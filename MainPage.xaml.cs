@@ -38,8 +38,7 @@ using Windows.Security.Cryptography.Core;
 using System.Text.RegularExpressions;
 using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.DateTime;
-using Microsoft.Recognizers.Text.Number;
-using Microsoft.Recognizers.Text.NumberWithUnit;
+
 
 namespace TaskList
 {
@@ -217,16 +216,34 @@ namespace TaskList
         private async void DataLoaded()
         {
             // Method calls to carry out after data loading is completed
-            await UpdateData();
-            Debug.WriteLine("................................");
-            Debug.WriteLine(".... Folders & Tasks Loaded ....");
-            await DisplayTasksInFolders();
+            //await UpdateData();
+            //Debug.WriteLine("................................");
+            //Debug.WriteLine(".... Folders & Tasks Loaded ....");
+            //await DisplayTasksInFolders();
             //await DisplayAllFolders();
             //await DisplayAllTasks();
-            await DisplaySortedIndex();
+            //await DisplaySortedIndex();
             Debug.WriteLine("................................");
             Debug.WriteLine("");
-            await RunTests();
+            //await RunTests();
+
+            string datecheck1 = await CreateTaskFromInput("12/1/24");
+            // ** BUG ** PRIORITY: LOW
+            // this date format is 1st of december
+            // change this to suit australian date format or can we use user system location?
+            Debug.WriteLine("dateCheck1 = " + datecheck1); 
+
+            var datecheck2 = await CreateTaskFromInput("Let's meet the 30th of December 2024 at 8pm");
+            Debug.WriteLine("dateCheck2 = " + datecheck2);
+
+            var datecheck3 = await CreateTaskFromInput("Meeting on the 29th of this month 3:32 in the afternoon");
+            Debug.WriteLine("dateCheck3 = " + datecheck3);
+
+            var datecheck4 = await CreateTaskFromInput("Meeting 25th June"); 
+            // ** BUG ** PRIORITY: HIGH - this would be critcial as it is how a user would think of the date (not always putting in current year
+            // this returns as null as its recognised as being in the past???
+            // need to check if there is a valid year of else year = current year
+            Debug.WriteLine("dateCheck4 = " + datecheck4);
         }
         private async void SaveData()
         {
@@ -402,6 +419,7 @@ namespace TaskList
             Folder.RemoveFolder(folderAdded);
         }
 
+
         /// <summary>
         /// Method to take input from the user, parse the input and check for dates, names, places and a description
         /// TODO: check for date and save it if there is one else date = null
@@ -409,43 +427,62 @@ namespace TaskList
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        //public static IEnumerable<ModelResult> CreateTaskFromInput(string input)
-        public static Task CreateTaskFromInput(string input)
+        public async Task<string> CreateTaskFromInput(string input)
         {
-        // TEST CODE: using Microsoft Recognizers nuget packages, and regex.
-        // Research:
-        // https://github.com/microsoft/Recognizers-Text/tree/master/.NET/Samples
-        // https://github.com/microsoft/Recognizers-Text/blob/master/.NET/Samples/SimpleConsole/Program.cs
-        // https://csharp.hotexamples.com/examples/-/DateTimeRecognizer/-/php-datetimerecognizer-class-examples.html#google_vignette
-        // https://starbeamrainbowlabs.com/blog/article.php?article=posts%2F325-AI-Microsoft-Text-Recognizers.html
-        // https://stackoverflow.com/questions/52593835/parsing-timex-expressions-in-net-core
+            // TEST CODE: using Microsoft Recognizers nuget packages, and regex.
+            // Research:
+            // https://github.com/microsoft/Recognizers-Text/tree/master/.NET/Samples
+            // https://github.com/microsoft/Recognizers-Text/blob/master/.NET/Samples/SimpleConsole/Program.cs
+            // https://csharp.hotexamples.com/examples/-/DateTimeRecognizer/-/php-datetimerecognizer-class-examples.html#google_vignette
+            // https://starbeamrainbowlabs.com/blog/article.php?article=posts%2F325-AI-Microsoft-Text-Recognizers.html
+            // https://stackoverflow.com/questions/52593835/parsing-timex-expressions-in-net-core
 
-            // Use English for the Recognizers culture
+            // NOTES:
+            // *** Ordinal number recognizer will find any ordinal number
+            //          E.g "eleventh" will return "11".
+
+            // *** Datetime recognizer will find any Date even if its write in coloquial language 
+            //          E.g "I'll go back 8pm today" will return "2017-10-04 20:00:00"
+
             var culture = Culture.English;
+            var results = DateTimeRecognizer.RecognizeDateTime(input, culture);
 
-            string query = input;
-
-            // Ordinal number recognizer will find any ordinal number
-            // E.g "eleventh" will return "11".
-            // NumberRecognizer.RecognizeOrdinal(query, culture);
-
-            // Datetime recognizer This model will find any Date even if its write in coloquial language 
-            // E.g "I'll go back 8pm today" will return "2017-10-04 20:00:00"
-            var result = DateTimeRecognizer.RecognizeDateTime(query, culture);
-
-            DateTime? dueDate = null;
-            if (result.Any())
+            // Solution help from https://github.com/microsoft/Recognizers-Text/issues/2680
+            // Check if there are no results or if there are no valid dateTimes
+            if (results.Count <= 0 || !results.First().TypeName.StartsWith("datetimeV2"))
             {
-                var dateTimeResult = result.FirstOrDefault();
-                if (dateTimeResult != null)
-                {
-                    var parsedResult = new Microsoft.Recognizers.Text.DataTypes.TimexExpression.TimexProperty(dateTimeResult.ToString());
-                    Debug.WriteLine(parsedResult.ToString());
-                }
+                await Task.Delay(200);
+                Debug.WriteLine("No DateTimes found!");
+                return null;
             }
 
-            return null; // need to work out how to return the data as a valid date.. look at console output to get where data part is
+            // The DateTime model can return several resolution types
+            // https://github.com/Microsoft/Recognizers-Text/blob/master/.NET/Microsoft.Recognizers.Text.DateTime/Constants.cs#L7-L14
+            // We only want those with a date, date and time, or date time period: 
+
+            var first = results.First();
+            var resolutionValues = (IList<Dictionary<string, string>>)first.Resolution["values"];
+            var subType = first.TypeName.Split('.').Last();
+
+            if (subType.Contains("date") && !subType.Contains("range"))
+            {
+                // a date (or date & time) or multiple 
+                var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
+                if (moment < DateTime.Now)
+                {
+                    // a future moment is valid past moment is not 
+                    await Task.Delay(200);
+                    Debug.WriteLine("Exception! Cant use a date from the past!");
+                    return null;
+                }
+                return moment.ToString();
+            }
+
+            await Task.Delay(100);
+            Debug.WriteLine("end of function");
+            return null;
         }
+
 
         /// <summary>
         /// This Method splits the input string into tokens using regex

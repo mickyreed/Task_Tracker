@@ -79,6 +79,31 @@
             
             </summary>
         </member>
+        <member name="M:TaskList.MainPage.CreateTaskFromInput(System.String)">
+            <summary>
+            Method to take input from the user, parse the input and check for dates, names, places and a description
+            TODO: check for date and save it if there is one else date = null
+            TODO: split the input into tokens and remove words like if when as etc and return the description
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.GetDescription(System.String)">
+            <summary>
+            This Method splits the input string into tokens using regex
+            removes any stop words (common words like "a", "the", "with", etc.) 
+            Then joins the remaining tokens back into a string.
+            https://www.geeksforgeeks.org/write-regular-expressions/#google_vignette
+            https://www.tutorialspoint.com/Initializing-HashSet-in-Chash
+            https://www.geeksforgeeks.org/hashset-in-c-sharp-with-examples/
+            https://learn.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.split?view=net-8.0
+            https://www.dotnetperls.com/regex-split
+            https://thedeveloperblog.com/c-sharp/regex-split
+            file:///C:/Users/xcal1/Downloads/Regular%20expressions%20quick%20reference.pdf
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
         <member name="M:TaskList.MainPage.InitializeComponent">
             <summary>
             InitializeComponent()
@@ -96,6 +121,71 @@
         </member>
         <!-- Badly formed XML comment ignored for member "T:TaskList.RepeatTask" -->
         <!-- Badly formed XML comment ignored for member "T:TaskList.Tasks" -->
+        <member name="F:TaskList.Tasks.AllTasksList">
+            <summary>
+            Static list to hold all of the tasks
+            </summary>
+        </member>
+        <member name="F:TaskList.Tasks.TasksByDateIndex">
+            <summary>
+            Static list to all tasks sorted by date
+            </summary>
+        </member>
+        <member name="F:TaskList.Tasks.TasksByDescriptionIndex">
+            <summary>
+            Static class to hold all tasks sorted by description
+            </summary>
+        </member>
+        <member name="M:TaskList.Tasks.AddTask(TaskList.Tasks)">
+            <summary>
+            A static method to add new tasks to the static list
+            </summary>
+            <param name="task"></param>
+        </member>
+        <member name="M:TaskList.Tasks.RemoveTask(System.Guid)">
+            <summary>
+            A static method to remove a task from the static list using its GUID
+            </summary>
+            <param name="taskId"></param>
+        </member>
+        <member name="M:TaskList.Tasks.GetTaskById(System.Guid)">
+            <summary>
+            Static method to get a task by its ID
+            </summary>
+            <param name="taskId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.Tasks.SearchByDescription(System.String)">
+            <summary>
+            Search tasks with a given description
+            </summary>
+            <param name="keyword"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.Tasks.SearchByDueDate(System.Nullable{System.DateTime})">
+            <summary>
+            Search tasks with a given due date
+            </summary>
+            <param name="dueDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.Tasks.SortTasksByDate">
+            <summary>
+            Sort the tasks by date
+            </summary>
+        </member>
+        <member name="M:TaskList.Tasks.SortTasksByDescription">
+            <summary>
+            Sort tasks by description
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:TaskList.Tasks.UpdateTasksIndexes" -->
+        <member name="M:TaskList.Tasks.ToString">
+            <summary>
+            Method that displays a Task description, notes and dateDue as a string
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:TaskList.Program">
             <summary>
             Program class
