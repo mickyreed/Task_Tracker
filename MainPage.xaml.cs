@@ -226,20 +226,37 @@ namespace TaskList
             Debug.WriteLine("................................");
             Debug.WriteLine("");
             //await RunTests();
+            String input0 = "Meeting 30th"; // BUG! this comes up as 30th jan not curretn month
+            String input1 = "Meeting 30th of December"; // BUG! this comes up as a date in the past
+            String input2 = "Meeting the 30th of December 2025 at 8pm for dinner";
+            String input3 = "Meeting 3:32 in the afternoon tomorrow";
+            String input4 = "Meeting at 8:15pm"; //BUG! this dateTime returns as null
 
-            string datecheck1 = await CreateTaskFromInput("12/1/24");
+
+            string datecheck0 = await CreateTaskFromInput(input0);
+            Debug.WriteLine("dateCheck0 = " + datecheck0);
+            Debug.WriteLine(GetDescription(input0));
+
+            string datecheck1 = await CreateTaskFromInput(input1);
             // 8/4 ** BUG ** PRIORITY: LOW
             // this date format is 1st of december
             // change this to suit australian date format or can we use user system location?
-            Debug.WriteLine("dateCheck1 = " + datecheck1); 
+            Debug.WriteLine("dateCheck1 = " + datecheck1);
+            Debug.WriteLine(GetDescription(input1));
 
-            var datecheck2 = await CreateTaskFromInput("Let's meet the 30th of December 2024 at 8 for dinner"); // sets this as 8am
+            var datecheck2 = await CreateTaskFromInput(input2); // sets this as 8am
             Debug.WriteLine("dateCheck2 = " + datecheck2);
+            Debug.WriteLine(GetDescription(input2));
 
-            var datecheck3 = await CreateTaskFromInput("Meeting 3:32 in the afternoon tomorrow"); //Meeting on the 29th of this month 3:32 in the afternoon
+            var datecheck3 = await CreateTaskFromInput(input3); //Meeting on the 29th of this month 3:32 in the afternoon
             Debug.WriteLine("dateCheck3 = " + datecheck3);
+            Debug.WriteLine(GetDescription(input3));
 
-            var datecheck4 = await CreateTaskFromInput("Meeting at 2.15"); // needs a valid day // time returns as am, not as next occerence
+
+            var datecheck4 = await CreateTaskFromInput(input4); // needs a valid day // time returns as am, not as next occerence
+            Debug.WriteLine("dateCheck4 = " + datecheck4);
+            Debug.WriteLine(GetDescription(input4));
+
             // 8/4 ** BUG ** PRIORITY: HIGH - this would be critcial as it is how a user would think of the date (not always putting in current year
             // this returns as null as its recognised as being in the past??? but if i put Jnauary, it recognises it, and updates to the current month?
             // need to check if there is a valid year of else year = current year
@@ -255,7 +272,7 @@ namespace TaskList
             // if the string includes ordinal 1st or a 1 with the word January, then we can assume its january 1st next year
             // if the string includes january, but nother ordinal or number then set the day to this number and the month to january,
             //   check if the current date is before this january date and if it is set the due Date to this year or else set it to next tear
-            Debug.WriteLine("dateCheck4 = " + datecheck4);
+            
         }
         private async void SaveData()
         {
@@ -475,6 +492,8 @@ namespace TaskList
             var first = results.First();
             var resolutionValues = (IList<Dictionary<string, string>>)first.Resolution["values"];
             var subType = first.TypeName.Split('.').Last();
+            DateTime currentDate = DateTime.Now;
+            DateTime midYear = new DateTime(currentDate.Year, 6, 1);
 
             if (subType.Contains("date") && !subType.Contains("range"))
             {
@@ -483,15 +502,26 @@ namespace TaskList
 
                 // If the year is not specified, use the current year
                 if (moment.Year == 1)
-                {
-                    moment = new DateTime(DateTime.Now.Year, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
-                }
+                    // And if the input does not contain jan or january
+                    if (!input.ToLower().Contains("jan") && !input.ToLower().Contains("January"))
+                    {
+                        moment = new DateTime(currentDate.Year, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+                    }
+                    else
+                    {
+                        // Set the year nto next year
+                        moment = new DateTime(currentDate.Year, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+                        moment.AddYears(1);
+                    }
 
                 // If the month is not specified, use the current month
                 if (moment.Month == 1)
-                {
-                    moment = new DateTime(moment.Year, DateTime.Now.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
-                }
+                    // And if the input does not contain jan or january
+                    if (!input.ToLower().Contains("jan") && !input.ToLower().Contains("January"))
+                    {
+                        //  set month to current month
+                        moment = new DateTime(moment.Year, currentDate.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+                    }
 
                 // If the day is not specified, use the current day
                 if (moment.Day == 1)
@@ -500,6 +530,7 @@ namespace TaskList
                 }
 
                 // If only the time is specified, use the current date
+                // *** BUG 10/4 this does not work as intended
                 if (moment.Day == 1 && moment.Month == 1)
                 {
                     moment = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, moment.Hour, moment.Minute, moment.Second);
