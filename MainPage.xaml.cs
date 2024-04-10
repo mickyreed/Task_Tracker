@@ -449,8 +449,6 @@ namespace TaskList
                 cleanedInput = Regex.Replace(cleanedInput, Regex.Escape(entity.Text), "", RegexOptions.IgnoreCase);
             }
             
-            
-
             // Solution help from https://github.com/microsoft/Recognizers-Text/issues/2680
             // Check if there are no results or if there are no valid dateTimes
             if (results.Count <= 0 || !results.First().TypeName.StartsWith("datetimeV2"))
@@ -468,8 +466,6 @@ namespace TaskList
             var resolutionValues = (IList<Dictionary<string, string>>)first.Resolution["values"];
             var subType = first.TypeName.Split('.').Last();
             DateTime currentDate = DateTime.Now;
-
-
 
             if (subType.Contains("date") && !subType.Contains("range"))
             {
