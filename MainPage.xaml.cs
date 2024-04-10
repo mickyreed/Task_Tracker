@@ -229,52 +229,43 @@ namespace TaskList
             Debug.WriteLine("");
             //await RunTests();
             //String input0 = "Meeting 30th"; // BUG! Does not return a date at all
-            String input0 = "Meeting 31st January"; // BUG! this comes up as error - added try parse FIXED 11/4
-            String input1 = "Meeting 30th of May"; // BUG! this comes up as a date in the past
-            String input2 = "Meeting the 30th of December 2025 at 8pm for dinner";
-            String input3 = "Meeting 3:32 in the afternoon tomorrow";
+            String input0 = "Meeting 31 January"; // BUG! this comes up as error - added try parse FIXED 11/4
+            String input1 = "Meeting 30th of May with Bob at 12th st HighGate Restaurant"; // BUG! this comes up as a date in the past
+            String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
+            String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
             String input4 = "Meeting at 8:15pm"; //BUG! this dateTime returns as null FIXED WITH subtype time fix
 
-            string datecheck0 = await CreateTaskFromInput(input0);
-            Debug.WriteLine(input0 + " returns: " + datecheck0);
-            //Debug.WriteLine(GetDescription(input0));
+            (string cleanedInput, string dateTime0) = await CreateTaskFromInput(input0);
+            Debug.WriteLine(input0 + " returns: \n" + GetDescription(cleanedInput) + "\n" + dateTime0);
 
-            string datecheck1 = await CreateTaskFromInput(input1);
-            // 8/4 ** BUG ** PRIORITY: LOW
-            // this date format is 1st of december
-            // change this to suit australian date format or can we use user system location?
-            Debug.WriteLine(input1 + " returns: " + datecheck1);
-            //Debug.WriteLine(GetDescription(input1));
+            (string cleanedInput1, string dateTime1) = await CreateTaskFromInput(input1);
+            Debug.WriteLine(input1 + " returns: \n" + GetDescription(cleanedInput1) + "\n" + dateTime1);
 
-            var datecheck2 = await CreateTaskFromInput(input2); // sets this as 8am
-            Debug.WriteLine(input2 + " returns: " + datecheck2);
-            //Debug.WriteLine(GetDescription(input2));
+            (string cleanedInput2, string dateTime2) = await CreateTaskFromInput(input2);
+            Debug.WriteLine(input2 + " returns: \n" + GetDescription(cleanedInput2) + "\n" + dateTime2);
 
-            var datecheck3 = await CreateTaskFromInput(input3); //Meeting on the 29th of this month 3:32 in the afternoon
-            Debug.WriteLine(input3 + " returns: " + datecheck3);
-            //Debug.WriteLine(GetDescription(input3));
+            (string cleanedInput3, string dateTime3) = await CreateTaskFromInput(input3);
+            Debug.WriteLine(input3 + " returns: \n" + GetDescription(cleanedInput3) + "\n" + dateTime3);
 
-
-            var datecheck4 = await CreateTaskFromInput(input4); // needs a valid day // time returns as am, not as next occerence
-            Debug.WriteLine(input4 + " returns: " + datecheck4);
-            //Debug.WriteLine(GetDescription(input4));
+            (string cleanedInput4, string dateTime4) = await CreateTaskFromInput(input4);
+            Debug.WriteLine(input4 + " returns: \n" + GetDescription(cleanedInput4) + "\n" + dateTime4);
 
             // 8/4 ** BUG ** PRIORITY: HIGH - this would be critcial as it is how a user would think of the date (not always putting in current year
             // this returns as null as its recognised as being in the past??? but if i put Jnauary, it recognises it, and updates to the current month?
-            // need to check if there is a valid year of else year = current year
-            // update: 9/4 - date/day/year is being set to 1 if ther is null value, which interferes with a january or 1st query...
+            // RESOLVED: 10/4need to check if there is a valid year of else year = current year
+            // RESOLVED: 10/4 update: 9/4 - date/day/year is being set to 1 if ther is null value, which interferes with a january or 1st query...
             // perhaps check if there is january or 1st mentioned using regex or query the input string,
             //   and if there is then we can deal with it seprately to if the user didnt put a value in
             // check these first and modify string before checking date.
-            //   ie if there is an Ordinal number but no month then adjust string to include the current month 
-            //   ie if there is a time, but no day or no month, assume it is today
+            // RESOLVED: 10/4  ie if there is an Ordinal number but no month then adjust string to include the current month 
+            // RESOLVED: 10/4  ie if there is a time, but no day or no month, assume it is today
             //   ie if there is a time but no am or pm, then adjust to next occurence of this time
-            //   ie if the string includes 8 in the morning or 8 in the evening make sure this works
-            //   ie if the string include 8 oclock or just 8 , and the words, breakfast, lunch, brekkie, breaky, dinner, supper then adjust time to next occureence of that time
+                //   ie if the string includes 8 in the morning or 8 in the evening make sure this works
+                //   ie if the string include 8 oclock or just 8 , and the words, breakfast, lunch, brekkie, breaky, dinner, supper then adjust time to next occureence of that time
             // if the string includes ordinal 1st or a 1 with the word January, then we can assume its january 1st next year
             // if the string includes january, but nother ordinal or number then set the day to this number and the month to january,
             //   check if the current date is before this january date and if it is set the due Date to this year or else set it to next tear
-            
+
         }
         private async void SaveData()
         {
@@ -458,7 +449,7 @@ namespace TaskList
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        public async Task<string> CreateTaskFromInput(string input)
+        public async Task<(string, string)> CreateTaskFromInput(string input)
         {
             // TEST CODE: using Microsoft Recognizers nuget packages, and regex.
             // Research:
@@ -477,6 +468,15 @@ namespace TaskList
 
             var culture = Culture.English;
             var results = DateTimeRecognizer.RecognizeDateTime(input, culture);
+            
+            // Create a new string with all the detected date/time and ordinal entities removed
+            var cleanedInput = input.Trim();
+            //var cleanedInput = results.Aggregate(input, (current, entity) => current.Replace(entity.Text, ""));
+            foreach (var entity in results)
+            {
+                cleanedInput = Regex.Replace(cleanedInput, Regex.Escape(entity.Text), "", RegexOptions.IgnoreCase);
+            }
+
 
             // Solution help from https://github.com/microsoft/Recognizers-Text/issues/2680
             // Check if there are no results or if there are no valid dateTimes
@@ -484,7 +484,7 @@ namespace TaskList
             {
                 await Task.Delay(200);
                 Debug.WriteLine("No DateTimes found!");
-                return results.ToString(); ;
+                return (cleanedInput, results.ToString()); ;
             }
 
             // The DateTime model can return several resolution types
@@ -555,9 +555,9 @@ namespace TaskList
                         // a future moment is valid past moment is not 
                         await Task.Delay(200);
                         Debug.WriteLine("Exception! Cant use a date from the past!");
-                        return null;
+                        return (cleanedInput, null);
                     }
-                    return moment.ToString();
+                    return (cleanedInput, moment.ToString());
 
                 }
                 catch
@@ -570,11 +570,12 @@ namespace TaskList
             {
                 var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
                 moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
-                return moment.ToString();
+                return (cleanedInput, moment.ToString());
+
             }
             await Task.Delay(100);
             Debug.WriteLine("end of function");
-            return null;
+            return (cleanedInput, null);
         }
 
 
@@ -592,12 +593,12 @@ namespace TaskList
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private static string GetDescription(string input)
+        private static string GetDescription(string cleanedInput)
         {
             // create a hashset with some stop words we need to remove
-            var stopWords = new HashSet<string> { "a", "an", "and", "the", "at", "with", "for", "on", "in", "to" };
+            var stopWords = new HashSet<string> { "a", "an", "at", "and", "the", "for", "on", "in", "to" }; //"with", (maybe keep this for say "meeting with Bob"
             // split the input and remove the stop words, then re-join these in a string for use as the description
-            var tokens = Regex.Split(input, @"\W+")
+            var tokens = Regex.Split(cleanedInput, @"\W+")
                 .Where(token => !stopWords.Contains(token.ToLower())).ToList();
             return string.Join(" ", tokens);
         }
