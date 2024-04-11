@@ -91,6 +91,16 @@
             <param name="input"></param>
             <returns></returns>
         </member>
+        <member name="M:TaskList.MainPage.AdjustDateTime(System.String,System.DateTime)">
+            <summary>
+            Function which checks the input for various keywords: 
+            morning, breakfast, lunch, dinner, afternoon, evening, tomorrow
+            which can affect the am or pm and makes a judgement call on when the user meant the tme to be
+            </summary>
+            <param name="input"></param>
+            <param name="dateTime"></param>
+            <returns></returns>
+        </member>
         <member name="M:TaskList.MainPage.GetDescription(System.String)">
             <summary>
             This Method splits the input string into tokens using regex

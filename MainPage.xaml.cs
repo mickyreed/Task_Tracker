@@ -479,6 +479,7 @@ namespace TaskList
                         moment = new DateTime(currentDate.Year, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
                     }
 
+                    // if the month is not specified use the current month
                     if (moment.Month < currentDate.Month)
                     {
                         // If the month is 4 months less than the prior month assume its in future
@@ -515,6 +516,8 @@ namespace TaskList
                     {
                         moment = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
                     }
+
+                    // if the dateTime is less than dateTime.Now
                     if (moment < DateTime.Now)
 
                     {
@@ -536,7 +539,18 @@ namespace TaskList
             {
                 var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
                 moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
-                moment = AdjustDateTime(input, moment);
+                DateTime moment1 = AdjustDateTime(input, moment);
+                moment = moment1;
+
+                if (moment < DateTime.Now)
+
+                {
+                    // a future moment is valid past moment is not assume this should be in the future (next day same time)
+                    await Task.Delay(20);
+                    Debug.WriteLine("Exception! Cant use a date from the past! MAKING THIS A FUTURE EVENT");
+                    moment = moment.AddHours(24);
+                    return (cleanedInput, moment.ToString());
+                }
                 return (cleanedInput, moment.ToString());
             }
 
@@ -566,7 +580,7 @@ namespace TaskList
             int hour = int.Parse(match.Groups[1].Value);
 
             // Check for keywords indicating specific times of the day
-            if (input.Contains("morning") || input.Contains("breakfast"))
+            if (input.ToLower().Contains("morning") || input.ToLower().Contains("breakfast"))
             {
                 if (DateTime.Now <= dateTime)
                 {
@@ -579,7 +593,7 @@ namespace TaskList
                     return dateTime.AddHours(24);
                 }
             }
-            else if (input.Contains("lunch"))
+            else if (input.ToLower().Contains("lunch"))
             {
                 if (DateTime.Now <= dateTime && dateTime.Hour >= 10.30 && dateTime.Hour <= 2.30)
                 {
@@ -592,7 +606,7 @@ namespace TaskList
                     return dateTime.AddHours(24);
                 }
             }
-            else if (input.Contains("afternoon"))
+            else if (input.ToLower().Contains("afternoon"))
             {
                 if (DateTime.Now <= dateTime && dateTime.Hour >= 12.00 && dateTime.Hour < 6.00)
                 {
@@ -605,7 +619,7 @@ namespace TaskList
                     return dateTime.AddHours(24);
                 }
             }
-            else if (input.Contains("evening") || input.Contains("dinner"))
+            else if (input.ToLower().Contains("evening") || input.ToLower().Contains("dinner"))
             {
                 if (DateTime.Now <= dateTime.AddHours(12))
                 {
@@ -618,7 +632,7 @@ namespace TaskList
                     return dateTime.AddHours(36);
                 }
             }
-            else if (input.Contains("tomorrow") || input.Contains("tomorow"))
+            else if (input.ToLower().Contains("tomorrow") || input.ToLower().Contains("tomorow"))
             {
                 if (DateTime.Now.Day == dateTime.Day)
                 {
@@ -634,16 +648,16 @@ namespace TaskList
             else
             {
                 // By default, consider times mentioned without keywords as next available occurence
-                if (DateTime.Now <= dateTime)
+                if (DateTime.Now < dateTime)
                 {
                     return dateTime;
                 }
                 //if the dateTime.Now means that the next available occurence is tomorrow, add 24hrs
-                else if (DateTime.Now >= dateTime && DateTime.Now <= dateTime.AddHours(12))
+                else if (DateTime.Now < dateTime.AddHours(12))
                 {
                     return dateTime.AddHours(12);
                 }
-                else if (DateTime.Now >= dateTime && DateTime.Now >= dateTime.AddHours(12))
+                else if (DateTime.Now > dateTime.AddHours(12))
                 {
                     return dateTime.AddHours(24);
                 }
@@ -668,7 +682,7 @@ namespace TaskList
         private static string GetDescription(string cleanedInput)
         {
             // create a hashset with some stop words we need to remove
-            var stopWords = new HashSet<string> { "a", "at", "an", "the", "for", "on", "in", "to" }; //"with", "and",  (maybe keep this for say "meeting with Bob"
+            var stopWords = new HashSet<string> { "a", "at", "an", "the", "for", "on", "in", "to", }; //"with", "and",  (maybe keep this for say "meeting with Bob"
             // split the input and remove the stop words, then re-join these in a string for use as the description
             var tokens = Regex.Split(cleanedInput, @"\W+")
                 .Where(token => !stopWords.Contains(token.ToLower())).ToList();
