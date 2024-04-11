@@ -539,18 +539,20 @@ namespace TaskList
             {
                 var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
                 moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
-                DateTime moment1 = AdjustDateTime(input, moment);
-                moment = moment1;
+                moment = AdjustDateTime(input, moment);
 
-                if (moment < DateTime.Now)
-
+                // Check if the time is in the past compared to the current time
+                if (moment.TimeOfDay < DateTime.Now.TimeOfDay)
                 {
-                    // a future moment is valid past moment is not assume this should be in the future (next day same time)
-                    await Task.Delay(20);
-                    Debug.WriteLine("Exception! Cant use a date from the past! MAKING THIS A FUTURE EVENT");
-                    moment = moment.AddHours(24);
-                    return (cleanedInput, moment.ToString());
+                    // If the time is in the past, set it to the next occurrence of that time
+                    moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second).AddDays(1);
                 }
+                else
+                {
+                    // If the time is in the future, use the current date
+                    moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
+                }
+
                 return (cleanedInput, moment.ToString());
             }
 
@@ -621,7 +623,7 @@ namespace TaskList
             }
             else if (input.ToLower().Contains("evening") || input.ToLower().Contains("dinner"))
             {
-                if (DateTime.Now <= dateTime.AddHours(12))
+                if (DateTime.Now < dateTime.AddHours(12))
                 {
                     // If the current evening time is less than the input time
                     return dateTime.AddHours(12);
@@ -647,19 +649,20 @@ namespace TaskList
             }
             else
             {
+                //if the dateTime.Now means that the next available occurence is in the evening add 12hrs
+                if (DateTime.Now < dateTime.AddHours(12) && DateTime.Now > dateTime)
+                {
+                    return dateTime.AddHours(12);
+                }
+                //if the dateTime.Now means that the next available occurence is tomorrow, add 24hrs 
+                else if (DateTime.Now > dateTime.AddHours(12))
+                {
+                    return dateTime.AddHours(24);
+                }
                 // By default, consider times mentioned without keywords as next available occurence
                 if (DateTime.Now < dateTime)
                 {
                     return dateTime;
-                }
-                //if the dateTime.Now means that the next available occurence is tomorrow, add 24hrs
-                else if (DateTime.Now < dateTime.AddHours(12))
-                {
-                    return dateTime.AddHours(12);
-                }
-                else if (DateTime.Now > dateTime.AddHours(12))
-                {
-                    return dateTime.AddHours(24);
                 }
             }
 
