@@ -10,6 +10,8 @@ using System.Text.RegularExpressions;
 using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.DateTime;
 using Windows.UI.Popups;
+using System.ComponentModel.Design;
+using Windows.Services.Maps.LocalSearch;
 
 
 namespace TaskList
@@ -418,49 +420,37 @@ namespace TaskList
 
 
         /// <summary>
-        /// Method to take input from the user, parse the input and check for dates, names, places and a description
-        /// TODO: check for date and save it if there is one else date = null
-        /// TODO: split the input into tokens and remove words like if when as etc and return the description
+        /// Method to parse the input, and clean it checking for dates, ordinals and specific words or chars
+        /// Using Microsoft.Recognizers Nuget packages, and regex.
+        /// References:
+        /// https://github.com/microsoft/Recognizers-Text/tree/master/.NET/Samples
+        /// https://starbeamrainbowlabs.com/blog/article.php?article=posts%2F325-AI-Microsoft-Text-Recognizers.html
+        /// https://stackoverflow.com/questions/52593835/parsing-timex-expressions-in-net-core
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
         public async Task<(string, string)> CreateTaskFromInput(string input)
         {
-            // using Microsoft Recognizers nuget packages, and regex.
-            // Research:
-            // https://github.com/microsoft/Recognizers-Text/tree/master/.NET/Samples
-            // https://github.com/microsoft/Recognizers-Text/blob/master/.NET/Samples/SimpleConsole/Program.cs
-            // https://csharp.hotexamples.com/examples/-/DateTimeRecognizer/-/php-datetimerecognizer-class-examples.html#google_vignette
-            // https://starbeamrainbowlabs.com/blog/article.php?article=posts%2F325-AI-Microsoft-Text-Recognizers.html
-            // https://stackoverflow.com/questions/52593835/parsing-timex-expressions-in-net-core
 
             var culture = Culture.English;
             var results = DateTimeRecognizer.RecognizeDateTime(input, culture);
 
-            // Check for and remove "at" if it preceeds a Time ** NOT BEING USED IN THIS VERSION
-            // RemoveAtFromTime(input);
-
-            // Create a new string with all the detected date/time and ordinal entities removed, and Trim it
+            // Create a new trimmed string and remove all the detected date/time, ordinal and Specific Joining Words or char entities
             var cleanedInput = input.Trim();
-            
-            //var cleanedInput = results.Aggregate(input, (current, entity) => current.Replace(entity.Text, ""));
             foreach (var entity in results)
             {
                 cleanedInput = Regex.Replace(cleanedInput, Regex.Escape(entity.Text), "", RegexOptions.IgnoreCase);
+                GetDescription(cleanedInput);
             }
-            
+
             // Solution help from https://github.com/microsoft/Recognizers-Text/issues/2680
             // Check if there are no results or if there are no valid dateTimes
             if (results.Count <= 0 || !results.First().TypeName.StartsWith("datetimeV2"))
             {
                 await Task.Delay(200);
                 Debug.WriteLine("No DateTimes found!");
-                return (cleanedInput, results.ToString()); ;
+                return (cleanedInput, "None"); ;
             }
-
-            // The DateTime model can return several resolution types
-            // https://github.com/Microsoft/Recognizers-Text/blob/master/.NET/Microsoft.Recognizers.Text.DateTime/Constants.cs#L7-L14
-            // We only want those with a date, date and time, or date time period: 
 
             var first = results.First();
             var resolutionValues = (IList<Dictionary<string, string>>)first.Resolution["values"];
@@ -474,6 +464,7 @@ namespace TaskList
                 {
                     // a date (or date & time) or multiple 
                     var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
+                    moment = AdjustDateTime(input, moment);
 
                     Debug.WriteLine("--------------------------");
                     Debug.WriteLine("moment=:" + moment.Year.ToString()
@@ -513,13 +504,19 @@ namespace TaskList
                         moment = new DateTime(moment.Year, moment.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
                     }
 
-                    // If only the time is specified, use the current date
+                    // if the day is less than the current day, make it next week
+                    if (moment.Day < currentDate.Day)
+                    {
+                        moment = moment.AddDays(7);
+                    }
+
+                    // Fallback If only the time is specified or valid, use the current date
                     if (moment.Day == 1 && moment.Month == 1)
                     {
                         moment = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
                     }
-
                     if (moment < DateTime.Now)
+
                     {
                         // a future moment is valid past moment is not 
                         await Task.Delay(200);
@@ -527,7 +524,6 @@ namespace TaskList
                         return (cleanedInput, null);
                     }
                     return (cleanedInput, moment.ToString());
-
                 }
                 catch
                 {
@@ -540,18 +536,125 @@ namespace TaskList
             {
                 var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
                 moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
+                moment = AdjustDateTime(input, moment);
                 return (cleanedInput, moment.ToString());
-
             }
+
             await Task.Delay(100);
-            Debug.WriteLine("end of function");
-            return (cleanedInput, "No Due Date");
+            Debug.WriteLine("reached end of function with no date");
+            return (cleanedInput, currentDate.ToString());
         }
 
+        /// <summary>
+        /// Function which checks the input for various keywords: 
+        /// morning, breakfast, lunch, dinner, afternoon, evening, tomorrow
+        /// which can affect the am or pm and makes a judgement call on when the user meant the tme to be
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="dateTime"></param>
+        /// <returns></returns>
+        private static DateTime AdjustDateTime(string input, DateTime dateTime)
+        {
+            // Parse the time from the input string using regular expression
+            Match match = Regex.Match(input, @"\b(\d{1,2})\b");
+            if (!match.Success)
+            {
+                // If no time is found, return original dateTime
+                return dateTime;
+            }
+
+            int hour = int.Parse(match.Groups[1].Value);
+
+            // Check for keywords indicating specific times of the day
+            if (input.Contains("morning") || input.Contains("breakfast"))
+            {
+                if (DateTime.Now <= dateTime)
+                {
+                    // If time is after the specified datetime keep it as it is
+                    return dateTime;
+                }
+                else
+                {
+                    // Otherwise, set the time to the next morning
+                    return dateTime.AddHours(24);
+                }
+            }
+            else if (input.Contains("lunch"))
+            {
+                if (DateTime.Now <= dateTime && dateTime.Hour >= 10.30 && dateTime.Hour <= 2.30)
+                {
+                    // If time is currently before the set time keep it on same afternoon
+                    return dateTime.AddHours(12);
+                }
+                else
+                {
+                    // Otherwise, set the time to the afternoon of next day (24 + 12)
+                    return dateTime.AddHours(24);
+                }
+            }
+            else if (input.Contains("afternoon"))
+            {
+                if (DateTime.Now <= dateTime && dateTime.Hour >= 12.00 && dateTime.Hour < 6.00)
+                {
+                    // If time is currently before the set time keep it on same afternoon
+                    return dateTime.AddHours(12);
+                }
+                else
+                {
+                    // Otherwise, set the time to the afternoon of next day (24 + 12)
+                    return dateTime.AddHours(24);
+                }
+            }
+            else if (input.Contains("evening") || input.Contains("dinner"))
+            {
+                if (DateTime.Now <= dateTime.AddHours(12))
+                {
+                    // If the current evening time is less than the input time
+                    return dateTime.AddHours(12);
+                }
+                else
+                {
+                    // Otherwise, set the time to the following evening (12 + 24)
+                    return dateTime.AddHours(36);
+                }
+            }
+            else if (input.Contains("tomorrow") || input.Contains("tomorow"))
+            {
+                if (DateTime.Now.Day == dateTime.Day)
+                {
+                    // If the current day is less than tomorrow add 24hrs
+                    return dateTime.AddHours(24);
+                }
+                else
+                {
+                    // Otherwise, return the DateTime as is
+                    return dateTime;
+                }
+            }
+            else
+            {
+                // By default, consider times mentioned without keywords as next available occurence
+                if (DateTime.Now <= dateTime)
+                {
+                    return dateTime;
+                }
+                //if the dateTime.Now means that the next available occurence is tomorrow, add 24hrs
+                else if (DateTime.Now >= dateTime && DateTime.Now <= dateTime.AddHours(12))
+                {
+                    return dateTime.AddHours(12);
+                }
+                else if (DateTime.Now >= dateTime && DateTime.Now >= dateTime.AddHours(12))
+                {
+                    return dateTime.AddHours(24);
+                }
+            }
+
+            return dateTime;
+        }
 
         /// <summary>
         /// This Method splits the input string into tokens using regex
-        /// removes any stop words (common words like "a", "the", "with", etc.) 
+        /// removes any stop words (common words like "a", "the", "with", etc. as required) 
         /// Then joins the remaining tokens back into a string.
         /// https://www.geeksforgeeks.org/write-regular-expressions/#google_vignette
         /// https://www.tutorialspoint.com/Initializing-HashSet-in-Chash
@@ -559,9 +662,8 @@ namespace TaskList
         /// https://learn.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.split?view=net-8.0
         /// https://www.dotnetperls.com/regex-split
         /// https://thedeveloperblog.com/c-sharp/regex-split
-        /// file:///C:/Users/xcal1/Downloads/Regular%20expressions%20quick%20reference.pdf
         /// </summary>
-        /// <param name="input"></param>
+        /// <param name="cleanedInput"></param>
         /// <returns></returns>
         private static string GetDescription(string cleanedInput)
         {
@@ -573,6 +675,11 @@ namespace TaskList
             return string.Join(" ", tokens);
         }
 
+        /// <summary>
+        /// Function to get a string tuple of teh cleaned description,
+        /// and the date as a string and display it in the UI
+        /// </summary>
+        /// <param name="userInput"></param>
         public async void CheckUserInput(string userInput)
         {
             (string cleanedInput, string dateTime) = await CreateTaskFromInput(userInput);
@@ -581,6 +688,11 @@ namespace TaskList
             ResultTextBlock.Text = output;
         }
 
+        /// <summary>
+        /// Button CLick Event for recieving input from user and converting it to a Task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(InputTextBox.Text))
@@ -601,6 +713,9 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// Error Message Function for invalid input
+        /// </summary>
         public async void ErrorMessage()
         {
             var dialog = new MessageDialog("Error: You must enter a Task");

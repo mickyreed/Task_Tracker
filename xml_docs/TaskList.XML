@@ -81,9 +81,12 @@
         </member>
         <member name="M:TaskList.MainPage.CreateTaskFromInput(System.String)">
             <summary>
-            Method to take input from the user, parse the input and check for dates, names, places and a description
-            TODO: check for date and save it if there is one else date = null
-            TODO: split the input into tokens and remove words like if when as etc and return the description
+            Method to parse the input, and clean it checking for dates, ordinals and specific words or chars
+            Using Microsoft.Recognizers Nuget packages, and regex.
+            References:
+            https://github.com/microsoft/Recognizers-Text/tree/master/.NET/Samples
+            https://starbeamrainbowlabs.com/blog/article.php?article=posts%2F325-AI-Microsoft-Text-Recognizers.html
+            https://stackoverflow.com/questions/52593835/parsing-timex-expressions-in-net-core
             </summary>
             <param name="input"></param>
             <returns></returns>
@@ -91,7 +94,7 @@
         <member name="M:TaskList.MainPage.GetDescription(System.String)">
             <summary>
             This Method splits the input string into tokens using regex
-            removes any stop words (common words like "a", "the", "with", etc.) 
+            removes any stop words (common words like "a", "the", "with", etc. as required) 
             Then joins the remaining tokens back into a string.
             https://www.geeksforgeeks.org/write-regular-expressions/#google_vignette
             https://www.tutorialspoint.com/Initializing-HashSet-in-Chash
@@ -99,10 +102,28 @@
             https://learn.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.split?view=net-8.0
             https://www.dotnetperls.com/regex-split
             https://thedeveloperblog.com/c-sharp/regex-split
-            file:///C:/Users/xcal1/Downloads/Regular%20expressions%20quick%20reference.pdf
             </summary>
-            <param name="input"></param>
+            <param name="cleanedInput"></param>
             <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.CheckUserInput(System.String)">
+            <summary>
+            Function to get a string tuple of teh cleaned description,
+            and the date as a string and display it in the UI
+            </summary>
+            <param name="userInput"></param>
+        </member>
+        <member name="M:TaskList.MainPage.Button_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            Button CLick Event for recieving input from user and converting it to a Task
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.ErrorMessage">
+            <summary>
+            Error Message Function for invalid input
+            </summary>
         </member>
         <member name="M:TaskList.MainPage.InitializeComponent">
             <summary>
