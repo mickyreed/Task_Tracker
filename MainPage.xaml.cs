@@ -12,6 +12,8 @@ using Microsoft.Recognizers.Text.DateTime;
 using Windows.UI.Popups;
 using System.ComponentModel.Design;
 using Windows.Services.Maps.LocalSearch;
+using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
+using System.Runtime.CompilerServices;
 
 
 namespace TaskList
@@ -190,7 +192,7 @@ namespace TaskList
         private async void DataLoaded()
         {
             #region TESTS - dipslaying, add, delete both Folders and Tasks
-            // Method calls to carry out after data loading is completed
+            ////Method calls to carry out after data loading is completed
             //await UpdateData();
             //Debug.WriteLine("................................");
             //Debug.WriteLine(".... Folders & Tasks Loaded ....");
@@ -203,44 +205,49 @@ namespace TaskList
             //await RunTests();
             #endregion
 
-            #region TESTS FOR Testing Task Input Creation Method
-            ////String input0 = "Meeting 30th"; // BUG! Does not return a date at all
-            //String input0 = "Exercise at 9am on the 31 January Star Jumps and Leg Day"; // BUG! this comes up as error - added try parse FIXED 11/4
-            //String input1 = "Meeting 30th of May with Bob and Mary at HighGate Restaurant"; // BUG! this comes up as a date in the past
-            //String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
-            //String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
-            //String input4 = "Meeting at 8:15pm"; //BUG! this dateTime returns as null FIXED WITH subtype time fix
+            #region TESTS CASES FOR Testing Task Input Creation Method
+            // TEST DATA
+            String input0 = "Exercise at 9am on the 1st January 2025 Star Jumps and Leg Day";
+            String input1 = "Meeting 1st of May with Bob and Mary at HighGate Restaurant";
+            String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
+            String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
+            String input4 = "Meeting at 8:15pm";
 
-            //(string cleanedInput, string dateTime0) = await CreateTaskFromInput(input0);
-            //Debug.WriteLine(input0 + " returns: \n" + GetDescription(cleanedInput) + "\n" + dateTime0);
+            String input5 = "Call Rob on Wednesday at 3PM";
+            String input6 = "Call Rob at 3PM on Wednesday"; 
+            String input7 = "Call Rob";
+            String input8 = "Call Rob, 3PM, Thursday";
+            String input9 = "Call Rob, Wednesday, 3PM"; 
+            String input10 = "Call Rob 3PM Wednesday";
+            String input11 = "Call Rob Wednesday 3AM";
+            //String input12 = "1/1/2025";
 
-            //(string cleanedInput1, string dateTime1) = await CreateTaskFromInput(input1);
-            //Debug.WriteLine(input1 + " returns: \n" + GetDescription(cleanedInput1) + "\n" + dateTime1);
-
-            //(string cleanedInput2, string dateTime2) = await CreateTaskFromInput(input2);
-            //Debug.WriteLine(input2 + " returns: \n" + GetDescription(cleanedInput2) + "\n" + dateTime2);
-
-            //(string cleanedInput3, string dateTime3) = await CreateTaskFromInput(input3);
-            //Debug.WriteLine(input3 + " returns: \n" + GetDescription(cleanedInput3) + "\n" + dateTime3);
-
-            //(string cleanedInput4, string dateTime4) = await CreateTaskFromInput(input4);
-            //Debug.WriteLine(input4 + " returns: \n" + GetDescription(cleanedInput4) + "\n" + dateTime4);
-
-            //// 8/4 ** BUG ** PRIORITY: HIGH - this would be critcial as it is how a user would think of the date (not always putting in current year
-            //// this returns as null as its recognised as being in the past??? but if i put Jnauary, it recognises it, and updates to the current month?
-            //// RESOLVED: 10/4need to check if there is a valid year of else year = current year
-            //// RESOLVED: 10/4 update: 9/4 - date/day/year is being set to 1 if ther is null value, which interferes with a january or 1st query...
-            //// perhaps check if there is january or 1st mentioned using regex or query the input string,
-            ////   and if there is then we can deal with it seprately to if the user didnt put a value in
-            //// check these first and modify string before checking date.
-            //// RESOLVED: 10/4  ie if there is an Ordinal number but no month then adjust string to include the current month 
-            //// RESOLVED: 10/4  ie if there is a time, but no day or no month, assume it is today
-            ////   ie if there is a time but no am or pm, then adjust to next occurence of this time
-            ////   ie if the string includes 8 in the morning or 8 in the evening make sure this works
-            ////   ie if the string include 8 oclock or just 8 , and the words, breakfast, lunch, brekkie, breaky, dinner, supper then adjust time to next occureence of that time
-            //// if the string includes ordinal 1st or a 1 with the word January, then we can assume its january 1st next year
-            //// if the string includes january, but nother ordinal or number then set the day to this number and the month to january,
-            ////   check if the current date is before this january date and if it is set the due Date to this year or else set it to next tear
+            //
+            //string output12 = await CheckUserInput(input12);
+            string output0 = await CheckUserInput(input0);
+            Debug.WriteLine($"{output0} \n");
+            string output1 = await CheckUserInput(input1);
+            Debug.WriteLine($"{output1} \n");
+            string output2 = await CheckUserInput(input2);
+            Debug.WriteLine($"{output2} \n");
+            string output3 = await CheckUserInput(input3);
+            Debug.WriteLine($"{output3} \n");
+            string output4 = await CheckUserInput(input4);
+            Debug.WriteLine($"{output4} \n");
+            string output5 = await CheckUserInput(input5);
+            Debug.WriteLine($"{output5} \n");
+            string output6 = await CheckUserInput(input6);
+            Debug.WriteLine($"{output6} \n");
+            string output7 = await CheckUserInput(input7);
+            Debug.WriteLine($"{output7} \n");
+            string output8 = await CheckUserInput(input8);
+            Debug.WriteLine($"{output8} \n");
+            string output9 = await CheckUserInput(input9);
+            Debug.WriteLine($"{output9} \n");
+            string output10 = await CheckUserInput(input10);
+            Debug.WriteLine($"{output10} \n");
+            string output11 = await CheckUserInput(input11);
+            Debug.WriteLine($"{output11} \n");
             #endregion
 
         }
@@ -463,69 +470,39 @@ namespace TaskList
                 {
                     // a date (or date & time) or multiple 
                     var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
-                    moment = AdjustDateTime(input, moment);
+                    //moment = AdjustDateTime(input, moment);
 
-                    Debug.WriteLine("--------------------------");
-                    Debug.WriteLine("moment=:" + moment.Year.ToString()
-                        + ", " + moment.Month.ToString()
-                        + ", " + moment.Day.ToString()
-                        + ", " + moment.TimeOfDay.ToString());
-                    Debug.WriteLine("--------------------------");
+                    int year = moment.Year;
+                    int month = moment.Month;
+                    int day = moment.Day;
+                    int hour = moment.Hour;
+                    int minute = moment.Minute;
+                    int second = moment.Second;
+                    
+                    Debug.WriteLine($"Moment Time = {hour}:{minute}:{second} - {day}-{month}-{year}");
 
-                    // If the year is not specified, use the current year
-                    if (moment.Year < currentDate.Year)
-                    {
-                        moment = new DateTime(currentDate.Year, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
-                    }
+                    DateTime checkedMoment = CheckAndAdjustMoment(input, moment, currentDate);
+                    //moment = checkedMoment.Value;
 
-                    // if the month is not specified use the current month
-                    if (moment.Month < currentDate.Month)
-                    {
-                        // If the month is 4 months less than the prior month assume its in future
-                        if (moment.Date < currentDate.AddMonths(-2))
-                        {
-                            moment = moment.AddYears(1);
-                        }
-                        // If the month is not specified, use the current month
-                        if (moment.Month == 1)
-                        {
-                            // And if the input does not contain jan or january
-                            if (!input.ToLower().Contains("jan") && !input.ToLower().Contains("January"))
-                            {
-                                //  set month to current month
-                                moment = new DateTime(moment.Year, currentDate.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
-                            }
-                        }
-                    }
+                    year = checkedMoment.Year;
+                    month = checkedMoment.Month;
+                    day = checkedMoment.Day;
+                    hour = checkedMoment.Hour;
+                    minute = checkedMoment.Minute;
+                    second = checkedMoment.Second;
 
-                    // If the day is not specified, use the current day
-                    //if (moment.Day == 1)
-                    //{
-                    //    moment = new DateTime(moment.Year, moment.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
-                    //}
+                    Debug.WriteLine($"RETURNED Moment Time = {hour}:{minute}:{second} - {day}-{month}-{year}");
+                    //Debug.WriteLine("--------------------------");
+                    //Debug.WriteLine("moment=:" + moment.Year.ToString()
+                    //    + ", " + moment.Month.ToString()
+                    //    + ", " + moment.Day.ToString()
+                    //    + ", " + moment.TimeOfDay.ToString());
+                    //Debug.WriteLine("--------------------------");
 
-                    //// if the day is less than the current day, make it next week
-                    //if (moment.Day < currentDate.Date.Day)
-                    //{
-                    //    moment = moment.AddDays(1);
-                    //}
+                    //NEW
+                    // If the date is less than todays date
 
-                    // Fallback If only the time is specified or valid, use the current date
-                    if (moment.Day == 1 && moment.Month == 1)
-                    {
-                        moment = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
-                    }
-
-                    // if the dateTime is less than dateTime.Now
-                    if (moment < DateTime.Now)
-
-                    {
-                        // a future moment is valid past moment is not 
-                        await Task.Delay(200);
-                        Debug.WriteLine("Exception! Cant use a date from the past!");
-                        return (cleanedInput, null);
-                    }
-                    return (cleanedInput, moment.ToString());
+                    return (cleanedInput, checkedMoment.ToString());
                 }
                 catch
                 {
@@ -538,26 +515,141 @@ namespace TaskList
             {
                 var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
                 moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
-                moment = AdjustDateTime(input, moment);
+                //moment = AdjustDateTime(input, moment);
 
                 // Check if the time is in the past compared to the current time
                 if (moment.TimeOfDay < DateTime.Now.TimeOfDay)
                 {
                     // If the time is in the past, set it to the next occurrence of that time
-                    moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second).AddDays(1);
+                    moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day + 1, moment.Hour, moment.Minute, moment.Second);
                 }
                 else
                 {
                     // If the time is in the future, use the current date
                     moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
                 }
-
+                Debug.WriteLine($"{cleanedInput}, {moment}");
                 return (cleanedInput, moment.ToString());
             }
 
             await Task.Delay(100);
             Debug.WriteLine("reached end of function with no date");
             return (cleanedInput, currentDate.ToString());
+            
+        }
+
+        private DateTime CheckAndAdjustMoment(string input, DateTime moment, DateTime currentDate)
+        {
+            if (moment.Year <= currentDate.Year)
+            {
+                int currentYear = currentDate.Year;
+                int momentYear = moment.Year;
+                int yearDifference = currentYear - moment.Year;
+                // Check if the date is last year?
+                if (yearDifference > 0)
+                {
+                    // if it is add the difference to get it to the current year
+                    // update the moment as a new DateTime ( as DateTime is immutable)
+                    moment = new DateTime(moment.Year + yearDifference, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+                }
+                //else if  (yearDifference < 0) // else if the date is invalid - return
+                //{
+                //    //Debug.WriteLine($"RETURNED NULL Moment Time = {hour}:{minute}:{second} - {day}-{month}-{year}");
+                //    return moment;
+
+                //}
+
+                int dateDifferenceInDays = (currentDate.Date - moment.Date).Days;
+                // ReCheck if the date is more than 7 days ago
+                if (dateDifferenceInDays > 7)
+                { 
+                    // if it is assume date is in the future
+                    // update the moment as a new DateTime ( as DateTime is immutable)
+                    moment = new DateTime(moment.Year + 1, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+                }
+                // else if the date is less than the current date but greater than or equal to 7 days ago
+                else if (moment.Date < currentDate && dateDifferenceInDays <= 7)
+                {
+                    if (input.ToLower().Contains("fortnight"))
+                    {
+                        // add 14 days
+                        // update the moment as a new DateTime ( as DateTime is immutable)
+                        moment = new DateTime(moment.Year, moment.Month, moment.Day + 21, moment.Hour, moment.Minute, moment.Second);
+                    }
+                    else
+                    {
+                        // return the moment plus 7 days
+                        // update the moment as a new DateTime ( as DateTime is immutable)
+                        moment = new DateTime(moment.Year, moment.Month, moment.Day +7, moment.Hour, moment.Minute, moment.Second);
+                    }
+                }
+
+                //else if (input.ToLower().Contains("fortnight"))
+                //{
+                //    moment = new DateTime(moment.Year, moment.Month, moment.Day + 14, moment.Hour, moment.Minute, moment.Second);
+                //}
+                // update the moment as a new DateTime ( as DateTime is immutable)
+                //moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+                //moment = AdjustDateTime(input, moment);
+                //Debug.WriteLine($"RETURNED Moment Time = {hour}:{minute}:{second} - {day}-{month}-{year}");
+                return moment;
+            }
+
+            ////OLD
+            //// If the year is not specified, use the current year
+            //if (moment.Year < currentDate.Year)
+            //{
+            //    moment = new DateTime(currentDate.Year, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+            //}
+
+            //// if the month is not specified use the current month
+            //if (moment.Month < currentDate.Month && !input.Contains(currentDate.Year.ToString()))
+            //{
+            //    moment = moment.AddYears(1);
+            //    moment = new DateTime(moment.Year, currentDate.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+            //}
+            //else
+            //{
+            //    moment = new DateTime(moment.Year, currentDate.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+            //}
+
+            //if (moment.Day < currentDate.Day)
+
+            //    moment = moment.AddDays(7);
+            //    moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+
+            //// If the day is not specified, use the current day
+            ////if (moment.Day == 1)
+            ////{
+            ////    moment = new DateTime(moment.Year, moment.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
+            ////}
+
+            ////// if the day is less than the current day, make it next week
+            ////if (moment.Day < currentDate.Date.Day)
+            ////{
+            ////    moment = moment.AddDays(1);
+            ////}
+
+            //// Fallback If only the time is specified or valid, use the current date
+            ////if (moment.Day == 1 && moment.Month == 1)
+            ////{
+            ////    moment = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
+            ////}
+
+            //// if the dateTime is less than dateTime.Now
+            //if (moment < DateTime.Now)
+
+            //{
+            //    // a future moment is valid past moment is not 
+            //    await Task.Delay(200);
+            //    Debug.WriteLine("Exception! Cant use a date from the past!");
+            //    return (cleanedInput, currentDate.ToString());
+            //}
+            else
+            {
+                //Debug.WriteLine($"RETURNED END OF TRY CATCH Moment Time = {hour}:{minute}:{second} - {day}-{month}-{year}");
+                return moment;
+            }
         }
 
         /// <summary>
@@ -607,19 +699,19 @@ namespace TaskList
                     return dateTime.AddHours(24);
                 }
             }
-            else if (input.ToLower().Contains("afternoon"))
-            {
-                if (DateTime.Now <= dateTime && dateTime.Hour >= 12.00 && dateTime.Hour < 6.00)
-                {
-                    // If time is currently before the set time keep it on same afternoon
-                    return dateTime.AddHours(12);
-                }
-                else
-                {
-                    // Otherwise, set the time to the afternoon of next day (24 + 12)
-                    return dateTime.AddHours(24);
-                }
-            }
+            //else if (input.ToLower().Contains("afternoon"))
+            //{
+            //    if (DateTime.Now <= dateTime && dateTime.Hour >= 12.00 && dateTime.Hour < 6.00)
+            //    {
+            //        // If time is currently before the set time keep it on same afternoon
+            //        return dateTime.AddHours(12);
+            //    }
+            //    else
+            //    {
+            //        // Otherwise, set the time to the afternoon of next day (24 + 12)
+            //        return dateTime.AddHours(24);
+            //    }
+            //}
             else if (input.ToLower().Contains("evening") || input.ToLower().Contains("dinner"))
             {
                 if (DateTime.Now < dateTime.AddHours(12))
@@ -633,19 +725,19 @@ namespace TaskList
                     return dateTime.AddHours(36);
                 }
             }
-            else if (input.ToLower().Contains("tomorrow") || input.ToLower().Contains("tomorow"))
-            {
-                if (DateTime.Now.Day == dateTime.Day)
-                {
-                    // If the current day is less than tomorrow add 24hrs
-                    return dateTime.AddHours(24);
-                }
-                else
-                {
-                    // Otherwise, return the DateTime as is
-                    return dateTime;
-                }
-            }
+            //else if (input.ToLower().Contains("tomorrow") || input.ToLower().Contains("tomorow"))
+            //{
+            //    if (DateTime.Now.Day == dateTime.Day)
+            //    {
+            //        // If the current day is less than tomorrow add 24hrs
+            //        return dateTime.AddHours(24);
+            //    }
+            //    else
+            //    {
+            //        // Otherwise, return the DateTime as is
+            //        return dateTime;
+            //    }
+            //}
             else
             {
                 //if the dateTime.Now means that the next available occurence is in the evening add 12hrs
@@ -701,7 +793,7 @@ namespace TaskList
             (string cleanedInput, string dateTime) = await CreateTaskFromInput(userInput);
             cleanedInput = cleanedInput.Trim(); //trim the input
             cleanedInput = GetDescription(cleanedInput); // call to remove any unwanted stopword fro decsription
-            Debug.WriteLine("... " + userInput + " returns: \n" + cleanedInput + "\n" + dateTime);
+            //Debug.WriteLine("... " + userInput + " returns: \n" + cleanedInput + "\n" + dateTime);
             string output = "TASK: " + cleanedInput + "\nNOTES: " + userInput + "\nDUE DATE: " + dateTime;
             return output;
         }
@@ -726,6 +818,7 @@ namespace TaskList
                 {
                     //ResultTextBlock.Text = "HELLO!!!";
                     string output = await CheckUserInput(userInput);
+
                     ResultTextBlock.Text = output;
                     InputTextBox.Text = string.Empty;
                 }
