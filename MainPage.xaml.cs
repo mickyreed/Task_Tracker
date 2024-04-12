@@ -440,7 +440,6 @@ namespace TaskList
             foreach (var entity in results)
             {
                 cleanedInput = Regex.Replace(cleanedInput, Regex.Escape(entity.Text), "", RegexOptions.IgnoreCase);
-                GetDescription(cleanedInput);
             }
 
             // Solution help from https://github.com/microsoft/Recognizers-Text/issues/2680
@@ -500,16 +499,16 @@ namespace TaskList
                     }
 
                     // If the day is not specified, use the current day
-                    if (moment.Day == 1)
-                    {
-                        moment = new DateTime(moment.Year, moment.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
-                    }
+                    //if (moment.Day == 1)
+                    //{
+                    //    moment = new DateTime(moment.Year, moment.Month, DateTime.Today.Day, moment.Hour, moment.Minute, moment.Second);
+                    //}
 
-                    // if the day is less than the current day, make it next week
-                    if (moment.Day < currentDate.Day)
-                    {
-                        moment = moment.AddDays(7);
-                    }
+                    //// if the day is less than the current day, make it next week
+                    //if (moment.Day < currentDate.Date.Day)
+                    //{
+                    //    moment = moment.AddDays(1);
+                    //}
 
                     // Fallback If only the time is specified or valid, use the current date
                     if (moment.Day == 1 && moment.Month == 1)
@@ -531,7 +530,7 @@ namespace TaskList
                 catch
                 {
                     Debug.WriteLine("THIS DATE IS INVALID, please enter a new date");
-                    return (cleanedInput, "No Due Date");
+                    return (cleanedInput, null);
                 }
             }
 
@@ -684,7 +683,7 @@ namespace TaskList
         /// <returns></returns>
         private static string GetDescription(string cleanedInput)
         {
-            // create a hashset with some stop words we need to remove
+            // create a hash set with some stop words we need to remove
             var stopWords = new HashSet<string> { "a", "at", "an", "the", "for", "on", "in", "to", }; //"with", "and",  (maybe keep this for say "meeting with Bob"
             // split the input and remove the stop words, then re-join these in a string for use as the description
             var tokens = Regex.Split(cleanedInput, @"\W+")
@@ -693,16 +692,18 @@ namespace TaskList
         }
 
         /// <summary>
-        /// Function to get a string tuple of teh cleaned description,
+        /// Function to get a string tuple of the cleaned description,
         /// and the date as a string and display it in the UI
         /// </summary>
         /// <param name="userInput"></param>
-        public async void CheckUserInput(string userInput)
+        public async Task<string> CheckUserInput(string userInput)
         {
             (string cleanedInput, string dateTime) = await CreateTaskFromInput(userInput);
-            Debug.WriteLine("... " + userInput + " returns: \n" + GetDescription(cleanedInput) + "\n" + dateTime);
+            cleanedInput = cleanedInput.Trim(); //trim the input
+            cleanedInput = GetDescription(cleanedInput); // call to remove any unwanted stopword fro decsription
+            Debug.WriteLine("... " + userInput + " returns: \n" + cleanedInput + "\n" + dateTime);
             string output = "TASK: " + cleanedInput + "\nNOTES: " + userInput + "\nDUE DATE: " + dateTime;
-            ResultTextBlock.Text = output;
+            return output;
         }
 
         /// <summary>
@@ -724,7 +725,8 @@ namespace TaskList
                 if (userInput != null || userInput != "Enter a value")
                 {
                     //ResultTextBlock.Text = "HELLO!!!";
-                    CheckUserInput(userInput);
+                    string output = await CheckUserInput(userInput);
+                    ResultTextBlock.Text = output;
                     InputTextBox.Text = string.Empty;
                 }
             }

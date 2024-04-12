@@ -118,7 +118,7 @@
         </member>
         <member name="M:TaskList.MainPage.CheckUserInput(System.String)">
             <summary>
-            Function to get a string tuple of teh cleaned description,
+            Function to get a string tuple of the cleaned description,
             and the date as a string and display it in the UI
             </summary>
             <param name="userInput"></param>
