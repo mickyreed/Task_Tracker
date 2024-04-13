@@ -226,29 +226,29 @@ namespace TaskList
             //
             //string output12 = await CheckUserInput(input12);
             string output0 = await CheckUserInput(input0);
-            Debug.WriteLine($"{output0} \n");
+            //Debug.WriteLine($"{output0} \n");
             string output1 = await CheckUserInput(input1);
-            Debug.WriteLine($"{output1} \n");
+            //Debug.WriteLine($"{output1} \n");
             string output2 = await CheckUserInput(input2);
-            Debug.WriteLine($"{output2} \n");
+            //Debug.WriteLine($"{output2} \n");
             string output3 = await CheckUserInput(input3);
-            Debug.WriteLine($"{output3} \n");
+            //Debug.WriteLine($"{output3} \n");
             string output4 = await CheckUserInput(input4);
-            Debug.WriteLine($"{output4} \n");
+            //Debug.WriteLine($"{output4} \n");
             string output5 = await CheckUserInput(input5);
-            Debug.WriteLine($"{output5} \n");
+            //Debug.WriteLine($"{output5} \n");
             string output6 = await CheckUserInput(input6);
-            Debug.WriteLine($"{output6} \n");
+            //Debug.WriteLine($"{output6} \n");
             string output7 = await CheckUserInput(input7);
-            Debug.WriteLine($"{output7} \n");
+            //Debug.WriteLine($"{output7} \n");
             string output8 = await CheckUserInput(input8);
-            Debug.WriteLine($"{output8} \n");
+            //Debug.WriteLine($"{output8} \n");
             string output9 = await CheckUserInput(input9);
-            Debug.WriteLine($"{output9} \n");
+            //Debug.WriteLine($"{output9} \n");
             string output10 = await CheckUserInput(input10);
-            Debug.WriteLine($"{output10} \n");
+            //Debug.WriteLine($"{output10} \n");
             string output11 = await CheckUserInput(input11);
-            Debug.WriteLine($"{output11} \n");
+            //Debug.WriteLine($"{output11} \n");
             #endregion
 
         }
@@ -550,6 +550,13 @@ namespace TaskList
             
         }
 
+        /// <summary>
+        /// Function to check the DateTime moment and adjust it in reference to our current date
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="moment"></param>
+        /// <param name="currentDate"></param>
+        /// <returns></returns>
         private DateTime CheckAndAdjustMoment(string input, DateTime moment, DateTime currentDate)
         {
             if (moment.Year <= currentDate.Year)
@@ -620,7 +627,6 @@ namespace TaskList
                 moment = adjustedMoment1;
                 return moment;
             }
-
 
             else
             {
@@ -854,7 +860,9 @@ namespace TaskList
                 }
                 catch (FormatException)
                 {
-                    Debug.WriteLine("Invalid date format. Please check the input string.");
+                    // Handle the parsing of incomplet or null date formats
+                    // these will occur if the user enters a Task without a date
+                    Debug.WriteLine("Null or Invalid date format Handled.");
                 }
             }
             

@@ -91,6 +91,15 @@
             <param name="input"></param>
             <returns></returns>
         </member>
+        <member name="M:TaskList.MainPage.CheckAndAdjustMoment(System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Function to check the DateTime moment and adjust it in reference to our current date
+            </summary>
+            <param name="input"></param>
+            <param name="moment"></param>
+            <param name="currentDate"></param>
+            <returns></returns>
+        </member>
         <member name="M:TaskList.MainPage.GetDescription(System.String)">
             <summary>
             This Method splits the input string into tokens using regex
@@ -112,6 +121,14 @@
             and the date as a string and display it in the UI
             </summary>
             <param name="userInput"></param>
+        </member>
+        <member name="M:TaskList.MainPage.CreateTaskFromTaskData(System.String,System.String,System.Nullable{System.DateTime})">
+            <summary>
+            A function which will take the adjusted DateTime and input Data and create a Task Object
+            </summary>
+            <param name="description"></param>
+            <param name="notes"></param>
+            <param name="dateDue"></param>
         </member>
         <member name="M:TaskList.MainPage.Button_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
             <summary>
