@@ -586,6 +586,14 @@ namespace TaskList
                         moment = new DateTime(moment.Year, moment.Month, moment.Day + 21, moment.Hour, moment.Minute, moment.Second);
                         return moment;
                     }
+
+                    else
+                    {
+                        // Add 7 days to  ka eit next week
+                        //Debug.WriteLine("Tomorrow Day");
+                        moment = new DateTime(moment.Year, moment.Month, moment.Day + 7, moment.Hour, moment.Minute, moment.Second);
+                        return moment;
+                    }
                 }
 
                 //else if the moment is on the same day
@@ -612,6 +620,7 @@ namespace TaskList
                 moment = adjustedMoment1;
                 return moment;
             }
+
 
             else
             {
@@ -824,20 +833,31 @@ namespace TaskList
             return output;
         }
 
+        /// <summary>
+        /// A function which will take the adjusted DateTime and input Data and create a Task Object
+        /// </summary>
+        /// <param name="description"></param>
+        /// <param name="notes"></param>
+        /// <param name="dateDue"></param>
         public void CreateTaskFromTaskData(string description, string notes, DateTime? dateDue)
         {
             string format = "dd/MM/yyyy h:mm:ss tt"; // Specify the exact format of dueDate parameter string to convert to new DateTime
             DateTime? convertedDateTime = null;
 
-            try
+            if (dateDue != null)
             {
-                convertedDateTime = DateTime.ParseExact(dateDue.ToString(), format, CultureInfo.InvariantCulture);
-                //Debug.WriteLine("Converted DateTime: " + convertedDateTime);
+
+                string dateString = dateDue.Value.ToString(format);
+                try
+                {
+                    convertedDateTime = DateTime.ParseExact(dateString, format, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException)
+                {
+                    Debug.WriteLine("Invalid date format. Please check the input string.");
+                }
             }
-            catch (FormatException)
-            {
-                Debug.WriteLine("Invalid date format. Please check the input string.");
-            }
+            
 
 
             // Add a task from the User Input
@@ -898,21 +918,6 @@ namespace TaskList
             InputTextBox.Text = string.Empty;
             ResultTextBlock.Text = string.Empty;
         }
-
-        //private string RemoveAtFromTime(string input)
-        //{
-        //    //BUG! THis is not working at the moment Priority is Very Low - optional only
-        //    // Check if the substring before the DateTime value contains the word "at" and remove it
-        //    int indexOfTime = input.IndexOf("time", StringComparison.OrdinalIgnoreCase);
-        //    if (indexOfTime > 0 && input.Substring(0, indexOfTime).Trim().EndsWith("at", StringComparison.OrdinalIgnoreCase))
-        //    {
-        //        // Remove "at" and the preceding part from the original string
-        //        input = input.Remove(indexOfTime - 2); // -2 to remove "at" and the preceding space
-        //    }
-
-        //    // Return the updated input
-        //    return input;
-        //}
     }
 }
 
