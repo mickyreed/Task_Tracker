@@ -638,6 +638,13 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// Function to adjust the dateTime & Time based on the input
+        /// ie breakfast, Lunch, DInner, Afternoon, Evening etc
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="moment"></param>
+        /// <returns></returns>
         private static DateTime AdjustMomentForEvent(string input, DateTime moment)
         {
             DateTime adjustedMoment = moment;
@@ -675,7 +682,6 @@ namespace TaskList
 
             return adjustedMoment;
         }
-
 
         /// <summary>
         /// Function which checks the input for various keywords: 
@@ -925,6 +931,29 @@ namespace TaskList
             await dialog.ShowAsync();
             InputTextBox.Text = string.Empty;
             ResultTextBlock.Text = string.Empty;
+        }
+
+        /// <summary>
+        /// Event Handler to check for text changes in the Text Box and block any math symbols
+        /// Reference: https://claude.ai/chat/ab0b5a8f-3b82-4249-bf1b-8677e5b5667a
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            
+            TextBox textBox = sender as TextBox;
+            // Define a regular expression pattern to match math symbols
+            string pattern = @"[+\-*/=^%]";
+            Regex regex = new Regex(pattern);
+
+            // Check if the new input text contains any math symbols
+            if (regex.IsMatch(textBox.Text))
+            {
+                // Revert the text to the previous value
+                textBox.Text = textBox.Text.TrimEnd(regex.Matches(textBox.Text).Last().Value.ToCharArray());
+                textBox.SelectionStart = textBox.Text.Length;
+            }
         }
     }
 }

@@ -21,7 +21,7 @@
             <RowDefinition Height="150"/>
             <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
-        <TextBox Grid.Column="1" Grid.Row="3" x:Name="InputTextBox" BorderBrush="AliceBlue" BorderThickness="2" PlaceholderText="Enter a value" Margin="20"/>
+        <TextBox Grid.Column="1" Grid.Row="3" x:Name="InputTextBox" TextChanged="InputTextBox_TextChanged" BorderBrush="AliceBlue" BorderThickness="2" PlaceholderText="Enter a value" Margin="20"/>
         <Button Grid.Column="1" Grid.Row="4" Content="Submit" Click="Button_Click"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"/>
         <TextBlock Grid.Column="1" Grid.Row="6" x:Name="ResultTextBlock" FontSize="18" HorizontalAlignment="Center" Margin="20" TextWrapping="Wrap"/>
     </Grid>

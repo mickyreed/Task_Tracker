@@ -100,6 +100,7 @@
             <param name="currentDate"></param>
             <returns></returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:TaskList.MainPage.AdjustMomentForEvent(System.String,System.DateTime)" -->
         <member name="M:TaskList.MainPage.GetDescription(System.String)">
             <summary>
             This Method splits the input string into tokens using regex
@@ -142,6 +143,14 @@
             <summary>
             Error Message Function for invalid input
             </summary>
+        </member>
+        <member name="M:TaskList.MainPage.InputTextBox_TextChanged(System.Object,Windows.UI.Xaml.Controls.TextChangedEventArgs)">
+            <summary>
+            Event Handler to check for text changes in the Text Box and block any math symbols
+            Reference: https://claude.ai/chat/ab0b5a8f-3b82-4249-bf1b-8677e5b5667a
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
         </member>
         <member name="M:TaskList.MainPage.InitializeComponent">
             <summary>
