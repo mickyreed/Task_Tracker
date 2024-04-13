@@ -79,7 +79,7 @@
             
             </summary>
         </member>
-        <member name="M:TaskList.MainPage.CreateTaskFromInput(System.String)">
+        <member name="M:TaskList.MainPage.CreateTaskDataFromInput(System.String)">
             <summary>
             Method to parse the input, and clean it checking for dates, ordinals and specific words or chars
             Using Microsoft.Recognizers Nuget packages, and regex.
@@ -89,16 +89,6 @@
             https://stackoverflow.com/questions/52593835/parsing-timex-expressions-in-net-core
             </summary>
             <param name="input"></param>
-            <returns></returns>
-        </member>
-        <member name="M:TaskList.MainPage.AdjustDateTime(System.String,System.DateTime)">
-            <summary>
-            Function which checks the input for various keywords: 
-            morning, breakfast, lunch, dinner, afternoon, evening, tomorrow
-            which can affect the am or pm and makes a judgement call on when the user meant the tme to be
-            </summary>
-            <param name="input"></param>
-            <param name="dateTime"></param>
             <returns></returns>
         </member>
         <member name="M:TaskList.MainPage.GetDescription(System.String)">
@@ -129,6 +119,7 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
+            
         </member>
         <member name="M:TaskList.MainPage.ErrorMessage">
             <summary>
