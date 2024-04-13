@@ -206,50 +206,50 @@ namespace TaskList
             //await RunTests();
             #endregion
 
-            #region TESTS CASES FOR Testing Task Input Creation Method
-            // TEST DATA
-            String input0 = "Exercise at 9am on the 1st January 2025 Star Jumps and Leg Day";
-            String input1 = "Meeting 1st of May with Bob and Mary at HighGate Restaurant";
-            String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
-            String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
-            String input4 = "Meeting at 8:15pm";
+            //#region TESTS CASES FOR Testing Task Input Creation Method
+            //// TEST DATA
+            //String input0 = "Exercise at 9am on the 1st January 2025 Star Jumps and Leg Day";
+            //String input1 = "Meeting 1st of May with Bob and Mary at HighGate Restaurant";
+            //String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
+            //String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
+            //String input4 = "Meeting at 8:15pm";
 
-            String input5 = "Call Rob on Wednesday at 3PM";
-            String input6 = "Call Rob at 3PM on Wednesday"; 
-            String input7 = "Call Rob";
-            String input8 = "Call Rob, 3PM, Thursday";
-            String input9 = "Call Rob, Wednesday, 3PM"; 
-            String input10 = "Call Rob 3PM Wednesday";
-            String input11 = "Call Rob Wednesday 3AM";
-            //String input12 = "1/1/2025";
+            //String input5 = "Call Rob on Wednesday at 3PM";
+            //String input6 = "Call Rob at 3PM on Wednesday"; 
+            //String input7 = "Call Rob";
+            //String input8 = "Call Rob, 3PM, Thursday";
+            //String input9 = "Call Rob, Wednesday, 3PM"; 
+            //String input10 = "Call Rob 3PM Wednesday";
+            //String input11 = "Call Rob Wednesday 3AM";
+            ////String input12 = "1/1/2025";
 
-            //
-            //string output12 = await CheckUserInput(input12);
-            string output0 = await CheckUserInput(input0);
-            //Debug.WriteLine($"{output0} \n");
-            string output1 = await CheckUserInput(input1);
-            //Debug.WriteLine($"{output1} \n");
-            string output2 = await CheckUserInput(input2);
-            //Debug.WriteLine($"{output2} \n");
-            string output3 = await CheckUserInput(input3);
-            //Debug.WriteLine($"{output3} \n");
-            string output4 = await CheckUserInput(input4);
-            //Debug.WriteLine($"{output4} \n");
-            string output5 = await CheckUserInput(input5);
-            //Debug.WriteLine($"{output5} \n");
-            string output6 = await CheckUserInput(input6);
-            //Debug.WriteLine($"{output6} \n");
-            string output7 = await CheckUserInput(input7);
-            //Debug.WriteLine($"{output7} \n");
-            string output8 = await CheckUserInput(input8);
-            //Debug.WriteLine($"{output8} \n");
-            string output9 = await CheckUserInput(input9);
-            //Debug.WriteLine($"{output9} \n");
-            string output10 = await CheckUserInput(input10);
-            //Debug.WriteLine($"{output10} \n");
-            string output11 = await CheckUserInput(input11);
-            //Debug.WriteLine($"{output11} \n");
-            #endregion
+            ////
+            ////string output12 = await CheckUserInput(input12);
+            //string output0 = await CheckUserInput(input0);
+            ////Debug.WriteLine($"{output0} \n");
+            //string output1 = await CheckUserInput(input1);
+            ////Debug.WriteLine($"{output1} \n");
+            //string output2 = await CheckUserInput(input2);
+            ////Debug.WriteLine($"{output2} \n");
+            //string output3 = await CheckUserInput(input3);
+            ////Debug.WriteLine($"{output3} \n");
+            //string output4 = await CheckUserInput(input4);
+            ////Debug.WriteLine($"{output4} \n");
+            //string output5 = await CheckUserInput(input5);
+            ////Debug.WriteLine($"{output5} \n");
+            //string output6 = await CheckUserInput(input6);
+            ////Debug.WriteLine($"{output6} \n");
+            //string output7 = await CheckUserInput(input7);
+            ////Debug.WriteLine($"{output7} \n");
+            //string output8 = await CheckUserInput(input8);
+            ////Debug.WriteLine($"{output8} \n");
+            //string output9 = await CheckUserInput(input9);
+            ////Debug.WriteLine($"{output9} \n");
+            //string output10 = await CheckUserInput(input10);
+            ////Debug.WriteLine($"{output10} \n");
+            //string output11 = await CheckUserInput(input11);
+            ////Debug.WriteLine($"{output11} \n");
+            //#endregion
 
         }
         private async void SaveData()
@@ -479,7 +479,7 @@ namespace TaskList
                     //int hour = moment.Hour;
                     //int minute = moment.Minute;
                     //int second = moment.Second;
-                    
+
                     //Debug.WriteLine($"Moment Time = {hour}:{minute}:{second} - {day}-{month}-{year}");
 
                     DateTime checkedMoment = CheckAndAdjustMoment(input, moment, currentDate);
@@ -499,49 +499,60 @@ namespace TaskList
 
                     return (cleanedInput, checkedMoment);
                 }
-                catch
+                catch (FormatException)
                 {
-                    //Debug.WriteLine("THIS DATE IS INVALID, please enter a new date");
+                    Debug.WriteLine("Handled invalid Date");
                     return (cleanedInput, null);
                 }
             }
 
             else if (subType.Contains("time"))
             {
-                var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
-                moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
-                //moment = AdjustDateTime(input, moment);
-                
-                // if the moment time is less than midday and the input contains dinner add 12hrs
-                if (moment.TimeOfDay < new TimeSpan(12, 0, 0) && input.ToLower().Contains("dinner"))
+                try
                 {
-                    // add 12hrs
-                    //Debug.WriteLine($"TIME ADD 12 HRS DINNER:   {moment}");
-                    // update the moment as a new DateTime ( as DateTime is immutable)
-                    moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour + 12, moment.Minute, moment.Second);
-                }
-                else if ((moment.Hour > 0 && moment.Hour < 6) 
-                    && (input.ToLower().Contains("lunch") || input.ToLower().Contains("afternoon")))
-                {
-                    // add 12hrs
-                    //Debug.WriteLine($"TIME ADD 12 HRS AFTERNOON:   {moment}");
-                    // update the moment as a new DateTime ( as DateTime is immutable)
-                    moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour + 12, moment.Minute, moment.Second);
-                }
+                    var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
 
-                // Check if the time is in the past compared to the current time
-                if (moment.TimeOfDay < DateTime.Now.TimeOfDay)
-                {
-                    // If the time is in the past, set it to the next occurrence of that time
-                    moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day + 1, moment.Hour, moment.Minute, moment.Second);
-                }
-                else
-                {
-                    // If the time is in the future, use the current date
+                    DateTime checkedMoment = CheckAndAdjustMoment(input, moment, currentDate);
+                    moment = checkedMoment;
                     moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
+                    //moment = AdjustDateTime(input, moment);
+
+                    // if the moment time is less than midday and the input contains dinner add 12hrs
+                    if (moment.TimeOfDay < new TimeSpan(12, 0, 0) && input.ToLower().Contains("dinner"))
+                    {
+                        // add 12hrs
+                        //Debug.WriteLine($"TIME ADD 12 HRS DINNER:   {moment}");
+                        // update the moment as a new DateTime ( as DateTime is immutable)
+                        moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour + 12, moment.Minute, moment.Second);
+                    }
+                    else if ((moment.Hour > 0 && moment.Hour < 6)
+                        && (input.ToLower().Contains("lunch") || input.ToLower().Contains("afternoon")))
+                    {
+                        // add 12hrs
+                        //Debug.WriteLine($"TIME ADD 12 HRS AFTERNOON:   {moment}");
+                        // update the moment as a new DateTime ( as DateTime is immutable)
+                        moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour + 12, moment.Minute, moment.Second);
+                    }
+
+                    // Check if the time is in the past compared to the current time
+                    if (moment.TimeOfDay < DateTime.Now.TimeOfDay)
+                    {
+                        // If the time is in the past, set it to the next occurrence of that time
+                        moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day + 1, moment.Hour, moment.Minute, moment.Second);
+                    }
+                    else
+                    {
+                        // If the time is in the future, use the current date
+                        moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
+                    }
+                    //Debug.WriteLine($"{cleanedInput}, {moment}");
+                    return (cleanedInput, moment);
                 }
-                //Debug.WriteLine($"{cleanedInput}, {moment}");
-                return (cleanedInput, moment);
+                catch (FormatException)
+                {
+                    Debug.WriteLine("Handled invalid Time");
+                    return (cleanedInput, currentDate);
+                }
             }
 
             await Task.Delay(100);
@@ -594,13 +605,15 @@ namespace TaskList
                         return moment;
                     }
 
-                    else
-                    {
-                        // Add 7 days to  ka eit next week
-                        //Debug.WriteLine("Tomorrow Day");
-                        moment = new DateTime(moment.Year, moment.Month, moment.Day + 7, moment.Hour, moment.Minute, moment.Second);
-                        return moment;
-                    }
+                    //else if (!input.ToLower().Contains("tonight"))
+                    //{
+                    //    // Add 7 days to  ka eit next week
+                    //    //Debug.WriteLine("Tomorrow Day");
+                    //    moment = new DateTime(moment.Year, moment.Month, moment.Day + 7, moment.Hour, moment.Minute, moment.Second);
+                    //    return moment;
+                    //}
+
+
                 }
 
                 //else if the moment is on the same day
@@ -622,10 +635,14 @@ namespace TaskList
                     return moment;
                 }
 
-                //Debug.WriteLine("Check & Return before else");
-                DateTime adjustedMoment1 = AdjustMomentForEvent(input, moment);
-                moment = adjustedMoment1;
-                return moment;
+                else
+                {
+                    //Debug.WriteLine("Check & Return before else");
+                    DateTime adjustedMoment = AdjustMomentForEvent(input, moment);
+                    moment = adjustedMoment;
+                    return moment;
+                }
+                
             }
 
             else
@@ -636,6 +653,8 @@ namespace TaskList
                 moment = adjustedMoment;
                 return moment;
             }
+
+            return moment;
         }
 
         /// <summary>
@@ -650,7 +669,7 @@ namespace TaskList
             DateTime adjustedMoment = moment;
 
             //if the input if for dinner
-            if ((moment.Hour > 4 && moment.Hour <= 12)
+            if ((moment.Hour > 4 && moment.Hour < 12)
                 && input.ToLower().Contains("dinner") || input.ToLower().Contains("tonight"))
             {
                 // add 12 hours
@@ -957,5 +976,3 @@ namespace TaskList
         }
     }
 }
-
-
