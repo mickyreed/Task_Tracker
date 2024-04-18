@@ -509,7 +509,7 @@ namespace TaskList
         /// <returns></returns>
         public async Task<(string, DateTime?)> CreateTaskDataFromInput(string input)
         {
-            Debug.WriteLine("1. In Task");
+            //Debug.WriteLine("1. In Task");
             var culture = Culture.English;
             var results = DateTimeRecognizer.RecognizeDateTime(input, culture);
 
@@ -534,12 +534,13 @@ namespace TaskList
             var subType = first.TypeName.Split('.').Last();
             DateTime currentDate = DateTime.Now;
 
+            // if the DateTime contains a date (not a range)
             if (subType.Contains("date") && !subType.Contains("range"))
             {
                 // try to parse in the date and catch it if the date is invalid or out of range
                 try
                 {
-                    Debug.WriteLine("2. In SubType date");
+                    //Debug.WriteLine("2. In SubType date");
                     // a date (or date & time) or multiple 
                     DateTime moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
 
@@ -559,9 +560,10 @@ namespace TaskList
                 }
             }
 
+            // if the date contains a time only, not a recognised date
             else if (subType.Contains("time"))
             {
-                Debug.WriteLine("3. In Sub Type Time");
+                //Debug.WriteLine("3. In Sub Type Time");
                 try
                 {
                     var moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
@@ -569,72 +571,35 @@ namespace TaskList
                     DateTime checkedMoment = AdjustMomentForEvent(input, moment);
 
                     moment = checkedMoment;
-                    //moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
-                    //moment = AdjustDateTime(input, moment);
-
-                    //// if the moment time is less than midday and the input contains dinner add 12hrs
-                    //if (moment.TimeOfDay < new TimeSpan(12, 0, 0) && input.ToLower().Contains("dinner"))
-                    //{
-                    //    Debug.WriteLine("DINNER TIME");
-                    //    // add 12hrs
-                    //    //Debug.WriteLine($"TIME ADD 12 HRS DINNER:   {moment}");
-                    //    // update the moment as a new DateTime ( as DateTime is immutable)
-                    //    moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour + 12, moment.Minute, moment.Second);
-                    //    return (cleanedInput, moment);
-                    //}
-                    //else if (moment.TimeOfDay < new TimeSpan(12, 0, 0) && input.ToLower().Contains("tonight") || input.ToLower().Contains("dinner"))
-                    //{
-                    //    Debug.WriteLine("TONIGHT TIME");
-                    //    // add 12hrs
-                    //    //Debug.WriteLine($"TIME ADD 12 HRS DINNER:   {moment}");
-                    //    // update the moment as a new DateTime ( as DateTime is immutable)
-                    //    moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour + 12, moment.Minute, moment.Second);
-                    //    return (cleanedInput, moment);
-                    //}
-                    //else if ((moment.Hour > 0 && moment.Hour < 6)
-                    //    && (input.ToLower().Contains("lunch") || input.ToLower().Contains("afternoon")))
-                    //{
-                    //    // add 12hrs
-                    //    //Debug.WriteLine($"TIME ADD 12 HRS AFTERNOON:   {moment}");
-                    //    // update the moment as a new DateTime ( as DateTime is immutable)
-                    //    moment = new DateTime(moment.Year, moment.Month, moment.Day, moment.Hour + 12, moment.Minute, moment.Second);
-                    //    return (cleanedInput, moment);
-                    //}
-
-                    //// Check if the time is in the past compared to the current time
-                    //if (moment.TimeOfDay < DateTime.Now.TimeOfDay)
-                    //{
-                    //    // If the time is in the past, set it to the next occurrence of that time
-                    //    moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day + 1, moment.Hour, moment.Minute, moment.Second);
-                    //    return (cleanedInput, moment);
-                    //}
-                    //else
-                    //{
-                    //    Debug.WriteLine("END OF TIME");
-                    //    // If the time is in the future, use the current date
-
-                    //    moment = new DateTime(currentDate.Year, currentDate.Month, currentDate.Day, moment.Hour, moment.Minute, moment.Second);
-                    //    return (cleanedInput, moment);
-                    //}
-                    //Debug.WriteLine($"{cleanedInput}, {moment}");
+ 
                     return (cleanedInput, moment);
                 }
                 catch (FormatException)
                 {
-                    Debug.WriteLine("4. In Catch");
+                    //Debug.WriteLine("4. In Catch");
                     Debug.WriteLine("Handled invalid Time");
                     return (cleanedInput, currentDate);
                 }
             }
 
             await Task.Delay(100);
-            Debug.WriteLine("reached end of function with no date");
+            Debug.WriteLine("reached end of function return current date");
             return (cleanedInput, currentDate); 
         }
 
+        /// <summary>
+        /// This function adjusts the Task datetime, to make sure it is not in a previous year,
+        /// It will add the difference in years to make it this year
+        /// and then recheck and make sure the adjusted date is not earlier in the year, 
+        /// if it is it and the date is greater than 7 days earlier,
+        /// It will add a year to make it next years event
+        /// </summary>
+        /// <param name="moment"></param>
+        /// <param name="currentDate"></param>
+        /// <returns></returns>
         private DateTime CheckAndAdjustForYear(DateTime moment, DateTime currentDate)
         {
-            Debug.WriteLine("3.5. In CheckAndAdjustYear");
+            //Debug.WriteLine("3.5. In CheckAndAdjustYear");
 
             DateTime adjustedMoment = moment;
 
@@ -644,7 +609,7 @@ namespace TaskList
                 int momentYear = moment.Year;
                 int yearDifference = currentYear - momentYear;
                 
-                Debug.WriteLine($"....yearDifference = {yearDifference}");
+                //Debug.WriteLine($"....yearDifference = {yearDifference}");
                 
                 // Check if the date is last year?
                 if (yearDifference > 0)
@@ -653,52 +618,53 @@ namespace TaskList
                     // if it is add the difference to get it to the current year
                     // update the moment as a new DateTime ( as DateTime is immutable)
                     adjustedMoment = adjustedMoment.AddYears(yearDifference);
-                    Debug.WriteLine($"....adjustedMoment = {adjustedMoment}");
-                    //moment = new DateTime(moment.Year + yearDifference, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
+                    //Debug.WriteLine($"....adjustedMoment = {adjustedMoment}");
                 }
 
                 // ReCheck if the date is more than 7 days ago by checking the difference in days
                 int dateDifferenceInDays = (currentDate.Date - adjustedMoment.Date).Days;
-                Debug.WriteLine($"....DifferenceinDays = {dateDifferenceInDays}");
+                //Debug.WriteLine($"....DifferenceinDays = {dateDifferenceInDays}");
                 
                 if (dateDifferenceInDays > 7)
                 {
                     // if it more than 7 days assume date is in the future
                     // update the moment as a new DateTime ( as DateTime is immutable)
                     adjustedMoment = adjustedMoment.AddYears(1);
-                    Debug.WriteLine(adjustedMoment.ToString());
+                    //Debug.WriteLine(adjustedMoment.ToString());
 
-                    //moment = new DateTime(moment.Year + 1, moment.Month, moment.Day, moment.Hour, moment.Minute, moment.Second);
                 }
             }
             return adjustedMoment;
         }
 
+        /// <summary>
+        /// This function adjusts a Task date for if a user inputs "fortnight"
+        /// NOTE: "fortnight at 6pm" will not work, it needs to reference a day
+        /// such as tomorrow fortnight at 6 or similar
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="moment"></param>
+        /// <param name="currentDate"></param>
+        /// <returns></returns>
         private DateTime CheckAndAdjustForFortnight(string input, DateTime moment, DateTime currentDate)
         {
             if (moment.Date < currentDate.AddDays(-3) && input.ToLower().Contains("fortnight"))
             {
                 // add 21 days
-                //moment.AddDays(21);
-                //DateTime adjustedMoment = AdjustMomentForEvent(input, moment);
                 moment = moment.AddDays(21);
-                //moment = new DateTime(moment.Year, moment.Month, moment.Day + 21, moment.Hour, moment.Minute, moment.Second);
                 return moment;
             }
             else if (moment.Date >= currentDate.AddDays(-3) && input.ToLower().Contains("fortnight"))
             {
                 // add 14 days
-                // moment.AddDays(14);
-                //DateTime adjustedMoment = AdjustMomentForEvent(input, moment);
                 moment = moment.AddDays(14);
-                //moment = new DateTime(moment.Year, moment.Month, moment.Day + 21, moment.Hour, moment.Minute, moment.Second);
-                return moment;
             }
             return moment;
         }
 
         /// <summary>
         /// Function to check the DateTime moment and adjust it in reference to our current date
+        /// this function makes calls to other functions to adjust for Year, Fortnight, and events
         /// </summary>
         /// <param name="input"></param>
         /// <param name="moment"></param>
@@ -710,23 +676,20 @@ namespace TaskList
             DateTime checkedFortnight = CheckAndAdjustForFortnight(input, checkedYear, currentDate);
             DateTime adjustedMoment = checkedFortnight;
 
-            // if the date is less than the current date(excluding time) the make it next week
-            if (adjustedMoment.Date < currentDate.Date)// && dateDifferenceInDays <= 7)
+            // if the date is less than the current date(excluding time) then make it next week
+            if (adjustedMoment.Date < currentDate.Date)
             {
                 adjustedMoment = adjustedMoment.AddDays(1);
-                //moment = new DateTime(moment.Year, moment.Month, moment.Day + 7, moment.Hour, moment.Minute, moment.Second);
             }
 
             DateTime adjustedEvent = AdjustMomentForEvent(input, adjustedMoment);
-            //moment = adjustedMoment;
             moment = adjustedEvent;
             return moment;
-
         }
 
 
         /// <summary>
-        /// Function to adjust the dateTime & Time based on the input
+        /// Function to adjust the dateTime & Time based on the Event input
         /// ie breakfast, Lunch, DInner, Afternoon, Evening etc
         /// </summary>
         /// <param name="input"></param>
@@ -734,15 +697,15 @@ namespace TaskList
         /// <returns></returns>
         private static DateTime AdjustMomentForEvent(string input, DateTime moment)
         {
-            Debug.WriteLine("4. In AdjustMomentForEvent");
+            //Debug.WriteLine("4. In AdjustMomentForEvent");
             DateTime adjustedMoment = moment;
-            Debug.WriteLine("moment is: " + moment.Hour.ToString());
+            //Debug.WriteLine("moment is: " + moment.Hour.ToString());
             //if the input if for dinner
             if (moment.Hour > 4 && moment.Hour < 12)
             {
                 if (input.ToLower().Contains("dinner") || input.ToLower().Contains("tonight"))
                 {
-                    Debug.WriteLine("DINNER MOMENT");
+                    //Debug.WriteLine("DINNER MOMENT");
                     adjustedMoment = CheckAndUpdateTime(moment);
                     return adjustedMoment;
                 }
@@ -753,7 +716,7 @@ namespace TaskList
             {
                 if (input.ToLower().Contains("lunch"))
                 {
-                    Debug.WriteLine($"LUNCH ADD 12 hrs:   {moment.Date}");
+                    //Debug.WriteLine($"LUNCH ADD 12 hrs:   {moment.Date}");
                     //adjustedMoment = moment.AddHours(12);
                     adjustedMoment = CheckAndUpdateTime(moment);
                     return adjustedMoment;
@@ -766,7 +729,7 @@ namespace TaskList
             {
                 if (input.ToLower().Contains("breakfast") && (moment.Hour > 0 && moment.Hour < 12) && (!input.ToLower().Contains("tomorrow")))
                 {
-                    Debug.WriteLine($"BREAKFAST TOO LATE ADD 24 hrs:   {moment.Date}");
+                    //Debug.WriteLine($"BREAKFAST TOO LATE ADD 24 hrs:   {moment.Date}");
                     //adjustedMoment = moment.AddHours(12);
                     adjustedMoment = moment.AddDays(1);
                     //adjustedMoment = CheckAndUpdateTime(moment);
@@ -784,22 +747,29 @@ namespace TaskList
             if ((moment.Hour > 0 && moment.Hour < 7)
                 && (input.ToLower().Contains("afternoon")))
             {
-                Debug.WriteLine("afternoon check");
+                //Debug.WriteLine("afternoon check");
                 adjustedMoment = CheckAndUpdateTime(moment);
                 return adjustedMoment;
             }
 
             else if (moment.TimeOfDay < DateTime.Now.TimeOfDay)
             {
-                Debug.WriteLine("time of day check");
+                //Debug.WriteLine("time of day check");
                 adjustedMoment = CheckAndUpdateTime(moment);
                 return adjustedMoment;
             }
 
-            Debug.WriteLine("end of adjusted moment for event");
+            //Debug.WriteLine("end of adjusted moment for event");
             return adjustedMoment;
         }
 
+        /// <summary>
+        /// A function to update any default time values by adding 12 hours to adjust for AM/PM
+        /// and then rechecking if it is still prior to the current time, and if it is add 1 day
+        /// to effectively make it tomorrows event
+        /// </summary>
+        /// <param name="moment"></param>
+        /// <returns></returns>
         private static DateTime CheckAndUpdateTime(DateTime moment)
         {
             //Add 12 hours to the moment Time
@@ -808,7 +778,7 @@ namespace TaskList
             // check if the moment time is still before the current time
             if (adjustedMoment < DateTime.Now)
             {
-                Debug.WriteLine($"PAST TODAYS LUNCH ADD 24 hrs:   {moment.Date}");
+                //Debug.WriteLine($"ADDING 24 hrs:   {adjustedMoment.Date}");
                 // Time is in the past add 24hrs
                 adjustedMoment = adjustedMoment.AddDays(1);
                 
@@ -941,7 +911,7 @@ namespace TaskList
         private static string GetDescription(string cleanedInput)
         {
             // create a hash set with some stop words we need to remove
-            var stopWords = new HashSet<string> { "a", "at", "an", "the", "for", "on", "in", "to", }; //"with", "and",  (maybe keep this for say "meeting with Bob"
+            var stopWords = new HashSet<string> { "a", "at", "an", "the", "for", "on", "in", "to", "at" }; //"with", "and",  (maybe keep this for say "meeting with Bob"
             // split the input and remove the stop words, then re-join these in a string for use as the description
             var tokens = Regex.Split(cleanedInput, @"\W+")
                 .Where(token => !stopWords.Contains(token.ToLower())).ToList();
@@ -958,7 +928,7 @@ namespace TaskList
             (string cleanedInput, DateTime? dateTime) = await CreateTaskDataFromInput(userInput);
 
             cleanedInput = cleanedInput.Trim(); //trim the input
-            cleanedInput = GetDescription(cleanedInput); // call to remove any unwanted stopword fro decsription
+            cleanedInput = GetDescription(cleanedInput); // call to remove any unwanted stop words from description
             string dateTimeToDisplay;
             cleanedInput = GetDescription(cleanedInput); // second clean for extra words (resolves extra "at"
             
@@ -1000,7 +970,7 @@ namespace TaskList
                 }
                 catch (FormatException)
                 {
-                    // Handle the parsing of incomplet or null date formats
+                    // Handle the parsing of incomplete or null date formats
                     // these will occur if the user enters a Task without a date
                     Debug.WriteLine("Null or Invalid date format Handled.");
                 }
@@ -1047,7 +1017,6 @@ namespace TaskList
 
                 if (userInput != null || userInput != "Enter a value")
                 {
-                    //ResultTextBlock.Text = "HELLO!!!";
                     string output = await CheckUserInput(userInput);
 
                     ResultTextBlock.Text = output;

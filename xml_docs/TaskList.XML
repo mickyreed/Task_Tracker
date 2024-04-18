@@ -188,9 +188,33 @@
             <param name="input"></param>
             <returns></returns>
         </member>
+        <member name="M:TaskList.MainPage.CheckAndAdjustForYear(System.DateTime,System.DateTime)">
+            <summary>
+            This function adjusts the Task datetime, to make sure it is not in a previous year,
+            It will add the difference in years to make it this year
+            and then recheck and make sure the adjusted date is not earlier in the year, 
+            if it is it and the date is greater than 7 days earlier,
+            It will add a year to make it next years event
+            </summary>
+            <param name="moment"></param>
+            <param name="currentDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.CheckAndAdjustForFortnight(System.String,System.DateTime,System.DateTime)">
+            <summary>
+            This function adjusts a Task date for if a user inputs "fortnight"
+            NOTE: "fortnight at 6pm" will not work, it needs to reference a day
+            such as tomorrow fortnight at 6 or similar
+            </summary>
+            <param name="input"></param>
+            <param name="moment"></param>
+            <param name="currentDate"></param>
+            <returns></returns>
+        </member>
         <member name="M:TaskList.MainPage.CheckAndAdjustMoment(System.String,System.DateTime,System.DateTime)">
             <summary>
             Function to check the DateTime moment and adjust it in reference to our current date
+            this function makes calls to other functions to adjust for Year, Fortnight, and events
             </summary>
             <param name="input"></param>
             <param name="moment"></param>
@@ -198,6 +222,15 @@
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:TaskList.MainPage.AdjustMomentForEvent(System.String,System.DateTime)" -->
+        <member name="M:TaskList.MainPage.CheckAndUpdateTime(System.DateTime)">
+            <summary>
+            A function to update any default time values by adding 12 hours to adjust for AM/PM
+            and then rechecking if it is still prior to the current time, and if it is add 1 day
+            to effectively make it tomorrows event
+            </summary>
+            <param name="moment"></param>
+            <returns></returns>
+        </member>
         <member name="M:TaskList.MainPage.GetDescription(System.String)">
             <summary>
             This Method splits the input string into tokens using regex

@@ -30,13 +30,13 @@
     <AppXManifest Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-04-18T19:05:03.872</Modified>
+      <Modified>2024-04-18T19:40:37.772</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\TaskList.exe">
       <PackagePath>entrypoint\TaskList.exe</PackagePath>
-      <Modified>2024-04-18T19:05:03.012</Modified>
+      <Modified>2024-04-18T19:40:37.318</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\.nuget\packages\microsoft.extensions.caching.abstractions\2.2.0\lib\netstandard2.0\Microsoft.Extensions.Caching.Abstractions.dll">
       <PackagePath>Microsoft.Extensions.Caching.Abstractions.dll</PackagePath>
@@ -146,11 +146,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\App.xbf">
       <PackagePath>App.xbf</PackagePath>
-      <Modified>2024-04-18T19:05:02.911</Modified>
+      <Modified>2024-04-18T19:40:37.243</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\MainPage.xbf">
       <PackagePath>MainPage.xbf</PackagePath>
-      <Modified>2024-04-18T19:05:02.911</Modified>
+      <Modified>2024-04-18T19:40:37.243</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Windows Kits\10\UnionMetadata\10.0.22621.0\Windows.winmd">
       <PackagePath>WinMetadata\Windows.winmd</PackagePath>
@@ -162,7 +162,7 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Core\TaskList.exe">
       <PackagePath>TaskList.exe</PackagePath>
-      <Modified>2024-04-18T19:05:03.866</Modified>
+      <Modified>2024-04-18T19:40:37.769</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>
