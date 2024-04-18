@@ -79,6 +79,103 @@
             
             </summary>
         </member>
+        <member name="M:TaskList.MainPage.LoadData">
+            <summary>
+            Method to call the Loading of  Task and Folder Data from storage
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.RunTests">
+            <summary>
+            Function that includes Test Methods used in Testing
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.DataLoaded">
+            <summary>
+            Function called after data is loaded runs input Tests and create Task from input Methods
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.SaveData">
+            <summary>
+            Functiomn to save data from Tasks and Files to file in Binary format
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.UpdateData">
+            <summary>
+            this function will update the data after each change and save to the file
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.UpdateTaskIndexes">
+            <summary>
+            Function to call updates for Task Indexes
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.DisplaySortedIndex">
+            <summary>
+            Function to display the Sorted Indexes
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.DisplayAllTasks">
+            <summary>
+            Function to Display all Tasks
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.DisplayAllFolders">
+            <summary>
+            Function to display all Folders in debug console
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.DisplayTasksInFolders">
+            <summary>
+            Function to Verify that tasks were added to the folders then display them to the Debug Console
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.SearchByDescription">
+            <summary>
+            Function to Search Tasks for a given description
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.SearchByTodaysDate">
+            <summary>
+            Function to Search for tasks with a due date of Today
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.SearchByDate(System.String)">
+            <summary>
+            Function to Search for tasks with a given due date
+            </summary>
+            <param name="date"></param>
+            <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:TaskList.MainPage.TestAddTask">
+            <summary>
+            Function to Add a Task
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.TestRemoveTask(System.Guid)">
+            <summary>
+            Function to delete a task
+            </summary>
+            <param name="idToLookup"></param>
+        </member>
+        <member name="M:TaskList.MainPage.TestAddFolder">
+            <summary>
+            Function to Test adding a folder
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.TestRemoveFolder(TaskList.Folder)">
+            <summary>
+            Function to delete a folder
+            </summary>
+            <param name="folderAdded"></param>
+        </member>
         <member name="M:TaskList.MainPage.CreateTaskDataFromInput(System.String)">
             <summary>
             Method to parse the input, and clean it checking for dates, ordinals and specific words or chars
