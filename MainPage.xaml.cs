@@ -497,6 +497,9 @@ namespace TaskList
             Folder.RemoveFolder(folderAdded);
         }
 
+
+
+        #region Create Tasks from Input
         /// <summary>
         /// Method to parse the input, and clean it checking for dates, ordinals and specific words or chars
         /// Using Microsoft.Recognizers Nuget packages, and regex.
@@ -686,7 +689,6 @@ namespace TaskList
             moment = adjustedEvent;
             return moment;
         }
-
 
         /// <summary>
         /// Function to adjust the dateTime & Time based on the Event input
@@ -997,6 +999,7 @@ namespace TaskList
             Debug.WriteLine($"*************************************************");
             
         }
+        #endregion
 
         /// <summary>
         /// Button CLick Event for recieving input from user and converting it to a Task
