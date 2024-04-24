@@ -655,7 +655,7 @@ namespace TaskList
             if (moment.Date < currentDate.AddDays(-3) && input.ToLower().Contains("fortnight"))
             {
                 // add 21 days
-                moment = moment.AddDays(21);
+                moment = moment.AddDays(14);
                 return moment;
             }
             else if (moment.Date >= currentDate.AddDays(-3) && input.ToLower().Contains("fortnight"))
@@ -681,7 +681,7 @@ namespace TaskList
             DateTime adjustedMoment = checkedFortnight;
 
             //if the date is less than the current date(excluding time) then make it next week
-            if (!input.ToLower().Contains("next"))
+            if (!input.ToLower().Contains("fortnight") && !input.ToLower().Contains("next"))
             {
                 if (adjustedMoment.Date < currentDate.Date &&
                 input.ToLower().Contains("monday") ||
