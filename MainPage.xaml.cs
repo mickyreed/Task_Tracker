@@ -15,6 +15,7 @@ using Windows.Services.Maps.LocalSearch;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 using System.Runtime.CompilerServices;
 using System.Globalization;
+using Microsoft.Recognizers.Text.NumberWithUnit.Chinese;
 
 
 namespace TaskList
@@ -679,10 +680,20 @@ namespace TaskList
             DateTime checkedFortnight = CheckAndAdjustForFortnight(input, checkedYear, currentDate);
             DateTime adjustedMoment = checkedFortnight;
 
-            // if the date is less than the current date(excluding time) then make it next week
-            if (adjustedMoment.Date < currentDate.Date)
+            //if the date is less than the current date(excluding time) then make it next week
+            if (!input.ToLower().Contains("next"))
             {
-                adjustedMoment = adjustedMoment.AddDays(1);
+                if (adjustedMoment.Date < currentDate.Date &&
+                input.ToLower().Contains("monday") ||
+                input.ToLower().Contains("tuesday") ||
+                input.ToLower().Contains("wednesday") ||
+                input.ToLower().Contains("thursday") ||
+                input.ToLower().Contains("friday") ||
+                input.ToLower().Contains("saturday") ||
+                input.ToLower().Contains("sunday"))
+                {
+                    adjustedMoment = adjustedMoment.AddDays(7);
+                }
             }
 
             DateTime adjustedEvent = AdjustMomentForEvent(input, adjustedMoment);
