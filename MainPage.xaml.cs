@@ -16,6 +16,8 @@ using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 using System.Runtime.CompilerServices;
 using System.Globalization;
 using Microsoft.Recognizers.Text.NumberWithUnit.Chinese;
+using Microsoft.Data.Sqlite;
+
 
 
 namespace TaskList
@@ -31,6 +33,7 @@ namespace TaskList
     /// </summary>
     public sealed partial class MainPage : Page
     {
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -50,6 +53,7 @@ namespace TaskList
         {
             await TaskDataManager.LoadDataAsync();
             await FolderDataManager.LoadDataAsync();
+            await TaskDataManagerSQL.InitialiseDatabase();
 
             // Call this method after data loading is completed
             DataLoaded();

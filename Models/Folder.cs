@@ -28,13 +28,16 @@ namespace TaskList
         public Guid id { get; } // no setter
         public string name { get; set; }
 
-        // • A list of tasks that the folder contains.However, we are not going to implement a list of tasks directly.Instead,
-        // make a list of GUIDs and if a task is meant to be in that folder, then it’s ID will be in the list. 
+        /// <summary>
+        /// A list of tasks that the folder contains referenced by GUID
+        /// if a task is meant to be in that folder, then it’s ID will be in the list. 
+        /// </summary>
         public List<Guid> taskId { get; set; }
 
-
-        // • TODO: A calculated property that is the total number of incomplete tasks in the folder.
-        // create a public int with a count property
+        /// <summary>
+        /// A calculated property that is the total number of incomplete tasks in the folder.
+        /// </summary>
+        /// <returns></returns>
         public int incompleteTasksTotal()
         {
             int count = 0; //count of total tasks in folder
@@ -58,7 +61,10 @@ namespace TaskList
             return incompletedCount;
         }
 
-        // Constructor
+        /// <summary>
+        /// Folder Constructor method
+        /// </summary>
+        /// <param name="name"></param>
         public Folder(string name)
         {
             this.name = name;
@@ -68,29 +74,43 @@ namespace TaskList
             // NOTE: name property above not required during initialisation
         }
 
-        // A method that will add a task to the folder.
+        /// <summary>
+        /// A method that will add a task to the folder.
+        /// </summary>
+        /// <param name="id"></param>
         public void AddTask(Guid id)
         {
 
             taskId.Add(id);
         }
 
-        // A method that will remove a task from the folder, given it’s ID.
+        /// <summary>
+        /// A method that will remove a task from the folder, given it’s ID.
+        /// </summary>
+        /// <param name="id"></param>
         public void RemoveTask(Guid id)
         {
             taskId.Remove(id);
         }
 
-        // TODO: A static list to hold all of the folders
+        /// <summary>
+        /// A static list to hold all of the folders
+        /// </summary>
         public static List<Folder> AllFoldersList = new List<Folder>();
 
-        // TODO: A static method to add new folders to the static list
+        /// <summary>
+        /// A static method to add new folders to the static list
+        /// </summary>
+        /// <param name="folder"></param>
         public static void AddFolder(Folder folder)
         {
             AllFoldersList.Add(folder);
         }
 
-        // TODO: A static method to remove a folder from the static list using its GUID
+        /// <summary>
+        /// A static method to remove a folder from the static list using its GUID
+        /// </summary>
+        /// <param name="folder"></param>
         public static void RemoveFolder(Folder folder)
         {
             AllFoldersList.RemoveAll(f => f.name == folder.name);
