@@ -54,6 +54,7 @@ namespace TaskList
             await TaskDataManager.LoadDataAsync();
             await FolderDataManager.LoadDataAsync();
             await TaskDataManagerSQL.InitialiseDatabase();
+            await TaskDataManagerSQL.LoadDataBaseAsync();
 
             // Call this method after data loading is completed
             DataLoaded();

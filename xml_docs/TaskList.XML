@@ -59,6 +59,53 @@
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "T:TaskList.Folder" -->
+        <member name="P:TaskList.Folder.taskId">
+            <summary>
+            A list of tasks that the folder contains referenced by GUID
+            if a task is meant to be in that folder, then it’s ID will be in the list. 
+            </summary>
+        </member>
+        <member name="M:TaskList.Folder.incompleteTasksTotal">
+            <summary>
+            A calculated property that is the total number of incomplete tasks in the folder.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.Folder.#ctor(System.String)">
+            <summary>
+            Folder Constructor method
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:TaskList.Folder.AddTask(System.Guid)">
+            <summary>
+            A method that will add a task to the folder.
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="M:TaskList.Folder.RemoveTask(System.Guid)">
+            <summary>
+            A method that will remove a task from the folder, given it’s ID.
+            </summary>
+            <param name="id"></param>
+        </member>
+        <member name="F:TaskList.Folder.AllFoldersList">
+            <summary>
+            A static list to hold all of the folders
+            </summary>
+        </member>
+        <member name="M:TaskList.Folder.AddFolder(TaskList.Folder)">
+            <summary>
+            A static method to add new folders to the static list
+            </summary>
+            <param name="folder"></param>
+        </member>
+        <member name="M:TaskList.Folder.RemoveFolder(TaskList.Folder)">
+            <summary>
+            A static method to remove a folder from the static list using its GUID
+            </summary>
+            <param name="folder"></param>
+        </member>
         <member name="T:TaskList.Habit">
             <summary>
             
@@ -296,6 +343,17 @@
             <summary>
             GetBindingConnector(int connectionId, object target)
             </summary>
+        </member>
+        <member name="T:TaskList.TaskDataManagerSQL">
+            <summary>
+            A class which initialises  the database
+            </summary>
+        </member>
+        <member name="M:TaskList.TaskDataManagerSQL.InitialiseDatabase">
+            <summary>
+            A methiod which initialises the database "open" ready for access
+            </summary>
+            <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "T:TaskList.RepeatTask" -->
         <!-- Badly formed XML comment ignored for member "T:TaskList.Tasks" -->

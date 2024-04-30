@@ -12,6 +12,8 @@ using Windows.Media.Capture;
 using Windows.Storage;
 using static TaskList.RepeatTask;
 using Microsoft.Data.Sqlite;
+using Windows.Media.Core;
+using System.Reflection.Metadata.Ecma335;
 
 
 namespace TaskList
@@ -42,6 +44,9 @@ namespace TaskList
              filename);
             database = new SqliteConnection("Filename=" + fullFilePath);
             database.Open();
+            Debug.WriteLine($"*******************************************************************************************" +
+                $"********************************{fullFilePath} ***********************************" +
+                $"**********************************************************************************");
         }
 
         public static async Task SaveDataSQLAsync()
@@ -140,86 +145,170 @@ namespace TaskList
                 Debug.WriteLine($"ERROR: UNABLE TO SAVE TASKS!... {ex.GetType().Name}: {ex.Message}");
             }
         }
-
-        public static async Task LoadDataAsync()
+        public static async Task LoadDataBaseAsync()
         {
-            bool addSampleRecordsToDatabase = true;
+            bool addRecordsToDatabase = true;
 
             try
             {
-                String createTableQuery = "CREATE TABLE TASKS(ID CHAR(32), description VARCHAR(50), notes VARCHAR(150), isCompleted BOOL, dateDue DATETIME); ";
+                //String createTableQuery = "CREATE TABLE tasks(id VARCHAR(32), description VARCHAR(50), notes VARCHAR(150), isCompleted BOOL, dateDue DATETIME, streak INT, frequency CHAR(12); ";
+                String createTableQuery = "CREATE TABLE Tasks(id VARCHAR(32), folder VARCHAR(32), type VARCHAR(12), description VARCHAR(50), notes VARCHAR(150), isCompleted BOOL, dateDue DATETIME, streak INT, frequency VARCHAR(12));";
+
                 SqliteCommand createTable = new SqliteCommand(createTableQuery, database);
                 createTable.ExecuteReader();
             }
 
             catch (Exception ex)
             {
-                addSampleRecordsToDatabase = false;
+                addRecordsToDatabase = false;
                 Debug.WriteLine($"ERROR: TABLE EXISTS!.... \n {ex.GetType().Name}: {ex.Message}");
             }
-            if (addSampleRecordsToDatabase == true)
+            if (addRecordsToDatabase == true)
             {
-                /// Put code to create sample data here
                 foreach (var task in Tasks.AllTasksList)
                 {
-                    if (task is Habit habit)
-                    {
-                        string ID = task.id.ToString();
-                        string description = task.GetType().Name; // Write task type
-                        string notes = task.notes.ToString();
-                        DateTime? dateTime = task.dateDue;
-                        bool isCompleted = task.isCompleted;
-                        int streak = habit.streak;
-                        string frequency = (Enum.GetName(typeof(Habit.Frequency), habit.frequency));
-
-
-                        String insertDataQuery =
-                        "INSERT INTO TASKS (ID, description, notes, dateTime, isCompleted) " +
-                        "VALUES (" + ID + ", \"" + description + ", \"" + notes + ", \"" + dateTime + 
-                        ", \"" + isCompleted + ", \"" + frequency + ", \"" + streak + "\");";
-
-                        Debug.WriteLine(insertDataQuery);
-                        SqliteCommand insertData = new SqliteCommand(insertDataQuery, database);
-                        insertData.ExecuteReader();
-                    }
-                    else if (task is RepeatTask repeatTask)
-                    {
-                        string ID = task.id.ToString();
-                        string description = task.GetType().Name; // Write task type
-                        string notes = task.notes.ToString();
-                        DateTime? dateTime = task.dateDue;
-                        bool isCompleted = task.isCompleted;
-                        string frequency = (Enum.GetName(typeof(RepeatTask.Frequency), repeatTask.frequency));
-
-                        String insertDataQuery =
-                        "INSERT INTO TASKS (ID, description, notes, dateTime, isCompleted) " +
-                        "VALUES (" + ID + ", \"" + description + ", \"" + notes + ", \"" + dateTime +
-                        ", \"" + isCompleted + ", \"" + frequency + "\");";
-
-                        Debug.WriteLine(insertDataQuery);
-                        SqliteCommand insertData = new SqliteCommand(insertDataQuery, database);
-                        insertData.ExecuteReader();
-                    }
-
-                    else if (task is Tasks baseTask)
-                    {
-                        string ID = task.id.ToString();
-                        string description = task.GetType().Name; // Write task type
-                        string notes = task.notes.ToString();
-                        DateTime? dateTime = task.dateDue;
-                        bool isCompleted = task.isCompleted;
-
-                        String insertDataQuery =
-                        "INSERT INTO TASKS (ID, description, notes, dateTime, isCompleted) " +
-                        "VALUES (" + ID + ", \"" + description + ", \"" + notes + ", \"" + dateTime +
-                        ", \"" + isCompleted + "\");";
-
-                        Debug.WriteLine(insertDataQuery);
-                        SqliteCommand insertData = new SqliteCommand(insertDataQuery, database);
-                        insertData.ExecuteReader();
-                    }
-                }  
+                    UpdateDataBaseAsync(task);
+                }
             }
         }
+
+        public static async Task UpdateDataBaseAsync (Tasks task)
+        {
+        //    // Check if task ID already exists in the database
+        //    string checkExistingQuery = "SELECT COUNT(*) FROM Tasks WHERE id = @id";
+        //    SqliteCommand checkExistingCommand = new SqliteCommand(checkExistingQuery, database);
+        //    checkExistingCommand.Parameters.AddWithValue("@id", task.id.ToString());
+        //    int existingCount = Convert.ToInt32(checkExistingCommand.ExecuteScalar());
+
+        //    // If there's an existing task with the same ID, skip inserting
+        //    if (existingCount > 0)
+        //    {
+        //        Debug.WriteLine($"Task with ID {task.id} already exists in the database. Skipping insertion.");
+        //        continue; // Skip out to the next iteration of the for each loop
+        //    }
+
+            if (task is Habit habit)
+            {
+                string id = task.id.ToString();
+                string folder = "";
+                string type = task.GetType().Name.ToString();
+                string description = task.description; // Write task type
+                string notes = task.notes;
+                DateTime? dateDue = task.dateDue;
+                bool isCompleted = task.isCompleted;
+                int streak = habit.streak;
+                string frequency = (Enum.GetName(typeof(Habit.Frequency), habit.frequency));
+
+                string insertDataQuery = "INSERT INTO Tasks (id, folder, type, description, notes, dateDue, isCompleted, frequency, streak) " +
+                    "VALUES (@id, @folder, @type, @description, @notes, @dateDue, @isCompleted, @frequency, @streak)";
+
+                SqliteCommand command = new SqliteCommand(insertDataQuery, database);
+
+                // Add parameters
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@folder", folder);
+                command.Parameters.AddWithValue("@type", type);
+                command.Parameters.AddWithValue("@description", description);
+                command.Parameters.AddWithValue("@notes", notes);
+                command.Parameters.AddWithValue("@dateDue", dateDue);
+                command.Parameters.AddWithValue("@isCompleted", isCompleted);
+                command.Parameters.AddWithValue("@frequency", frequency);
+                command.Parameters.AddWithValue("@streak", streak);
+
+                // Execute the command
+                command.ExecuteNonQuery();
+            }
+            else if (task is RepeatTask repeatTask)
+            {
+                string id = task.id.ToString();
+                string folder = "";
+                string type = task.GetType().Name.ToString();
+                string description = task.description; // Write task type
+                string notes = task.notes;
+                DateTime? dateDue = task.dateDue;
+                bool isCompleted = task.isCompleted;
+                int streak = 0;
+                string frequency = (Enum.GetName(typeof(RepeatTask.Frequency), repeatTask.frequency));
+
+                string insertDataQuery = "INSERT INTO Tasks (id, folder, type, description, notes, dateDue, isCompleted, frequency, streak) " +
+                    "VALUES (@id, @folder, @type, @description, @notes, @dateDue, @isCompleted, @frequency, @streak)";
+
+                SqliteCommand command = new SqliteCommand(insertDataQuery, database);
+
+                // Add parameters
+                command.Parameters.AddWithValue("@id", id);
+                command.Parameters.AddWithValue("@folder", folder);
+                command.Parameters.AddWithValue("@type", type);
+                command.Parameters.AddWithValue("@description", description);
+                command.Parameters.AddWithValue("@notes", notes);
+                command.Parameters.AddWithValue("@dateDue", dateDue);
+                command.Parameters.AddWithValue("@isCompleted", isCompleted);
+                command.Parameters.AddWithValue("@frequency", frequency);
+                command.Parameters.AddWithValue("@streak", streak);
+
+                // Execute the command
+                command.ExecuteNonQuery();
+            }
+            else if (task is Tasks baseTask)
+                    {
+                        string id = task.id.ToString();
+                        string folder = "";
+                        string type = task.GetType().Name.ToString();
+                        string description = task.description; // Write task type
+                        string notes = task.notes;
+                        DateTime? dateDue = task.dateDue;
+                        bool isCompleted = task.isCompleted;
+                        int streak = 0;
+                        string frequency = "";
+
+                        string insertDataQuery = "INSERT INTO Tasks (id, folder, type, description, notes, dateDue, isCompleted, frequency, streak) " +
+                         "VALUES (@id, @folder, @type, @description, @notes, @dateDue, @isCompleted, @frequency, @streak)";
+
+                        SqliteCommand command = new SqliteCommand(insertDataQuery, database);
+
+                        // Add parameters
+                        command.Parameters.AddWithValue("@id", id);
+                        command.Parameters.AddWithValue("@folder", folder);
+                        command.Parameters.AddWithValue("@type", type);
+                        command.Parameters.AddWithValue("@description", description);
+                        command.Parameters.AddWithValue("@notes", notes);
+                        command.Parameters.AddWithValue("@dateDue", dateDue);
+                        command.Parameters.AddWithValue("@isCompleted", isCompleted);
+                        command.Parameters.AddWithValue("@frequency", frequency);
+                        command.Parameters.AddWithValue("@streak", streak);
+
+                        // Execute the command
+                        command.ExecuteNonQuery();
+                    }
+            
+        }
+        public static async Task AddTaskAsync(Tasks task)
+        {
+            try
+            {
+                UpdateDataBaseAsync(task);
+                Debug.WriteLine("Task added to the database.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR: Couldn't update Database!.... \n {ex.GetType().Name}: {ex.Message}");
+            }
+        }
+        public static async Task DeleteTaskByIdAsync(Guid taskId)
+        {
+            try
+            {
+                string sql = "DELETE FROM Tasks WHERE id = @taskId";
+                SqliteCommand command = new SqliteCommand(sql, database);
+                command.Parameters.AddWithValue("@taskId", taskId.ToString());
+                command.ExecuteNonQuery(); 
+                Debug.WriteLine($"Task with ID {taskId} deleted from database.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR: Cannot delete task with ID: {taskId}! {ex.GetType().Name}: {ex.Message}");
+            }
+        }
+
     }
 }
