@@ -54,7 +54,9 @@ namespace TaskList
             await TaskDataManager.LoadDataAsync();
             await FolderDataManager.LoadDataAsync();
             await TaskDataManagerSQL.InitialiseDatabase();
+            await FolderDataManagerSQL.InitialiseDatabase();
             await TaskDataManagerSQL.LoadDataBaseAsync();
+            await FolderDataManagerSQL.LoadDataBaseAsync();
 
             // Call this method after data loading is completed
             DataLoaded();
@@ -161,7 +163,7 @@ namespace TaskList
             //int numberOfIncompleteTasksInFolder1 = folder1.incompleteTasksTotal(folder1);
             //Debug.WriteLine($"Number of incomplete Tasks in Folder1 = {numberOfIncompleteTasksInFolder1}");
             #endregion
-            #region TAKS2 METHOD CALLS (depricated)
+            #region TASK2 METHOD CALLS (depricated)
             // DisplayAllTasks();
             // Debug.WriteLine($"Number of folders loaded: {Folder.AllFoldersList.Count}");
             // DisplayTasksInFolders();
@@ -222,7 +224,7 @@ namespace TaskList
             //await DisplaySortedIndex();
             //Debug.WriteLine("................................");
             //Debug.WriteLine("");
-            //await RunTests();
+            await RunTests();
             #endregion
 
             #region TESTS CASES FOR Testing Task Input Creation Method
@@ -457,6 +459,9 @@ namespace TaskList
             taskAdded.isCompleted = false;
             Tasks.AddTask(taskAdded);
 
+            //Delete Task from SQL Database
+            _ = TaskDataManagerSQL.AddTaskAsync(taskAdded);
+
             Guid idToLookUp = taskAdded.id;
             Debug.WriteLine($"\n Added Task '{taskAdded.description}' with ID: {idToLookUp}");
             Debug.WriteLine($"*************************************************");
@@ -467,12 +472,17 @@ namespace TaskList
         /// Function to delete a task
         /// </summary>
         /// <param name="idToLookup"></param>
-        public void TestRemoveTask(Guid idToLookup)
+        public async void TestRemoveTask(Guid idToLookup)
         {
             Debug.WriteLine($"*************************************************");
             Guid id = idToLookup;
 
             Tasks.RemoveTask(id);
+
+            //Delete Task from SQL Database
+            await TaskDataManagerSQL.DeleteTaskByIdAsync(id);
+
+
             Debug.WriteLine($"\n Removed Task with ID: {id}");
             Debug.WriteLine($"*************************************************");
         }
@@ -488,6 +498,10 @@ namespace TaskList
 
             var folderAdded = new Folder("Added Folder");
             Folder.AddFolder(folderAdded);
+
+            //Add Folder from SQL Database
+            _ = FolderDataManagerSQL.AddFolderAsync(folderAdded);
+
             return folderAdded;
         }
 
@@ -501,6 +515,9 @@ namespace TaskList
             Debug.WriteLine("TEST: REMOVING A FOLDER");
 
             Folder.RemoveFolder(folderAdded);
+
+            //Delete Folder from SQL Database
+            _ = FolderDataManagerSQL.DeleteFolderByIdAsync(folderAdded.id);
         }
 
 
@@ -994,8 +1011,6 @@ namespace TaskList
                 }
             }
             
-
-
             // Add a task from the User Input
             //Debug.WriteLine($"*************************************************");
             var taskAdded = new Tasks();
@@ -1004,6 +1019,9 @@ namespace TaskList
             taskAdded.dateDue = convertedDateTime;
             taskAdded.isCompleted = false;
             Tasks.AddTask(taskAdded);
+
+            // ***   ADD TASK TO THE SQL DATABASE   ***
+            _ = TaskDataManagerSQL.UpdateDataBaseAsync(taskAdded);
 
             Guid idToLookUp = taskAdded.id;
             Debug.WriteLine($"\nAdded Task " +

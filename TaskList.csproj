@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="Models\DefaultDataInitialiser.cs" />
     <Compile Include="Models\Folder.cs" />
+    <Compile Include="Models\FolderDataManagerSQL.cs" />
     <Compile Include="Models\FolderDataManager.cs" />
     <Compile Include="Models\Habit.cs" />
     <Compile Include="MainPage.xaml.cs">

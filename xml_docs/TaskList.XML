@@ -106,6 +106,54 @@
             </summary>
             <param name="folder"></param>
         </member>
+        <member name="T:TaskList.FolderDataManagerSQL">
+            <summary>
+            A class to manage folder data to an sql database
+            </summary>
+        </member>
+        <member name="F:TaskList.FolderDataManagerSQL.database">
+            <summary>
+            Sqlite database connection
+            </summary>
+        </member>
+        <member name="F:TaskList.FolderDataManagerSQL.filename">
+            <summary>
+            declares the name of the database
+            </summary>
+        </member>
+        <member name="M:TaskList.FolderDataManagerSQL.InitialiseDatabase">
+            <summary>
+            A method which initialises the database "open" ready for access
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.FolderDataManagerSQL.LoadDataBaseAsync">
+            <summary>
+            A Task to load the database and or create a table if not existing
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.FolderDataManagerSQL.UpdateDataBaseAsync(TaskList.Folder)">
+            <summary>
+            A Task to update the database with a folder if it is added
+            </summary>
+            <param name="folder"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.FolderDataManagerSQL.AddFolderAsync(TaskList.Folder)">
+            <summary>
+            Helper task to call the UpdateFolderDataBaseAsync method with the folder
+            </summary>
+            <param name="task"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.FolderDataManagerSQL.DeleteFolderByIdAsync(System.Guid)">
+            <summary>
+            Task to delete a task from the database given its id
+            </summary>
+            <param name="taskId"></param>
+            <returns></returns>
+        </member>
         <member name="T:TaskList.Habit">
             <summary>
             
@@ -353,6 +401,33 @@
             <summary>
             A methiod which initialises the database "open" ready for access
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskDataManagerSQL.LoadDataBaseAsync">
+            <summary>
+            A Task that loads data in from the existing storage
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskDataManagerSQL.UpdateDataBaseAsync(TaskList.Tasks)">
+            <summary>
+            A Task that takes a task and adds it the database
+            </summary>
+            <param name="task"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskDataManagerSQL.AddTaskAsync(TaskList.Tasks)">
+            <summary>
+            Helper task to call the UpdateDataBaseAsync method with the Task
+            </summary>
+            <param name="task"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskDataManagerSQL.DeleteTaskByIdAsync(System.Guid)">
+            <summary>
+            Task to delete a task from the database given its id
+            </summary>
+            <param name="taskId"></param>
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "T:TaskList.RepeatTask" -->
