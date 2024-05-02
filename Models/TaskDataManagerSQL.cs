@@ -68,7 +68,7 @@ namespace TaskList
             catch (Exception ex)
             {
                 addRecordsToDatabase = false;
-                Debug.WriteLine($"ERROR: TABLE EXISTS!.... \n {ex.GetType().Name}: {ex.Message}");
+                Debug.WriteLine($"WARNING: TABLE EXISTS!.... \n {ex.GetType().Name}: {ex.Message}");
             }
             
             // if database is empty, update it with the current data
@@ -187,6 +187,39 @@ namespace TaskList
             catch (Exception ex)
             {
                 Debug.WriteLine($"ERROR: Cannot delete task with ID: {taskId}! {ex.GetType().Name}: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Async Task to query the database and return a Task given its decription
+        /// </summary>
+        /// <param name="description"></param>
+        /// <returns></returns>
+        public static async Task QueryAllTasksByName(string description)
+        {
+            // query all tasks in Tasks database
+            string query = "SELECT * FROM Tasks WHERE description = @description";
+
+            SqliteCommand command = new SqliteCommand(query, database);
+
+            // Add parameters
+            command.Parameters.AddWithValue("@description", description);
+
+            using (SqliteDataReader reader = command.ExecuteReader())
+            {
+                // Check if any rows returned
+                if (reader.Read())
+                {
+                    // Retrieve data from the reader NOTE: id = index[0], description = index[3]
+                    string id = reader.GetString(0);
+                    string taskDescription = reader.GetString(3);
+
+                    Debug.WriteLine($"ID: {id}, Description: {taskDescription}");
+                }
+                else
+                {
+                    Debug.WriteLine("No matching Task found.");
+                }
             }
         }
 

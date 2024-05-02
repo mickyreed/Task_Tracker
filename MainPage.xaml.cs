@@ -163,7 +163,7 @@ namespace TaskList
             //int numberOfIncompleteTasksInFolder1 = folder1.incompleteTasksTotal(folder1);
             //Debug.WriteLine($"Number of incomplete Tasks in Folder1 = {numberOfIncompleteTasksInFolder1}");
             #endregion
-            #region TASK2 METHOD CALLS (depricated)
+            #region TASK 2 METHOD CALLS (depricated)
             // DisplayAllTasks();
             // Debug.WriteLine($"Number of folders loaded: {Folder.AllFoldersList.Count}");
             // DisplayTasksInFolders();
@@ -172,42 +172,72 @@ namespace TaskList
             // SearchByDate("2024/03/15"); //date format must be "2008/04/14";
             // SearchByDate("2024/03/12");
             #endregion
-
             #region TASK 3 TEST METHOD CALLS
-            // TEST adding a folder
-            Folder folderTest = TestAddFolder();
-            await DisplayAllFolders();
+            //// TEST adding a folder
+            //Folder folderTest = TestAddFolder();
+            //await DisplayAllFolders();
 
-            // TEST adding a task
-            Guid testGuid = TestAddTask();
-            await Task.Delay(200);
-            await DisplayTasksInFolders();
+            //// TEST adding a task
+            //Guid testGuid = TestAddTask();
+            //await Task.Delay(200);
+            //await DisplayTasksInFolders();
 
-            // TEST update the index and save file
-            await UpdateData();
-            await Task.Delay(200);
-            await DisplaySortedIndex();
+            //// TEST update the index and save file
+            //await UpdateData();
+            //await Task.Delay(200);
+            //await DisplaySortedIndex();
 
-            //TEST remove the Task
-            TestRemoveTask(testGuid);
-            await Task.Delay(200);
-            await DisplayTasksInFolders();
+            ////TEST remove the Task
+            //TestRemoveTask(testGuid);
+            //await Task.Delay(200);
+            //await DisplayTasksInFolders();
 
-            // TEST update the index and save file
-            await UpdateData();
-            await Task.Delay(200);
-            await DisplaySortedIndex();
+            //// TEST update the index and save file
+            //await UpdateData();
+            //await Task.Delay(200);
+            //await DisplaySortedIndex();
 
-            // TEST: remove the folder
-            TestRemoveFolder(folderTest);
-            await DisplayAllFolders();
+            //// TEST: remove the folder
+            //TestRemoveFolder(folderTest);
+            //await DisplayAllFolders();
 
-            // TEST update the index and save file
-            await UpdateData();
+            //// TEST update the index and save file
+            //await UpdateData();
             #endregion
 
+            #region TASK 6 TEST METHOD CALLS
+            Debug.WriteLine("");
+            Debug.WriteLine("TASK MANAGER PART #6" +
+                "\nTESTS FOR ADDING AND DELETING ITEMS FROM TABLES IN DATABASE");
+            Debug.WriteLine("");
+            // TEST #1 adding a folder
+            Folder newfolder = TestAddFolder();
+            //display contents of db folder table
+            await FolderDataManagerSQL.QueryAllFoldersByName("Added Folder"); // expecting a Folder returned
+
+            // TEST #2 adding a task
+            Guid testGuid2 = TestAddTask();
+            await Task.Delay(200);
+            await TaskDataManagerSQL.QueryAllTasksByName("Added Task"); // expecting a Task returned
+            //display contents of db task table
+            await UpdateData();
+
+            ////TEST #3 remove the Task
+            TestRemoveTask(testGuid2);
+            await Task.Delay(200);
+            TaskDataManagerSQL.QueryAllTasksByName("Added Task"); // expecting no Task returned
+            //display contents of db task table
+            await UpdateData();
+
+            // TEST #4 remove the folder
+            TestRemoveFolder(newfolder);
+            //display contents of db folder table
+            await FolderDataManagerSQL.QueryAllFoldersByName("Added Folder"); // expecting no Folder returned
+
+            await UpdateData();
+            #endregion
         }
-        
+
         /// <summary>
         /// Function called after data is loaded runs input Tests and create Task from input Methods
         /// </summary>
@@ -227,48 +257,48 @@ namespace TaskList
             await RunTests();
             #endregion
 
-            #region TESTS CASES FOR Testing Task Input Creation Method
-            // TEST DATA
-            String input0 = "Exercise at 9am on the 1st January 2025 Star Jumps and Leg Day";
-            String input1 = "Meeting 1st of May with Bob and Mary at HighGate Restaurant";
-            String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
-            String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
-            String input4 = "Meeting at 8:15pm";
+            #region TASK 5 TESTS CASES FOR Testing Task Input Creation Method
+            //// TEST DATA
+            //String input0 = "Exercise at 9am on the 1st January 2025 Star Jumps and Leg Day";
+            //String input1 = "Meeting 1st of May with Bob and Mary at HighGate Restaurant";
+            //String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
+            //String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
+            //String input4 = "Meeting at 8:15pm";
 
-            String input5 = "Call Rob on Wednesday at 3PM";
-            String input6 = "Call Rob at 3PM on Wednesday";
-            String input7 = "Call Rob";
-            String input8 = "Call Rob, 3PM, Thursday";
-            String input9 = "Call Rob, Wednesday, 3PM";
-            String input10 = "Call Rob 3PM Wednesday";
-            String input11 = "Call Rob Wednesday 3AM";
-            //String input12 = "1/1/2025";
+            //String input5 = "Call Rob on Wednesday at 3PM";
+            //String input6 = "Call Rob at 3PM on Wednesday";
+            //String input7 = "Call Rob";
+            //String input8 = "Call Rob, 3PM, Thursday";
+            //String input9 = "Call Rob, Wednesday, 3PM";
+            //String input10 = "Call Rob 3PM Wednesday";
+            //String input11 = "Call Rob Wednesday 3AM";
+            ////String input12 = "1/1/2025";
 
-            //string output12 = await CheckUserInput(input12);
-            string output0 = await CheckUserInput(input0);
-            //Debug.WriteLine($"{output0} \n");
-            string output1 = await CheckUserInput(input1);
-            //Debug.WriteLine($"{output1} \n");
-            string output2 = await CheckUserInput(input2);
-            //Debug.WriteLine($"{output2} \n");
-            string output3 = await CheckUserInput(input3);
-            //Debug.WriteLine($"{output3} \n");
-            string output4 = await CheckUserInput(input4);
-            //Debug.WriteLine($"{output4} \n");
-            string output5 = await CheckUserInput(input5);
-            //Debug.WriteLine($"{output5} \n");
-            string output6 = await CheckUserInput(input6);
-            //Debug.WriteLine($"{output6} \n");
-            string output7 = await CheckUserInput(input7);
-            //Debug.WriteLine($"{output7} \n");
-            string output8 = await CheckUserInput(input8);
-            //Debug.WriteLine($"{output8} \n");
-            string output9 = await CheckUserInput(input9);
-            //Debug.WriteLine($"{output9} \n");
-            string output10 = await CheckUserInput(input10);
-            //Debug.WriteLine($"{output10} \n");
-            string output11 = await CheckUserInput(input11);
-            //Debug.WriteLine($"{output11} \n");
+            ////string output12 = await CheckUserInput(input12);
+            //string output0 = await CheckUserInput(input0);
+            ////Debug.WriteLine($"{output0} \n");
+            //string output1 = await CheckUserInput(input1);
+            ////Debug.WriteLine($"{output1} \n");
+            //string output2 = await CheckUserInput(input2);
+            ////Debug.WriteLine($"{output2} \n");
+            //string output3 = await CheckUserInput(input3);
+            ////Debug.WriteLine($"{output3} \n");
+            //string output4 = await CheckUserInput(input4);
+            ////Debug.WriteLine($"{output4} \n");
+            //string output5 = await CheckUserInput(input5);
+            ////Debug.WriteLine($"{output5} \n");
+            //string output6 = await CheckUserInput(input6);
+            ////Debug.WriteLine($"{output6} \n");
+            //string output7 = await CheckUserInput(input7);
+            ////Debug.WriteLine($"{output7} \n");
+            //string output8 = await CheckUserInput(input8);
+            ////Debug.WriteLine($"{output8} \n");
+            //string output9 = await CheckUserInput(input9);
+            ////Debug.WriteLine($"{output9} \n");
+            //string output10 = await CheckUserInput(input10);
+            ////Debug.WriteLine($"{output10} \n");
+            //string output11 = await CheckUserInput(input11);
+            ////Debug.WriteLine($"{output11} \n");
             #endregion
 
         }
@@ -459,7 +489,7 @@ namespace TaskList
             taskAdded.isCompleted = false;
             Tasks.AddTask(taskAdded);
 
-            //Delete Task from SQL Database
+            //Add Task to SQL Database
             _ = TaskDataManagerSQL.AddTaskAsync(taskAdded);
 
             Guid idToLookUp = taskAdded.id;
@@ -519,8 +549,6 @@ namespace TaskList
             //Delete Folder from SQL Database
             _ = FolderDataManagerSQL.DeleteFolderByIdAsync(folderAdded.id);
         }
-
-
 
         #region Create Tasks from Input
         /// <summary>
