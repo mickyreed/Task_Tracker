@@ -99,7 +99,7 @@ namespace TaskList
 
             catch (Exception ex)
             {
-                Debug.WriteLine("ERROR: NO EXISTING FOLDERS FOUND!... \n {0} Error while loading Data", ex);
+                Debug.WriteLine("WARNING: NO EXISTING FOLDERS FOUND!... \n {0} Error while loading Data", ex);
             }
 
         }

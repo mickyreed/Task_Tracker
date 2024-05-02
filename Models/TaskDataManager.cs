@@ -249,7 +249,7 @@ namespace TaskList
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"ERROR: NO EXISTING TASKS FOUND!.... \n {ex.GetType().Name}: {ex.Message}");
+                Debug.WriteLine($"WARNING: NO EXISTING TASKS FOUND!.... \n {ex.GetType().Name}: {ex.Message}");
             }
         }
     }

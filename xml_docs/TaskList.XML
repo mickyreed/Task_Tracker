@@ -154,6 +154,13 @@
             <param name="taskId"></param>
             <returns></returns>
         </member>
+        <member name="M:TaskList.FolderDataManagerSQL.QueryAllFoldersByName(System.String)">
+            <summary>
+            /// Async Task to query the database and return a Folder given its name
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
         <member name="T:TaskList.Habit">
             <summary>
             
@@ -428,6 +435,13 @@
             Task to delete a task from the database given its id
             </summary>
             <param name="taskId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskDataManagerSQL.QueryAllTasksByName(System.String)">
+            <summary>
+            Async Task to query the database and return a Task given its decription
+            </summary>
+            <param name="description"></param>
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "T:TaskList.RepeatTask" -->
