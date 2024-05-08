@@ -724,7 +724,7 @@ namespace TaskList
         }
 
         /// <summary>
-        /// Function to adjust the dateTime & Time based on the Event input
+        /// Function to adjust the dateTime and Time based on the Event input
         /// ie breakfast, Lunch, DInner, Afternoon, Evening etc
         /// </summary>
         /// <param name="input"></param>
@@ -1094,6 +1094,16 @@ namespace TaskList
                 textBox.Text = textBox.Text.TrimEnd(regex.Matches(textBox.Text).Last().Value.ToCharArray());
                 textBox.SelectionStart = textBox.Text.Length;
             }
+        }
+
+        private void ToggleMenu_Click(object sender, RoutedEventArgs e)
+        {
+            //
+        }
+
+        private void MenuListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //
         }
     }
 }

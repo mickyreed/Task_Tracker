@@ -7,22 +7,101 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="500"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100*"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="80"/>
-            <RowDefinition Height="80"/>
-            <RowDefinition Height="150"/>
-            <RowDefinition Height="200"/>
-        </Grid.RowDefinitions>
-        <TextBox Grid.Column="1" Grid.Row="3" x:Name="InputTextBox" TextChanged="InputTextBox_TextChanged" BorderBrush="AliceBlue" BorderThickness="2" PlaceholderText="Enter a value" Margin="20"/>
-        <Button Grid.Column="1" Grid.Row="4" Content="Submit" Click="Button_Click"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20"/>
-        <TextBlock Grid.Column="1" Grid.Row="6" x:Name="ResultTextBlock" FontSize="18" HorizontalAlignment="Center" Margin="20" TextWrapping="Wrap"/>
-    </Grid>
+
+    <SplitView x:Name="MySplitView" DisplayMode="CompactOverlay" IsPaneOpen="False" CompactPaneLength="150" OpenPaneLength="300">
+        <!-- Content area -->
+        <SplitView.Content>
+            <!-- Your main content goes here -->
+            <Grid>
+                <!--Button Content="Toggle Menu" Click="ToggleMenu_Click"/-->
+
+                <!-- Add your main content here -->
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="500"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="50*"/>
+                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="80"/>
+                        <RowDefinition Height="150"/>
+                        <RowDefinition Height="200"/>
+                        <RowDefinition Height="100"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Header Line separator -->
+                    <!--<Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="3" x:Name="TitleLine" BorderThickness="0,1,0,0" BorderBrush="LightGray" Margin="0,40,0,0">
+                        <Rectangle Fill="Pink" Height="3"/>
+                    </Border>/-->
+                    <!-- Header Title -->
+                    <!--TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" x:Name="TitleTextBlock" Text="TaskTrakr" FontSize="28" FontWeight="Bold" FontStyle="Oblique" Foreground="ALiceBlue" HorizontalAlignment="Left" Margin="20" TextWrapping="NoWrap"/-->
+                    <!-- Enter a Task Input Box -->
+                    <TextBox Grid.Column="1" Grid.Row="3" 
+                                x:Name="InputTextBox" 
+                                TextChanged="InputTextBox_TextChanged" 
+                                BorderBrush="AliceBlue" BorderThickness="2" 
+                                PlaceholderText="Enter a task" 
+                                Margin="20"/>
+                    <!-- Create Task Button -->
+                    <Button Grid.Column="1" Grid.Row="4" 
+                            Content="Create" Click="Button_Click"  
+                            HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            Margin="20"/>
+                    <!-- Display Task Created -->
+                    <TextBlock Grid.Column="1" Grid.Row="6" 
+                                x:Name="ResultTextBlock" 
+                                FontSize="18" HorizontalAlignment="Center" 
+                                Margin="20" TextWrapping="Wrap"/>
+
+                    <!-- Footer Line separator -->
+                    <!--<Border Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="3" 
+                            x:Name="FooterLine" 
+                            BorderThickness="0,1,0,0" BorderBrush="LightGray" 
+                            Margin="0,40,0,0">
+                    </Border>/-->
+
+                    <!-- Footer Title -->
+                    <!--<TextBlock Grid.Column="1" Grid.Row="7" Grid.ColumnSpan="2" 
+                                x:Name="FooterTextBlock" Text="Create a Task" 
+                                FontSize="16" FontWeight="Bold" FontStyle="Oblique" 
+                                Foreground="AliceBlue" HorizontalAlignment="Center" 
+                                Margin="40" TextWrapping="NoWrap"/>/-->
+                </Grid>
+            </Grid>
+        </SplitView.Content>
+
+        <!-- Pane area (menu) -->
+        <SplitView.Pane>
+            <Grid Background="LightGray">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50*"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="50"/>
+                </Grid.RowDefinitions>
+
+                <!-- Menu items -->
+
+                <!--TextBlock Grid.Row="0" x:Name="TitleTextBlock" Text="Folders" /-->
+
+                <ListView 
+                    SelectionChanged="MenuListView_SelectionChanged">
+                    <ListViewItem Grid.Row="3" Content="Personal"/>
+                    <ListViewItem Grid.Row="4" Content="Work"/>
+                    <!-- Add more menu items here -->
+                </ListView>
+            </Grid>
+        </SplitView.Pane>
+    </SplitView>
+
+    <!-- REFERENCES/-->
+    <!-- https://blog.ticktick.com/2019/06/03/habit510/-->
+
 </Page>

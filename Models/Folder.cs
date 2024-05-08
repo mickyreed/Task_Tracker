@@ -15,7 +15,6 @@ namespace TaskList
  /// 
  /// Folders
  /// Tasks are kept in folders.
-
  /// /// The Database
  /// Add a static list of all the folders in the database.
  /// You will also need static methods to do the following…

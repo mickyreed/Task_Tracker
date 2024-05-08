@@ -58,7 +58,19 @@
             GetXmlnsDefinitions()
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:TaskList.Folder" -->
+        <member name="T:TaskList.Folder">
+            <summary>
+            
+            Folders
+            Tasks are kept in folders.
+            /// The Database
+            Add a static list of all the folders in the database.
+            You will also need static methods to do the following…
+            • Add a new item to the static list.
+            • Remove an item from the static list, given its GUID.
+            
+            </summary>
+        </member>
         <member name="P:TaskList.Folder.taskId">
             <summary>
             A list of tasks that the folder contains referenced by GUID
@@ -316,7 +328,15 @@
             <param name="currentDate"></param>
             <returns></returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:TaskList.MainPage.AdjustMomentForEvent(System.String,System.DateTime)" -->
+        <member name="M:TaskList.MainPage.AdjustMomentForEvent(System.String,System.DateTime)">
+            <summary>
+            Function to adjust the dateTime and Time based on the Event input
+            ie breakfast, Lunch, DInner, Afternoon, Evening etc
+            </summary>
+            <param name="input"></param>
+            <param name="moment"></param>
+            <returns></returns>
+        </member>
         <member name="M:TaskList.MainPage.CheckAndUpdateTime(System.DateTime)">
             <summary>
             A function to update any default time values by adding 12 hours to adjust for AM/PM
