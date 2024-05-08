@@ -37,7 +37,7 @@ namespace TaskList
     public sealed partial class MainPage : Page
     {
         // List that we can bind to for the UI
-        public static List<Folder> AllFoldersList1 = new List<Folder>();
+        public static ObservableCollection<Folder> AllFoldersList1 = new ObservableCollection<Folder>();
         public MainPage()
         {
             this.InitializeComponent();
@@ -353,7 +353,7 @@ namespace TaskList
         /// <returns></returns>
         private async Task DisplayAllFolders()
         {
-            
+            AllFoldersList1.Clear(); // clear the existing folder UI list
             // DISPLAY FOLDER INFORMATION IN CONSOLE
             Debug.WriteLine("");
             Debug.WriteLine("...");
@@ -372,6 +372,7 @@ namespace TaskList
             Debug.WriteLine("");
             await Task.Delay(100);
         }
+
 
         /// <summary>
         /// Function to Verify that tasks were added to the folders then display them to the Debug Console
