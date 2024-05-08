@@ -8,12 +8,12 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <SplitView x:Name="MySplitView" DisplayMode="CompactOverlay" IsPaneOpen="False" CompactPaneLength="150" OpenPaneLength="300">
+    <SplitView x:Name="MainSplitView" DisplayMode="CompactOverlay" IsPaneOpen="False" CompactPaneLength="0" OpenPaneLength="200">
         <!-- Content area -->
         <SplitView.Content>
             <!-- Your main content goes here -->
             <Grid>
-                <!--Button Content="Toggle Menu" Click="ToggleMenu_Click"/-->
+                <Button Content="&#x2630;" Click="ToggleMenu_Click" VerticalAlignment="Top"/>
 
                 <!-- Add your main content here -->
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -75,7 +75,7 @@
 
         <!-- Pane area (menu) -->
         <SplitView.Pane>
-            <Grid Background="LightGray">
+            <Grid Background="#80CCCCCC">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50*"/>
@@ -92,7 +92,13 @@
                 <!--TextBlock Grid.Row="0" x:Name="TitleTextBlock" Text="Folders" /-->
 
                 <ListView 
-                    SelectionChanged="MenuListView_SelectionChanged">
+                    SelectionChanged="MenuListView_SelectionChanged"
+                    ItemsSource="{x:Bind AllFoldersList}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding folder.name}" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
                     <ListViewItem Grid.Row="3" Content="Personal"/>
                     <ListViewItem Grid.Row="4" Content="Work"/>
                     <!-- Add more menu items here -->

@@ -17,6 +17,8 @@ using System.Runtime.CompilerServices;
 using System.Globalization;
 using Microsoft.Recognizers.Text.NumberWithUnit.Chinese;
 using Microsoft.Data.Sqlite;
+using static TaskList.Folder;
+using System.ComponentModel;
 
 
 
@@ -1096,9 +1098,16 @@ namespace TaskList
             }
         }
 
+        
+{
+    public List<Folder> AllFoldersList => FolderManager.AllFoldersList;
+
+        // INotifyPropertyChanged implementation
+
+
         private void ToggleMenu_Click(object sender, RoutedEventArgs e)
         {
-            //
+            MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen;
         }
 
         private void MenuListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
