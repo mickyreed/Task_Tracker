@@ -17,11 +17,11 @@ namespace TaskList
             Debug.WriteLine($"");
 
             var folder1 = new Folder("Personal Tasks");
-            folder1.name = "Personal Tasks";
+            folder1.Name = "Personal Tasks";
             Folder.AddFolder(folder1);
 
             var folder2 = new Folder("Work Tasks");
-            folder2.name = "Work Tasks";
+            folder2.Name = "Work Tasks";
             Folder.AddFolder(folder2);
 
             var task1 = new Tasks();

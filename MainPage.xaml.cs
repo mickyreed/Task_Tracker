@@ -19,6 +19,7 @@ using Microsoft.Recognizers.Text.NumberWithUnit.Chinese;
 using Microsoft.Data.Sqlite;
 using static TaskList.Folder;
 using System.ComponentModel;
+using System.Collections.ObjectModel;
 
 
 
@@ -35,7 +36,8 @@ namespace TaskList
     /// </summary>
     public sealed partial class MainPage : Page
     {
-
+        // List that we can bind to for the UI
+        public static List<Folder> AllFoldersList1 = new List<Folder>();
         public MainPage()
         {
             this.InitializeComponent();
@@ -46,6 +48,7 @@ namespace TaskList
             {
                 DefaultDataInitialiser.LoadDefaultData();
             }
+            
         }
         
         /// <summary>
@@ -59,6 +62,9 @@ namespace TaskList
             await FolderDataManagerSQL.InitialiseDatabase();
             await TaskDataManagerSQL.LoadDataBaseAsync();
             await FolderDataManagerSQL.LoadDataBaseAsync();
+
+            
+
 
             // Call this method after data loading is completed
             DataLoaded();
@@ -292,6 +298,7 @@ namespace TaskList
         {
             SaveData();
             UpdateTaskIndexes();
+            await DisplayAllFolders();
             await Task.Delay(300);
         }
 
@@ -317,6 +324,7 @@ namespace TaskList
                 Tasks.TasksByDescriptionIndex.Add(task);
                 Debug.WriteLine($"Description: {task.description}, Due Date: {task.dateDue}");
             }
+
             Debug.WriteLine("");
             await Task.Delay(100);
         }
@@ -345,6 +353,7 @@ namespace TaskList
         /// <returns></returns>
         private async Task DisplayAllFolders()
         {
+            
             // DISPLAY FOLDER INFORMATION IN CONSOLE
             Debug.WriteLine("");
             Debug.WriteLine("...");
@@ -352,8 +361,14 @@ namespace TaskList
 
             foreach (var folder in Folder.AllFoldersList)
             {
-                Debug.WriteLine(folder.name);
+                Debug.WriteLine(folder.Name);
+                AllFoldersList1.Add(folder);
+                Debug.WriteLine($"***!!!***     {folder.Name}       ***!!!***");
             }
+
+            // Set the ItemsSource of FoldersListView to the list of current folders
+            FoldersListView.ItemsSource = AllFoldersList1;
+
             Debug.WriteLine("");
             await Task.Delay(100);
         }
@@ -367,8 +382,8 @@ namespace TaskList
             //Debug.WriteLine(Folder.AllFoldersList.Count());
             foreach (var folder in Folder.AllFoldersList)
             {
-                Debug.WriteLine($"\n FOLDER: {folder.name}");
-                Debug.WriteLine($"Displaying Tasks in folder {folder.name} = {folder.taskId.Count} : \n");
+                Debug.WriteLine($"\n FOLDER: {folder.Name}");
+                Debug.WriteLine($"Displaying Tasks in folder {folder.Name} = {folder.taskId.Count} : \n");
                 foreach (var taskId in folder.taskId)
                 {
                     var task = Tasks.GetTaskById(taskId);
@@ -1098,13 +1113,6 @@ namespace TaskList
             }
         }
 
-        
-{
-    public List<Folder> AllFoldersList => FolderManager.AllFoldersList;
-
-        // INotifyPropertyChanged implementation
-
-
         private void ToggleMenu_Click(object sender, RoutedEventArgs e)
         {
             MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen;
@@ -1114,5 +1122,6 @@ namespace TaskList
         {
             //
         }
+
     }
 }

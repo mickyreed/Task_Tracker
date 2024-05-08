@@ -28,7 +28,7 @@ namespace TaskList
                         writer.Write(Folder.AllFoldersList.Count());
                         foreach (var folder in Folder.AllFoldersList)
                         {
-                            writer.Write($"{folder.name}");
+                            writer.Write($"{folder.Name}");
                             writer.Write(folder.taskId.Count());
                             foreach (Guid id in folder.taskId)
                             {

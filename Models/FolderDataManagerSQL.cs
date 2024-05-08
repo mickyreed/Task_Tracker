@@ -89,7 +89,7 @@ namespace TaskList
             string insertDataQuery;
 
             string id = folder.id.ToString();
-            string name = folder.name;
+            string name = folder.Name;
 
             insertDataQuery = "INSERT INTO Folder (id, name) VALUES (@id, @name)";
 

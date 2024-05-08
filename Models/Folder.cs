@@ -22,10 +22,30 @@ namespace TaskList
  /// • Remove an item from the static list, given its GUID.
  /// 
  /// </summary>
-    public class Folder
+    public class Folder : INotifyPropertyChanged
     {
         public Guid id { get; } // no setter
-        public string name { get; set; }
+        //public string name { get; set; }
+        private string _name;
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         /// <summary>
         /// A list of tasks that the folder contains referenced by GUID
@@ -66,7 +86,7 @@ namespace TaskList
         /// <param name="name"></param>
         public Folder(string name)
         {
-            this.name = name;
+            this.Name = name;
             this.id = Guid.NewGuid();
             this.taskId = new List<Guid>();
 
@@ -123,7 +143,7 @@ namespace TaskList
         /// <param name="folder"></param>
         public static void RemoveFolder(Folder folder)
         {
-            AllFoldersList.RemoveAll(f => f.name == folder.name);
+            AllFoldersList.RemoveAll(f => f.Name == folder.Name);
             // removes all elements from the list where the id matches the folderId.
             // https://www.geeksforgeeks.org/lambda-expressions-in-c-sharp/
         }
