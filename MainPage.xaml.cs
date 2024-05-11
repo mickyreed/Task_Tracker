@@ -20,6 +20,8 @@ using Microsoft.Data.Sqlite;
 using static TaskList.Folder;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Input;
 
 
 
@@ -37,10 +39,19 @@ namespace TaskList
     public sealed partial class MainPage : Page
     {
         // List that we can bind to for the UI
-        public static ObservableCollection<Folder> AllFoldersList1 = new ObservableCollection<Folder>();
+        public static ObservableCollection<Folder> FoldersList = new ObservableCollection<Folder>();
+        public string SelectedFolderName { get; set; }
+        private Folder currentFolder;
+        
+        /// <summary>
+        /// The Apps Main Page which has an aside with a folder listview in it, 
+        /// and a main section with an input box which takes a task List input by user
+        /// </summary>
         public MainPage()
         {
             this.InitializeComponent();
+            //this.NavigationCacheMode = NavigationCacheMode.Disabled;
+
             LoadData();
 
             //If there is no existing folders or data then load default values
@@ -48,9 +59,15 @@ namespace TaskList
             {
                 DefaultDataInitialiser.LoadDefaultData();
             }
-            
+
         }
-        
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            RefreshFolderList(); // Refresh folder list when navigating back
+        }
+
         /// <summary>
         /// Method to call the Loading of  Task and Folder Data from storage
         /// </summary>
@@ -63,11 +80,25 @@ namespace TaskList
             await TaskDataManagerSQL.LoadDataBaseAsync();
             await FolderDataManagerSQL.LoadDataBaseAsync();
 
-            
-
-
+            FoldersList.Clear(); // clear the existing folder UI list
+            foreach (var folder in Folder.AllFoldersList)
+            {
+                //Debug.WriteLine(folder.Name);
+                FoldersList.Add(folder);
+                //Debug.WriteLine($"***!!!***     {folder.Name}       ***!!!***");
+            }
+            FoldersListView.ItemsSource = FoldersList;
+            //FoldersListView.ItemsSource = Folder.AllFoldersList;
             // Call this method after data loading is completed
             DataLoaded();
+        }
+
+        private void RefreshFolderList()
+        {
+            // Clear existing list
+            //FoldersListView.ItemsSource = Folder.AllFoldersList; ;
+            // Repopulate list with latest data
+            FoldersListView.ItemsSource = FoldersList;
         }
 
         /// <summary>
@@ -180,42 +211,41 @@ namespace TaskList
             // SearchByDate("2024/03/15"); //date format must be "2008/04/14";
             // SearchByDate("2024/03/12");
             #endregion
-
             #region TASK 3 TEST METHOD CALLS
-            // TEST adding a folder
-            Folder folderTest = TestAddFolder();
-            await DisplayAllFolders();
+            //// TEST adding a folder
+            //Folder folderTest = TestAddFolder();
+            //await DisplayAllFolders();
 
-            // TEST adding a task
-            Guid testGuid = TestAddTask();
-            await Task.Delay(200);
-            await DisplayTasksInFolders();
+            //// TEST adding a task
+            //Guid testGuid = TestAddTask();
+            //await Task.Delay(200);
+            //await DisplayTasksInFolders();
 
-            // TEST update the index and save file
-            await UpdateData();
-            await Task.Delay(200);
-            await DisplaySortedIndex();
+            //// TEST update the index and save file
+            //await UpdateData();
+            //await Task.Delay(200);
+            //await DisplaySortedIndex();
 
-            //TEST remove the Task
-            TestRemoveTask(testGuid);
-            await Task.Delay(200);
-            await DisplayTasksInFolders();
+            ////TEST remove the Task
+            //TestRemoveTask(testGuid);
+            //await Task.Delay(200);
+            //await DisplayTasksInFolders();
 
-            // TEST update the index and save file
-            await UpdateData();
-            await Task.Delay(200);
-            await DisplaySortedIndex();
+            //// TEST update the index and save file
+            //await UpdateData();
+            //await Task.Delay(200);
+            //await DisplaySortedIndex();
 
-            // TEST: remove the folder
-            TestRemoveFolder(folderTest);
-            await DisplayAllFolders();
+            //// TEST: remove the folder
+            //TestRemoveFolder(folderTest);
+            //await DisplayAllFolders();
 
-            // TEST update the index and save file
-            await UpdateData();
+            //// TEST update the index and save file
+            //await UpdateData();
             #endregion
 
         }
-        
+
         /// <summary>
         /// Function called after data is loaded runs input Tests and create Task from input Methods
         /// </summary>
@@ -236,51 +266,51 @@ namespace TaskList
             #endregion
 
             #region TESTS CASES FOR Testing Task Input Creation Method
-            // TEST DATA
-            String input0 = "Exercise at 9am on the 1st January 2025 Star Jumps and Leg Day";
-            String input1 = "Meeting 1st of May with Bob and Mary at HighGate Restaurant";
-            String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
-            String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
-            String input4 = "Meeting at 8:15pm";
+            //// TEST DATA
+            //String input0 = "Exercise at 9am on the 1st January 2025 Star Jumps and Leg Day";
+            //String input1 = "Meeting 1st of May with Bob and Mary at HighGate Restaurant";
+            //String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
+            //String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
+            //String input4 = "Meeting at 8:15pm";
 
-            String input5 = "Call Rob on Wednesday at 3PM";
-            String input6 = "Call Rob at 3PM on Wednesday";
-            String input7 = "Call Rob";
-            String input8 = "Call Rob, 3PM, Thursday";
-            String input9 = "Call Rob, Wednesday, 3PM";
-            String input10 = "Call Rob 3PM Wednesday";
-            String input11 = "Call Rob Wednesday 3AM";
-            //String input12 = "1/1/2025";
+            //String input5 = "Call Rob on Wednesday at 3PM";
+            //String input6 = "Call Rob at 3PM on Wednesday";
+            //String input7 = "Call Rob";
+            //String input8 = "Call Rob, 3PM, Thursday";
+            //String input9 = "Call Rob, Wednesday, 3PM";
+            //String input10 = "Call Rob 3PM Wednesday";
+            //String input11 = "Call Rob Wednesday 3AM";
+            ////String input12 = "1/1/2025";
 
-            //string output12 = await CheckUserInput(input12);
-            string output0 = await CheckUserInput(input0);
-            //Debug.WriteLine($"{output0} \n");
-            string output1 = await CheckUserInput(input1);
-            //Debug.WriteLine($"{output1} \n");
-            string output2 = await CheckUserInput(input2);
-            //Debug.WriteLine($"{output2} \n");
-            string output3 = await CheckUserInput(input3);
-            //Debug.WriteLine($"{output3} \n");
-            string output4 = await CheckUserInput(input4);
-            //Debug.WriteLine($"{output4} \n");
-            string output5 = await CheckUserInput(input5);
-            //Debug.WriteLine($"{output5} \n");
-            string output6 = await CheckUserInput(input6);
-            //Debug.WriteLine($"{output6} \n");
-            string output7 = await CheckUserInput(input7);
-            //Debug.WriteLine($"{output7} \n");
-            string output8 = await CheckUserInput(input8);
-            //Debug.WriteLine($"{output8} \n");
-            string output9 = await CheckUserInput(input9);
-            //Debug.WriteLine($"{output9} \n");
-            string output10 = await CheckUserInput(input10);
-            //Debug.WriteLine($"{output10} \n");
-            string output11 = await CheckUserInput(input11);
-            //Debug.WriteLine($"{output11} \n");
+            ////string output12 = await CheckUserInput(input12);
+            //string output0 = await CheckUserInput(input0);
+            ////Debug.WriteLine($"{output0} \n");
+            //string output1 = await CheckUserInput(input1);
+            ////Debug.WriteLine($"{output1} \n");
+            //string output2 = await CheckUserInput(input2);
+            ////Debug.WriteLine($"{output2} \n");
+            //string output3 = await CheckUserInput(input3);
+            ////Debug.WriteLine($"{output3} \n");
+            //string output4 = await CheckUserInput(input4);
+            ////Debug.WriteLine($"{output4} \n");
+            //string output5 = await CheckUserInput(input5);
+            ////Debug.WriteLine($"{output5} \n");
+            //string output6 = await CheckUserInput(input6);
+            ////Debug.WriteLine($"{output6} \n");
+            //string output7 = await CheckUserInput(input7);
+            ////Debug.WriteLine($"{output7} \n");
+            //string output8 = await CheckUserInput(input8);
+            ////Debug.WriteLine($"{output8} \n");
+            //string output9 = await CheckUserInput(input9);
+            ////Debug.WriteLine($"{output9} \n");
+            //string output10 = await CheckUserInput(input10);
+            ////Debug.WriteLine($"{output10} \n");
+            //string output11 = await CheckUserInput(input11);
+            ////Debug.WriteLine($"{output11} \n");
             #endregion
-
+            RefreshFolderList();
         }
-        
+
         /// <summary>
         /// Functiomn to save data from Tasks and Files to file in Binary format
         /// </summary>
@@ -353,23 +383,14 @@ namespace TaskList
         /// <returns></returns>
         private async Task DisplayAllFolders()
         {
-            AllFoldersList1.Clear(); // clear the existing folder UI list
+            //FoldersList.Clear(); // clear the existing folder UI list
+            RefreshFolderList();
             // DISPLAY FOLDER INFORMATION IN CONSOLE
-            Debug.WriteLine("");
-            Debug.WriteLine("...");
-            Debug.WriteLine("DISPLAY ALL FOLDERS FROM ALLFOLDERS LIST...");
+            //Debug.WriteLine("");
+            //Debug.WriteLine("...");
+            //Debug.WriteLine("DISPLAY ALL FOLDERS FROM ALLFOLDERS LIST...");
 
-            foreach (var folder in Folder.AllFoldersList)
-            {
-                Debug.WriteLine(folder.Name);
-                AllFoldersList1.Add(folder);
-                Debug.WriteLine($"***!!!***     {folder.Name}       ***!!!***");
-            }
-
-            // Set the ItemsSource of FoldersListView to the list of current folders
-            FoldersListView.ItemsSource = AllFoldersList1;
-
-            Debug.WriteLine("");
+            //Debug.WriteLine("");
             await Task.Delay(100);
         }
 
@@ -589,7 +610,7 @@ namespace TaskList
                     DateTime moment = resolutionValues.Select(v => DateTime.Parse(v["value"])).FirstOrDefault();
 
                     DateTime checkedMoment = CheckAndAdjustMoment(input, moment, currentDate);
-                    
+
                     Debug.WriteLine($"*************************************************");
                     Debug.WriteLine($"Input = {input}");
                     Debug.WriteLine($"Cleaned Input = {cleanedInput}");
@@ -615,7 +636,7 @@ namespace TaskList
                     DateTime checkedMoment = AdjustMomentForEvent(input, moment);
 
                     moment = checkedMoment;
- 
+
                     return (cleanedInput, moment);
                 }
                 catch (FormatException)
@@ -628,7 +649,7 @@ namespace TaskList
 
             await Task.Delay(100);
             Debug.WriteLine("reached end of function return current date");
-            return (cleanedInput, currentDate); 
+            return (cleanedInput, currentDate);
         }
 
         /// <summary>
@@ -652,9 +673,9 @@ namespace TaskList
                 int currentYear = currentDate.Year;
                 int momentYear = moment.Year;
                 int yearDifference = currentYear - momentYear;
-                
+
                 //Debug.WriteLine($"....yearDifference = {yearDifference}");
-                
+
                 // Check if the date is last year?
                 if (yearDifference > 0)
                 {
@@ -668,7 +689,7 @@ namespace TaskList
                 // ReCheck if the date is more than 7 days ago by checking the difference in days
                 int dateDifferenceInDays = (currentDate.Date - adjustedMoment.Date).Days;
                 //Debug.WriteLine($"....DifferenceinDays = {dateDifferenceInDays}");
-                
+
                 if (dateDifferenceInDays > 7)
                 {
                     // if it more than 7 days assume date is in the future
@@ -834,7 +855,7 @@ namespace TaskList
                 //Debug.WriteLine($"ADDING 24 hrs:   {adjustedMoment.Date}");
                 // Time is in the past add 24hrs
                 adjustedMoment = adjustedMoment.AddDays(1);
-                
+
             }
             return adjustedMoment;
         }
@@ -984,7 +1005,7 @@ namespace TaskList
             cleanedInput = GetDescription(cleanedInput); // call to remove any unwanted stop words from description
             string dateTimeToDisplay;
             cleanedInput = GetDescription(cleanedInput); // second clean for extra words (resolves extra "at"
-            
+
             CreateTaskFromTaskData(cleanedInput, userInput, dateTime);
 
             if (dateTime == null)
@@ -1028,7 +1049,7 @@ namespace TaskList
                     Debug.WriteLine("Null or Invalid date format Handled.");
                 }
             }
-            
+
             // Add a task from the User Input
             //Debug.WriteLine($"*************************************************");
             var taskAdded = new Tasks();
@@ -1037,6 +1058,19 @@ namespace TaskList
             taskAdded.dateDue = convertedDateTime;
             taskAdded.isCompleted = false;
             Tasks.AddTask(taskAdded);
+            //Folder1.AddTask(taskAdded.id);
+            Folder selectedFolder = CheckCurrentSelectedFolder(SelectedFolderName);
+            if (selectedFolder != null)
+            {
+                selectedFolder.AddTask(taskAdded.id);
+                Debug.WriteLine(taskAdded.description, selectedFolder.Name);
+                DisplayTasksInFolders();
+            }
+
+            DisplayTasksInFolders();
+
+
+
 
             // ***   ADD TASK TO THE SQL DATABASE   ***
             _ = TaskDataManagerSQL.UpdateDataBaseAsync(taskAdded);
@@ -1049,7 +1083,7 @@ namespace TaskList
                 $"\nDate Due: {dateDue}");
 
             Debug.WriteLine($"*************************************************");
-            
+
         }
         #endregion
 
@@ -1066,7 +1100,8 @@ namespace TaskList
                 ErrorMessage();
             }
 
-            else {
+            else
+            {
                 string userInput = InputTextBox.Text.Trim(); // Get the text from the text box
                 ResultTextBlock.Text = string.Empty;
 
@@ -1099,7 +1134,7 @@ namespace TaskList
         /// <param name="e"></param>
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            
+
             TextBox textBox = sender as TextBox;
             // Define a regular expression pattern to match math symbols
             string pattern = @"[+\-*/=^%]";
@@ -1119,10 +1154,91 @@ namespace TaskList
             MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen;
         }
 
-        private void MenuListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void FoldersListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //
+            // Retrieve the clicked folder
+            SelectedFolderName = e.ClickedItem as string;
+
+            // Update the TextBox text with the selected folder name
+            UpdateFolderNameTextBox();
+
         }
 
+        private void UpdateFolderNameTextBox()
+        {
+            // Update the TextBox text with the selected folder name
+            InputTextBox.PlaceholderText = "Add Task (to " + SelectedFolderName + ")";
+        }
+
+
+        private Folder CheckCurrentSelectedFolder(string folderName)
+        {
+            // Implement your logic to add tasks to the selected folder
+            // Example:
+            Console.WriteLine("Adding task to folder: " + folderName);
+
+            // Find the Folder instance with the matching name
+            Folder selectedFolder = null;
+            foreach (Folder folder in AllFoldersList)
+            {
+                if (folder.Name == SelectedFolderName)
+                {
+                    selectedFolder = folder;
+                    return selectedFolder;
+                    //break;
+                }
+
+            }
+            return selectedFolder;
+        }
+
+        private void FoldersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+
+            // Check if there is any selected item
+            if (e.AddedItems.Count > 0)
+            {
+                // Get the selected folder (assuming each item in the ListView is a Folder instance)
+                Folder selectedFolder = e.AddedItems[0] as Folder;
+
+                if (selectedFolder != null)
+                {
+                    // Update the current folder
+                    currentFolder = selectedFolder;
+
+                    // Update UI or perform any other actions based on the selection
+                    UpdateFolderNameTextBox(selectedFolder.Name);
+                }
+            }
+        }
+
+        private void UpdateFolderNameTextBox(string selectedFolderName)
+        {
+            // Update the TextBox text with the selected folder name
+            InputTextBox.PlaceholderText = "Add Task (to " + selectedFolderName + ")";
+        }
+
+        private void Button_Click_View_Tasks(object sender, RoutedEventArgs e)
+        {
+            // Get the selected folder
+            Folder selectedFolder = FoldersListView.SelectedItem as Folder;
+
+            if (selectedFolder != null)
+            {
+                // Navigate to a new page passing the selected folder as a parameter
+                Frame.Navigate(typeof(TasksPage), selectedFolder);
+            }
+        }
+
+        private void CreateTaskButton_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+
+        }
+
+        private void CreateTaskButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+
+        }
     }
 }

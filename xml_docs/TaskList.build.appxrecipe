@@ -130,6 +130,9 @@
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\MainPage.xbf">
       <PackagePath>MainPage.xbf</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\TasksPage.xbf">
+      <PackagePath>TasksPage.xbf</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Windows Kits\10\UnionMetadata\10.0.22621.0\Windows.winmd">
       <PackagePath>WinMetadata\Windows.winmd</PackagePath>
     </AppxPackagedFile>

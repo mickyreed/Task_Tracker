@@ -112,16 +112,6 @@
             </summary>
             <param name="folder"></param>
         </member>
-        <member name="T:TaskList.Folder.FolderManager">
-            <summary>
-            A class that handles the Folder List for the UI
-            </summary>
-        </member>
-        <member name="P:TaskList.Folder.FolderManager.AllFoldersList">
-            <summary>
-            non-static property that retrieves the static list and notifies the UI of changes. 
-            </summary>
-        </member>
         <member name="M:TaskList.Folder.RemoveFolder(TaskList.Folder)">
             <summary>
             A static method to remove a folder from the static list using its GUID
@@ -194,6 +184,12 @@
             Testing
             Create some tasks and folders, and write some code to test everything is working correctly
             
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.#ctor">
+            <summary>
+            The Apps Main Page which has an aside with a folder listview in it, 
+            and a main section with an input box which takes a task List input by user
             </summary>
         </member>
         <member name="M:TaskList.MainPage.LoadData">
@@ -526,6 +522,31 @@
             Method that displays a Task description, notes and dateDue as a string
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:TaskList.TasksPage">
+            <summary>
+            An empty page that can be used on its own or navigated to within a Frame.
+            </summary>
+        </member>
+        <member name="P:TaskList.TasksPage.SelectedFolderName">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:TaskList.TasksPage.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:TaskList.TasksPage.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:TaskList.TasksPage.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
         </member>
         <member name="T:TaskList.Program">
             <summary>

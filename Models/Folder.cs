@@ -127,17 +127,6 @@ namespace TaskList
         }
 
         /// <summary>
-        /// A class that handles the Folder List for the UI
-        /// </summary>
-        public class FolderManager
-        {
-            /// <summary>
-            /// non-static property that retrieves the static list and notifies the UI of changes. 
-            /// </summary>
-            public static List<Folder> AllFoldersList { get; } = new List<Folder>();
-        }
-
-        /// <summary>
         /// A static method to remove a folder from the static list using its GUID
         /// </summary>
         /// <param name="folder"></param>
