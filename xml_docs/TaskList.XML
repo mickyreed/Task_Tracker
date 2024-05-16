@@ -197,12 +197,6 @@
             Method to call the Loading of  Task and Folder Data from storage
             </summary>
         </member>
-        <member name="M:TaskList.MainPage.RunTests">
-            <summary>
-            Function that includes Test Methods used in Testing
-            </summary>
-            <returns></returns>
-        </member>
         <member name="M:TaskList.MainPage.DataLoaded">
             <summary>
             Function called after data is loaded runs input Tests and create Task from input Methods
@@ -276,18 +270,6 @@
             Function to delete a task
             </summary>
             <param name="idToLookup"></param>
-        </member>
-        <member name="M:TaskList.MainPage.TestAddFolder">
-            <summary>
-            Function to Test adding a folder
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:TaskList.MainPage.TestRemoveFolder(TaskList.Folder)">
-            <summary>
-            Function to delete a folder
-            </summary>
-            <param name="folderAdded"></param>
         </member>
         <member name="M:TaskList.MainPage.CreateTaskDataFromInput(System.String)">
             <summary>
@@ -399,6 +381,95 @@
             <summary>
             Event Handler to check for text changes in the Text Box and block any math symbols
             Reference: https://claude.ai/chat/ab0b5a8f-3b82-4249-bf1b-8677e5b5667a
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.ToggleMenu_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            An event hadnler that checks if the hamburger icon is clicked to open the aside menu
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.UpdateFolderNameTextBox">
+            <summary>
+            A function that Updates the TextBox text with the selected folder name
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.CheckCurrentSelectedFolder(System.String)">
+            <summary>
+            A funcytion that Finds the Folder instance with the matching name
+            </summary>
+            <param name="folderName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.MainPage.FoldersListView_SelectionChanged(System.Object,Windows.UI.Xaml.Controls.SelectionChangedEventArgs)">
+            <summary>
+            An event handler that checks for the listview items to change when a user selects it
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.UpdateFolderNameTextBox(System.String)">
+            <summary>
+            A function that updates the placeholder text in the Enter a Task input Text box based on the folder selected
+            </summary>
+            <param name="selectedFolderName"></param>
+        </member>
+        <member name="M:TaskList.MainPage.Button_Click_View_Tasks(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            An event handler that opens up the TasksPage after a button press
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.FoldersListView_DoubleTapped(System.Object,Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs)">
+            <summary>
+            An event handler that checks for a double click and opens up the TaskPage
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.AddFolder_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            Function that opens the Add Folder Pop Up window
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.DeleteFolderYes_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            Function that deletes a folder if the user presses the Confrim button
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.AddFolderButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            An event handler that takes in a button press and adds a folder based on input name from the user
+            then closes the dialogue box
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.DeleteFolderButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            An event handler that takes in a button press and opens apopup window
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.ClosePopup(System.String)">
+            <summary>
+            A function that takes in a string value which is the name of an existing popup window,
+            It finds the open pop up and closes it when a user presses the cancel button
+            </summary>
+            <param name="popupName"></param>
+        </member>
+        <member name="M:TaskList.MainPage.CancelButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            An event handler for finding the open pop up window name based on the Tag element from the button pressed
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
@@ -522,6 +593,30 @@
             Method that displays a Task description, notes and dateDue as a string
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:TaskList.TaskCountToStringConverter">
+            
+        </member>
+        <member name="M:TaskList.TaskCountToStringConverter.Convert(System.Object,System.Type,System.Object,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <param name="targetType"></param>
+            <param name="parameter"></param>
+            <param name="language"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskCountToStringConverter.ConvertBack(System.Object,System.Type,System.Object,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="value"></param>
+            <param name="targetType"></param>
+            <param name="parameter"></param>
+            <param name="language"></param>
+            <returns></returns>
+            <exception cref="T:System.NotImplementedException"></exception>
         </member>
         <member name="T:TaskList.TasksPage">
             <summary>

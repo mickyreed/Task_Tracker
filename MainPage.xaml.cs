@@ -5,11 +5,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Input;
+using Windows.UI.Popups;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.DateTime;
-using Windows.UI.Popups;
+
 using System.ComponentModel.Design;
 using Windows.Services.Maps.LocalSearch;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
@@ -20,10 +24,12 @@ using Microsoft.Data.Sqlite;
 using static TaskList.Folder;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
-using Windows.UI.Xaml.Navigation;
-using Windows.UI.Xaml.Input;
 
-
+using Microsoft.Recognizers.Text.Matcher;
+using System.Xml.Linq;
+using TaskList;
+using Windows.Graphics;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace TaskList
 {
@@ -50,7 +56,6 @@ namespace TaskList
         public MainPage()
         {
             this.InitializeComponent();
-            //this.NavigationCacheMode = NavigationCacheMode.Disabled;
 
             LoadData();
 
@@ -66,6 +71,21 @@ namespace TaskList
         {
             base.OnNavigatedTo(e);
             RefreshFolderList(); // Refresh folder list when navigating back
+
+            if (e.Parameter is Folder returnedFolder)
+            {
+                UpdateUIWithReturnedFolder(returnedFolder);
+            }
+        }
+
+        private void UpdateUIWithReturnedFolder(Folder folder)
+        {
+            // Update the UI based on the returned folder
+            // For example, select the folder in the ListView
+            FoldersListView.SelectedItem = folder;
+            SelectedFolderName = folder.Name;
+            // Update the TextBox text with the selected folder name
+            UpdateFolderNameTextBox();
         }
 
         /// <summary>
@@ -91,6 +111,7 @@ namespace TaskList
             //FoldersListView.ItemsSource = Folder.AllFoldersList;
             // Call this method after data loading is completed
             DataLoaded();
+            await Task.Delay(100);
         }
 
         private void RefreshFolderList()
@@ -98,152 +119,8 @@ namespace TaskList
             // Clear existing list
             //FoldersListView.ItemsSource = Folder.AllFoldersList; ;
             // Repopulate list with latest data
-            FoldersListView.ItemsSource = FoldersList;
-        }
-
-        /// <summary>
-        /// Function that includes Test Methods used in Testing
-        /// </summary>
-        /// <returns></returns>
-        private async Task RunTests()
-        {
-            #region EARLIER TESTS (Depricated)
-            //// Removing a task from the folder
-            //Debug.WriteLine("...");
-            //Debug.WriteLine("DELETE A TASK FROM A FOLDER...");
-            //folder1.RemoveTask(task1.id);
-            //DisplayTasksInFolders();
-            //Debug.WriteLine("");
-
-            ////Check due dates
-            //Debug.WriteLine("...");
-            //Debug.WriteLine("DISPLAY PERSONAL FOLDER TASK DUE DATES & if Overdue...");
-            //Debug.WriteLine("...");
-            //foreach (var taskId in folder1.taskId)
-            //{
-            //    var task = Tasks.GetTaskById(taskId);
-            //    Debug.WriteLine
-            //        ($"TASK TYPE: {task.GetType().Name}: ");
-
-            //    // Check if the task is a repeating task
-            //    if (task is RepeatTask repeatingTask)
-            //    {
-            //        Debug.WriteLine($"TASK NAME: {repeatingTask.description}");
-            //        Debug.WriteLine($"DUE DATE: {repeatingTask.dateDue.ToString()}");
-            //        Debug.WriteLine($"FREQUENCY: {repeatingTask.frequency}");
-            //        Debug.WriteLine($"Is Completed?: {repeatingTask.isCompleted}");
-            //        Debug.WriteLine($"Is Task Overdue?: {repeatingTask.isOverdue}");
-
-            //        Debug.WriteLine(".....");
-            //    }
-            //    // Check if the task is a habit tasks
-            //    else if (task is Habit habits)
-            //    {
-            //        Debug.WriteLine($"TASK NAME: {habits.description}");
-            //        Debug.WriteLine($"DUE DATE: {habits.dateDue.ToString()}");
-            //        Debug.WriteLine($"FREQUENCY: {habits.frequency}");
-            //        Debug.WriteLine($"STREAK: {habits.streak.ToString()}");
-            //        Debug.WriteLine($"Is Completed?: {habits.isCompleted}");
-            //        Debug.WriteLine($"Is Task Overdue?: {habits.isOverdue}");
-
-            //        Debug.WriteLine(".....");
-            //    }
-            //    // Or if its not a habit or repeating task, it's just a Task
-            //    else
-            //    {
-            //        Debug.WriteLine($"TASK NAME: {task.description}");
-            //        Debug.WriteLine($"DUE DATE: {task.dateDue}");
-            //        Debug.WriteLine($"Is Completed?: {task.isCompleted}");
-            //        Debug.WriteLine($"Is Task Overdue?: {task.isOverdue}");
-            //        Debug.WriteLine(".....");
-            //    }
-            //}
-
-            ////
-            //// THIS IS TO CHECK THE STREAK GETS ADDED WHEN A HABIT TASK IS COMPLETED
-            ////
-            //// Check the current due date & streak of the habit task Then mark it complete
-            //Debug.WriteLine($"THIS IS TO CHECK THE STREAK GETS ADDED WHEN A HABIT TASK IS COMPLETED");
-
-            //Debug.WriteLine($"Habit Task due date: {habitTask.dateDue}");
-            //Debug.WriteLine($"Streak before completion: {habitTask.streak}");
-            //Tasks.SetTaskCompletion(habitTask); // call the grand parent class method on the habit task to set completion
-            //Debug.WriteLine($"existing habit task is Completed ? : {habitTask.isCompleted}");
-            //Debug.WriteLine(".....");
-
-            ////Move habit task to the next due date and check the streak count, then reset complete to not completed
-
-            //habitTask.MoveToNextDueDate();
-            //Debug.WriteLine($"Habit Task due date: {habitTask.dateDue}");
-            //Debug.WriteLine($"Streak after completion: {habitTask.streak}");
-            //Tasks.SetTaskCompletion(habitTask);
-            //Debug.WriteLine($"new habit task is Completed ? : {habitTask.isCompleted}");
-            //Debug.WriteLine(".....");
-
-            ////
-            //// THIS IS TO CHECK THE STREAK RESETS WHEN A HABIT TASK ISNT COMPLETED
-            ////
-            //Debug.WriteLine($"THIS IS TO CHECK THE STREAK GETS RESET WHEN A HABIT TASK IS NOT COMPLETED");
-
-            //// Check the current due date & streak of the habit task #2 but do not complete it
-            //Debug.WriteLine($"Habit Task #2 due date: {habitTask2.dateDue}");
-            //Debug.WriteLine($"Streak before completion: {habitTask2.streak}");
-            //Debug.WriteLine($"existing habit task #2 is Completed ? : {habitTask.isCompleted}");
-            //Debug.WriteLine(".....");
-
-            ////Move habit task to the next due date and check the streak count has reset
-            //habitTask.MoveToNextDueDate();
-            //Debug.WriteLine($"Habit Task #2 due date: {habitTask.dateDue}");
-            //Debug.WriteLine($"Streak after not completing: {habitTask.streak}");
-            //Debug.WriteLine($"new habit task #2 is Completed ? : {habitTask.isCompleted}");
-            //Debug.WriteLine(".....");
-
-            ////Check the number of incomplet tasks in Folder 1 - This is to test the calculated folder property
-            //int numberOfIncompleteTasksInFolder1 = folder1.incompleteTasksTotal(folder1);
-            //Debug.WriteLine($"Number of incomplete Tasks in Folder1 = {numberOfIncompleteTasksInFolder1}");
-            #endregion
-            #region TASK2 METHOD CALLS (depricated)
-            // DisplayAllTasks();
-            // Debug.WriteLine($"Number of folders loaded: {Folder.AllFoldersList.Count}");
-            // DisplayTasksInFolders();
-            // SearchByDescription();
-            // SearchByTodaysDate();
-            // SearchByDate("2024/03/15"); //date format must be "2008/04/14";
-            // SearchByDate("2024/03/12");
-            #endregion
-            #region TASK 3 TEST METHOD CALLS
-            //// TEST adding a folder
-            //Folder folderTest = TestAddFolder();
-            //await DisplayAllFolders();
-
-            //// TEST adding a task
-            //Guid testGuid = TestAddTask();
-            //await Task.Delay(200);
-            //await DisplayTasksInFolders();
-
-            //// TEST update the index and save file
-            //await UpdateData();
-            //await Task.Delay(200);
-            //await DisplaySortedIndex();
-
-            ////TEST remove the Task
-            //TestRemoveTask(testGuid);
-            //await Task.Delay(200);
-            //await DisplayTasksInFolders();
-
-            //// TEST update the index and save file
-            //await UpdateData();
-            //await Task.Delay(200);
-            //await DisplaySortedIndex();
-
-            //// TEST: remove the folder
-            //TestRemoveFolder(folderTest);
-            //await DisplayAllFolders();
-
-            //// TEST update the index and save file
-            //await UpdateData();
-            #endregion
-
+            
+            //*FoldersListView.ItemsSource = FoldersList;
         }
 
         /// <summary>
@@ -251,63 +128,6 @@ namespace TaskList
         /// </summary>
         private async void DataLoaded()
         {
-            #region TESTS - dipslaying, add, delete both Folders and Tasks
-            ////Method calls to carry out after data loading is completed
-            //await UpdateData();
-            //Debug.WriteLine("................................");
-            //Debug.WriteLine(".... Folders & Tasks Loaded ....");
-            //await DisplayTasksInFolders();
-            //await DisplayAllFolders();
-            //await DisplayAllTasks();
-            //await DisplaySortedIndex();
-            //Debug.WriteLine("................................");
-            //Debug.WriteLine("");
-            await RunTests();
-            #endregion
-
-            #region TESTS CASES FOR Testing Task Input Creation Method
-            //// TEST DATA
-            //String input0 = "Exercise at 9am on the 1st January 2025 Star Jumps and Leg Day";
-            //String input1 = "Meeting 1st of May with Bob and Mary at HighGate Restaurant";
-            //String input2 = "Meet Jenny the 30th of December 2025 at 8pm for dinner";
-            //String input3 = "Meeting 3:32 in the afternoon tomorrow 12th street";
-            //String input4 = "Meeting at 8:15pm";
-
-            //String input5 = "Call Rob on Wednesday at 3PM";
-            //String input6 = "Call Rob at 3PM on Wednesday";
-            //String input7 = "Call Rob";
-            //String input8 = "Call Rob, 3PM, Thursday";
-            //String input9 = "Call Rob, Wednesday, 3PM";
-            //String input10 = "Call Rob 3PM Wednesday";
-            //String input11 = "Call Rob Wednesday 3AM";
-            ////String input12 = "1/1/2025";
-
-            ////string output12 = await CheckUserInput(input12);
-            //string output0 = await CheckUserInput(input0);
-            ////Debug.WriteLine($"{output0} \n");
-            //string output1 = await CheckUserInput(input1);
-            ////Debug.WriteLine($"{output1} \n");
-            //string output2 = await CheckUserInput(input2);
-            ////Debug.WriteLine($"{output2} \n");
-            //string output3 = await CheckUserInput(input3);
-            ////Debug.WriteLine($"{output3} \n");
-            //string output4 = await CheckUserInput(input4);
-            ////Debug.WriteLine($"{output4} \n");
-            //string output5 = await CheckUserInput(input5);
-            ////Debug.WriteLine($"{output5} \n");
-            //string output6 = await CheckUserInput(input6);
-            ////Debug.WriteLine($"{output6} \n");
-            //string output7 = await CheckUserInput(input7);
-            ////Debug.WriteLine($"{output7} \n");
-            //string output8 = await CheckUserInput(input8);
-            ////Debug.WriteLine($"{output8} \n");
-            //string output9 = await CheckUserInput(input9);
-            ////Debug.WriteLine($"{output9} \n");
-            //string output10 = await CheckUserInput(input10);
-            ////Debug.WriteLine($"{output10} \n");
-            //string output11 = await CheckUserInput(input11);
-            ////Debug.WriteLine($"{output11} \n");
-            #endregion
             RefreshFolderList();
         }
 
@@ -328,8 +148,8 @@ namespace TaskList
         {
             SaveData();
             UpdateTaskIndexes();
-            await DisplayAllFolders();
-            await Task.Delay(300);
+            //await DisplayAllFolders();
+            //await Task.Delay(300);
         }
 
         /// <summary>
@@ -525,41 +345,6 @@ namespace TaskList
             Debug.WriteLine($"\n Removed Task with ID: {id}");
             Debug.WriteLine($"*************************************************");
         }
-
-        /// <summary>
-        /// Function to Test adding a folder
-        /// </summary>
-        /// <returns></returns>
-        public Folder TestAddFolder()
-        {
-            Debug.WriteLine($"*************************************************");
-            Debug.WriteLine("TEST: ADDING A FOLDER");
-
-            var folderAdded = new Folder("Added Folder");
-            Folder.AddFolder(folderAdded);
-
-            //Add Folder from SQL Database
-            _ = FolderDataManagerSQL.AddFolderAsync(folderAdded);
-
-            return folderAdded;
-        }
-
-        /// <summary>
-        /// Function to delete a folder
-        /// </summary>
-        /// <param name="folderAdded"></param>
-        public void TestRemoveFolder(Folder folderAdded)
-        {
-            Debug.WriteLine($"*************************************************");
-            Debug.WriteLine("TEST: REMOVING A FOLDER");
-
-            Folder.RemoveFolder(folderAdded);
-
-            //Delete Folder from SQL Database
-            _ = FolderDataManagerSQL.DeleteFolderByIdAsync(folderAdded.id);
-        }
-
-
 
         #region Create Tasks from Input
         /// <summary>
@@ -1149,10 +934,17 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// An event hadnler that checks if the hamburger icon is clicked to open the aside menu
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ToggleMenu_Click(object sender, RoutedEventArgs e)
         {
             MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen;
         }
+
+
 
         private void FoldersListView_ItemClick(object sender, ItemClickEventArgs e)
         {
@@ -1164,18 +956,24 @@ namespace TaskList
 
         }
 
+
+
+        /// <summary>
+        /// A function that Updates the TextBox text with the selected folder name
+        /// </summary>
         private void UpdateFolderNameTextBox()
         {
             // Update the TextBox text with the selected folder name
             InputTextBox.PlaceholderText = "Add Task (to " + SelectedFolderName + ")";
         }
 
-
+        /// <summary>
+        /// A funcytion that Finds the Folder instance with the matching name
+        /// </summary>
+        /// <param name="folderName"></param>
+        /// <returns></returns>
         private Folder CheckCurrentSelectedFolder(string folderName)
         {
-            // Implement your logic to add tasks to the selected folder
-            // Example:
-            Console.WriteLine("Adding task to folder: " + folderName);
 
             // Find the Folder instance with the matching name
             Folder selectedFolder = null;
@@ -1192,9 +990,13 @@ namespace TaskList
             return selectedFolder;
         }
 
+        /// <summary>
+        /// An event handler that checks for the listview items to change when a user selects it
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FoldersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
 
             // Check if there is any selected item
             if (e.AddedItems.Count > 0)
@@ -1213,32 +1015,176 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// A function that updates the placeholder text in the Enter a Task input Text box based on the folder selected
+        /// </summary>
+        /// <param name="selectedFolderName"></param>
         private void UpdateFolderNameTextBox(string selectedFolderName)
         {
             // Update the TextBox text with the selected folder name
             InputTextBox.PlaceholderText = "Add Task (to " + selectedFolderName + ")";
         }
 
+        /// <summary>
+        /// An event handler that opens up the TasksPage after a button press
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click_View_Tasks(object sender, RoutedEventArgs e)
         {
             // Get the selected folder
-            Folder selectedFolder = FoldersListView.SelectedItem as Folder;
+            Button button = sender as Button;
+            Folder selectedFolder = button?.Tag as Folder;
 
             if (selectedFolder != null)
             {
+                //Folder selectedFolder = FoldersListView.SelectedItem as Folder;
                 // Navigate to a new page passing the selected folder as a parameter
                 Frame.Navigate(typeof(TasksPage), selectedFolder);
             }
         }
 
+
         private void CreateTaskButton_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
+        }
+        private void CreateTaskButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+        }
+        private void MainSplitView_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            MainSplitView.IsPaneOpen = false;
+        }
+        
+
+
+        /// <summary>
+        /// An event handler that checks for a double click and opens up the TaskPage
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FoldersListView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            Folder selectedFolder = (sender as ListView).SelectedItem as Folder;
+            if (selectedFolder != null)
+            {
+                // Pass the selected folder to the task view page
+                Frame.Navigate(typeof(TasksPage), selectedFolder);
+            }
+        }
+
+        /// <summary>
+        /// Function that opens the Add Folder Pop Up window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddFolder_Click(object sender, RoutedEventArgs e)
+        {
+            AddFolderPopup.IsOpen = true;
+        }
+
+        /// <summary>
+        /// Function that deletes a folder if the user presses the Confrim button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeleteFolderYes_Click(object sender, RoutedEventArgs e)
+        {
+            
+            // Implement logic to delete the folder
+            Debug.WriteLine($"*************************************************");
+            Debug.WriteLine("DELETING A FOLDER");
+            //var folderToDelete = (Folder)((Button)sender).Tag;
+            //Folder.RemoveFolder(folderToDelete);
+            Folder.RemoveFolder(currentFolder);
+            FoldersList.Remove(currentFolder);
+
+            //Delete Folder from SQL Database
+            _ = FolderDataManagerSQL.DeleteFolderByIdAsync(currentFolder.id);
+            SaveData();
+
+            // Close Popup after deletion
+            DeleteFolderPopup.IsOpen = false;
 
         }
 
-        private void CreateTaskButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        /// <summary>
+        /// An event handler that takes in a button press and adds a folder based on input name from the user
+        /// then closes the dialogue box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddFolderButton_Click(object sender, RoutedEventArgs e)
         {
+            string folderName = FolderNameTextBox.Text;
+            if (!string.IsNullOrEmpty(folderName))
+            {
+                var folderAdded = new Folder(folderName);
+                Folder.AddFolder(folderAdded);
+                FoldersList.Add(folderAdded);
 
+                //Add Folder to SQL Database
+                _ = FolderDataManagerSQL.AddFolderAsync(folderAdded);
+                SaveData();
+                //await UpdateData();
+
+                // Close Popup after adding folder
+                AddFolderPopup.IsOpen = false;
+            }
+        }
+
+        /// <summary>
+        /// An event handler that takes in a button press and opens apopup window
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DeleteFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            Button button = sender as Button;
+            Folder selectedFolder = button?.Tag as Folder;
+            currentFolder = selectedFolder;
+            DeleteFolderPopup.IsOpen = true;
+        }
+
+        /// <summary>
+        /// A function that takes in a string value which is the name of an existing popup window,
+        /// It finds the open pop up and closes it when a user presses the cancel button
+        /// </summary>
+        /// <param name="popupName"></param>
+        private void ClosePopup(string popupName)
+        {
+            var popup = FindName(popupName) as Popup;
+            if (popup != null)
+            {
+                popup.IsOpen = false;
+            }
+        }
+
+        /// <summary>
+        /// An event handler for finding the open pop up window name based on the Tag element from the button pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button != null)
+            {
+                var popupName = button.Tag as string;
+                ClosePopup(popupName);
+            }
         }
     }
 }
+
+/*
+TODO:
+Each task should have:
+    a checkbox to mark whether the task is completed
+    a small pencil icon which is visible only if the task has notes attached. 
+    Overdue tasks should be listed first and marked somehow. 
+    Beneath them should be the tasks due today. 
+    After that, list the remaining tasks. 
+    Tapping on a task will take the user to a screen where they can view and change all the details of the task. 
+    The app should have some basic preferences, They could be colour schemes, ifferent ways of ordering the tasks, etc.
+*/

@@ -53,6 +53,9 @@ namespace TaskList
         /// </summary>
         public List<Guid> taskId { get; set; }
 
+        // Property to calculate the count of tasks
+        public int TaskCount => taskId?.Count ?? 0;
+
         /// <summary>
         /// A calculated property that is the total number of incomplete tasks in the folder.
         /// </summary>

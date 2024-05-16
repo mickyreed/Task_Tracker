@@ -47,8 +47,64 @@ namespace TaskList
         {
             base.OnNavigatedTo(e);
             RefreshFolderList(); // Refresh folder list when navigating back
+            if (e.Parameter is Folder selectedFolder)
+            {
+                // Use the selectedFolder to load tasks or perform other operations
+                currentFolder = selectedFolder;
+                RefreshTaskList(selectedFolder);
+            }
         }
 
+        //protected override void OnNavigatedFrom(NavigationEventArgs e)
+        //{
+        //    base.OnNavigatedFrom(e);
+
+        //    if (Frame.CanGoBack)
+        //    {
+        //        var lastEntry = Frame.BackStack.LastOrDefault();
+        //        if (lastEntry != null)
+        //        {
+        //            lastEntry.Parameter = currentFolder;
+        //        }
+        //    }
+        //}
+
+        private void RefreshTaskList(Folder selectedFolder)
+        {
+            if (selectedFolder != null)
+            {
+                // Update the current folder
+                currentFolder = selectedFolder;
+
+                // Update UI or perform any other actions based on the selection
+                UpdateFolderNameTextBox(selectedFolder.Name);
+
+                // Retrieve the list of task IDs from the selected folder
+                List<Guid> taskIds = selectedFolder.taskId;
+
+                // Create a collection to hold the tasks
+                ObservableCollection<Tasks> tasksCollection = new ObservableCollection<Tasks>();
+
+                // Iterate through the task IDs and retrieve the corresponding tasks
+                foreach (var taskId in taskIds)
+                {
+                    // Retrieve the task using the taskId
+                    Tasks task = Tasks.GetTaskById(taskId);
+                    //var task = Tasks.GetTaskById(taskId);
+                    if (task != null)
+                    {
+                        // Add the task to the collection
+                        tasksCollection.Add(task);
+                    }
+
+                }
+
+                // Set the ItemsSource of the ListView to the tasks collection
+                TasksListView.ItemsSource = tasksCollection;
+                // Set the header to the folder name
+                FolderHeaderTextBlock.Text = selectedFolder.Name ;
+            }
+        }
         private async Task LoadData()
         {
             FoldersList.Clear(); // clear the existing folder UI list
@@ -81,8 +137,6 @@ namespace TaskList
             FoldersListView.ItemsSource = FoldersList;
         }
 
-
-
         private void FoldersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Check if there is any selected item
@@ -90,38 +144,8 @@ namespace TaskList
             {
                 // Get the selected folder (assuming each item in the ListView is a Folder instance)
                 Folder selectedFolder = e.AddedItems[0] as Folder;
-
-                if (selectedFolder != null)
-                {
-                    // Update the current folder
-                    currentFolder = selectedFolder;
-
-                    // Update UI or perform any other actions based on the selection
-                    UpdateFolderNameTextBox(selectedFolder.Name);
-
-                    // Retrieve the list of task IDs from the selected folder
-                    List<Guid> taskIds = selectedFolder.taskId;
-
-                    // Create a collection to hold the tasks
-                    ObservableCollection<Tasks> tasksCollection = new ObservableCollection<Tasks>();
-
-                    // Iterate through the task IDs and retrieve the corresponding tasks
-                    foreach (var taskId in taskIds)
-                    {
-                        // Retrieve the task using the taskId
-                        Tasks task = Tasks.GetTaskById(taskId);
-                        //var task = Tasks.GetTaskById(taskId);
-                        if (task != null)
-                        {
-                            // Add the task to the collection
-                            tasksCollection.Add(task);
-                        }
-
-                    }
-
-                    // Set the ItemsSource of the ListView to the tasks collection
-                    TasksListView.ItemsSource = tasksCollection;
-                }
+                currentFolder = selectedFolder;
+                RefreshTaskList(selectedFolder);
             }
         }
 
@@ -165,9 +189,19 @@ namespace TaskList
             //CreateTaskButton.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void TasksSplitView_PointerExited(object sender, PointerRoutedEventArgs e)
         {
+            TasksSplitView.IsPaneOpen = false;
+        }
 
+        private void EditTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            //
+        }
+
+        private void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
+        {
+            //
         }
     }
 }

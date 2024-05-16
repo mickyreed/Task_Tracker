@@ -7,6 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     xmlns:Media="using:Windows.UI.Xaml.Media">
+
+    <Page.Resources>
+        <local:TaskCountToStringConverter x:Key="TaskCountConverter"/>
+    </Page.Resources>
+
     <!--="{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
     <Page.Background>
         <Media:LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
@@ -15,7 +20,9 @@
         </Media:LinearGradientBrush>
     </Page.Background>
 
-    <SplitView x:Name="TasksSplitView" DisplayMode="CompactOverlay" IsPaneOpen="False" CompactPaneLength="0" OpenPaneLength="200">
+    <SplitView x:Name="TasksSplitView" DisplayMode="CompactOverlay" 
+               IsPaneOpen="False" CompactPaneLength="0" OpenPaneLength="300"
+               PointerExited="TasksSplitView_PointerExited">
         <!-- Content area -->
         <SplitView.Content>
             <!-- Main content goes here -->
@@ -38,7 +45,10 @@
                     </Grid.RowDefinitions>
 
                     <!-- Header -->
-                    <TextBlock Grid.Column="1" Grid.Row="1" Text="FOLDER" FontSize="18" FontWeight="Bold" Foreground="AliceBlue" Margin="15,36,5,16" Grid.RowSpan="2"/>
+                    <TextBlock x:Name="FolderHeaderTextBlock" 
+                               Grid.Column="1" Grid.Row="1" 
+                               Text="FOLDER" FontSize="18" FontWeight="Bold" 
+                               Foreground="AliceBlue" Margin="15,36,5,16" Grid.RowSpan="2"/>
 
                     <!-- Folder ListView -->
                     <ListView x:Name="TasksListView" Margin="5,5,5,5" Background="#2D2D30" BorderThickness="0.5"
@@ -52,17 +62,56 @@
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
                         </ListView.ItemContainerStyle>
+                        
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Frame CornerRadius="10" BorderBrush="AliceBlue" BorderThickness="0.5" Padding="20,10,10,10" Background="Transparent">
-                                    <StackPanel CornerRadius="10">
-                                        <TextBlock Text="{Binding description}" Foreground="#FFFFFF" FontSize="18"/>
-                                        <!--#FF3E4D-->
-                                        <TextBlock Text="{Binding notes}" Foreground="#CCCCCC" FontSize="16"/>
-                                        <TextBlock Text="{Binding dateDue}" Foreground="#999999" FontSize="12"/>
-                                        <!--#FF6F61-->
-                                    </StackPanel>
+
+                                <Frame CornerRadius="10" BorderBrush="#999999" BorderThickness="0.5" Padding="20,10,10,10" Background="Transparent">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="3">
+                                            <StackPanel Orientation="Vertical" Grid.Column="0" CornerRadius="10">
+                                                <TextBlock Text="{Binding description}" Foreground="#FFFFFF" FontSize="18"/>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <!--TextBlock Text="{Binding notes}" Foreground="#CCCCCC" FontSize="16"/-->
+                                                    <TextBlock Text="{Binding dateDue}" Foreground="#999999" FontSize="12"
+                                                               VerticalAlignment="Center"/>
+                                                    <!-- Pencil emoji if notes exist -->
+                                                    <TextBlock Text=" 📝" FontSize="18" Visibility="{Binding Notes}">
+                                                        <ToolTipService.ToolTip>
+                                                            <!-- Bind the content of the tooltip to Task.notes -->
+                                                            <ToolTip Content="{Binding notes}" />
+                                                        </ToolTipService.ToolTip>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                                
+                                            </StackPanel>
+                                        </StackPanel> 
+                                        <!-- Edit Task Button -->
+                                        <Button Grid.Column="1" Content="✏️" HorizontalAlignment="Right"
+                                                Click="EditTaskButton_Click" Tag="{Binding}" 
+                                                Background="Transparent" BorderThickness="0" FontSize="18" Margin="0,0,0,0">
+                                            <ToolTipService.ToolTip>
+                                                <ToolTip Content="Edit Task"/>
+                                            </ToolTipService.ToolTip>
+                                        </Button>
+                                        <!-- Delete Task Button -->
+                                        <Button Grid.Column="2" Content="❌" Foreground="Red" HorizontalAlignment="Right"
+                                                Click="DeleteTaskButton_Click" Tag="{Binding}" 
+                                                Background="Transparent" BorderThickness="0" FontSize="18">
+                                            <ToolTipService.ToolTip>
+                                                <ToolTip Content="Delete Task"/>
+                                            </ToolTipService.ToolTip>
+                                        </Button>
+                                    </Grid>
                                 </Frame>
+
+                               
+                               
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
@@ -107,7 +156,7 @@
 
         <!-- Pane area (menu) -->
         <SplitView.Pane>
-            <Grid Background="#80CCCCCC">
+            <Grid Background="#80CCCCCC" PointerExited="TasksSplitView_PointerExited">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50*"/>
                     <RowDefinition Height="50"/>
@@ -141,8 +190,13 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" Text="{Binding Name}" Foreground="AliceBlue" FontSize="18"/>
-                                <Button Content="Tasks" Click="Button_Click_1" HorizontalAlignment="Right" HorizontalContentAlignment="Right"/>
+                                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                                    <TextBlock Text="{Binding Name}" Foreground="AliceBlue" FontSize="16"/>
+                                    <!--TextBlock Text="{Binding TaskCount}" Foreground="#999999" FontSize="12" Margin="5,0,0,0"/-->
+                                    <TextBlock Text="{Binding TaskCount, Converter={StaticResource TaskCountConverter}}" Foreground="#FF3E4D" FontSize="12" Margin="5,0,0,0"/>
+
+                                    
+                                </StackPanel>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
