@@ -197,14 +197,9 @@
             Method to call the Loading of  Task and Folder Data from storage
             </summary>
         </member>
-        <member name="M:TaskList.MainPage.DataLoaded">
-            <summary>
-            Function called after data is loaded runs input Tests and create Task from input Methods
-            </summary>
-        </member>
         <member name="M:TaskList.MainPage.SaveData">
             <summary>
-            Functiomn to save data from Tasks and Files to file in Binary format
+            Function to save data from Tasks and Files to file in Binary format
             </summary>
         </member>
         <member name="M:TaskList.MainPage.UpdateData">

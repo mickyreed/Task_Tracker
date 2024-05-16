@@ -106,8 +106,14 @@ namespace TaskList
             await TaskDataManagerSQL.LoadDataBaseAsync();
             await FolderDataManagerSQL.LoadDataBaseAsync();
 
+            RefreshFolderList();
+
+        }
+
+        private async void RefreshFolderList()
+        {
             FoldersList.Clear(); // clear the existing folder UI list
-           
+
             foreach (var folder in Folder.AllFoldersList)
             {
                 //Debug.WriteLine(folder.Name);
@@ -118,31 +124,12 @@ namespace TaskList
             FoldersListView.ItemsSource = FoldersList;
             //FoldersListView.ItemsSource = Folder.AllFoldersList;
             // Call this method after data loading is completed
-            DataLoaded();
-            
+
             await Task.Delay(100);
-
-        }
-
-        private void RefreshFolderList()
-        {
-            // Clear existing list
-            //FoldersListView.ItemsSource = Folder.AllFoldersList; ;
-            // Repopulate list with latest data
-            
-            FoldersListView.ItemsSource = FoldersList;
         }
 
         /// <summary>
-        /// Function called after data is loaded runs input Tests and create Task from input Methods
-        /// </summary>
-        private async void DataLoaded()
-        {
-            RefreshFolderList();
-        }
-
-        /// <summary>
-        /// Functiomn to save data from Tasks and Files to file in Binary format
+        /// Function to save data from Tasks and Files to file in Binary format
         /// </summary>
         private async void SaveData()
         {
@@ -1098,7 +1085,7 @@ namespace TaskList
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DeleteFolderYes_Click(object sender, RoutedEventArgs e)
+        private async void DeleteFolderYes_Click(object sender, RoutedEventArgs e)
         {
             
             // Implement logic to delete the folder
@@ -1111,7 +1098,7 @@ namespace TaskList
 
             //Delete Folder from SQL Database
             _ = FolderDataManagerSQL.DeleteFolderByIdAsync(currentFolder.id);
-            SaveData();
+            await UpdateData();
 
             // Close Popup after deletion
             DeleteFolderPopup.IsOpen = false;
@@ -1124,18 +1111,19 @@ namespace TaskList
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void AddFolderButton_Click(object sender, RoutedEventArgs e)
+        private async void AddFolderButton_Click(object sender, RoutedEventArgs e)
         {
             string folderName = FolderNameTextBox.Text;
             if (!string.IsNullOrEmpty(folderName))
             {
                 var folderAdded = new Folder(folderName);
-                Folder.AddFolder(folderAdded);
+                //Folder.AddFolder(folderAdded);
                 FoldersList.Add(folderAdded);
+                await UpdateData();
 
                 //Add Folder to SQL Database
-                _ = FolderDataManagerSQL.AddFolderAsync(folderAdded);
-                SaveData();
+                //_ = FolderDataManagerSQL.AddFolderAsync(folderAdded);
+                //SaveData();
                 //await UpdateData();
 
                 // Close Popup after adding folder
@@ -1190,10 +1178,9 @@ namespace TaskList
 /*
 TODO:
 Each task should have:
-    a checkbox to mark whether the task is completed
-    a small pencil icon which is visible only if the task has notes attached.
-        Icon Added DONE
-        Functionality - NOT TESTED YET
+    TODO a checkbox to mark whether the task is completed
+    DONE a small pencil icon which is visible only if the task has notes attached.
+
     Overdue tasks should be listed first and marked somehow. 
     Beneath them should be the tasks due today. 
     After that, list the remaining tasks. 
