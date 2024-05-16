@@ -7,7 +7,6 @@
     <RootPropertyPathName Name="TaskCount" />
     <RootPropertyPathName Name="Name" />
     <RootPropertyPathName Name="Tasks" />
-    <RootPropertyPathName Name="Notes" />
     <RootPropertyPathName Name="notes" />
     <RootPropertyPathName Name="dateDue" />
     <RootPropertyPathName Name="description" />
@@ -119,9 +118,9 @@
       <RootProperty Name="CornerRadius" />
       <RootProperty Name="FontSize" />
       <RootProperty Name="Padding" />
-      <RootProperty Name="VerticalContentAlignment" />
       <RootProperty Name="BorderBrush" />
       <RootProperty Name="BorderThickness" />
+      <RootProperty Name="VerticalContentAlignment" />
       <RootProperty Name="FontStyle" />
       <RootEvent Name="TextChanged" />
     </RootType>
@@ -164,9 +163,15 @@
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Controls.ToolTip">
       <RootProperty Name="Content" />
+      <RootProperty Name="MaxWidth" />
+      <RootProperty Name="BorderBrush" />
+      <RootProperty Name="BorderThickness" />
+      <RootProperty Name="CornerRadius" />
+      <RootProperty Name="FontSize" />
     </RootType>
     <RootType FullName="Microsoft.Xaml.DirectUI.ProxyTypes.StaticResourceExtension" />
     <RootType FullName="TaskList.MainPage" />
+    <RootType FullName="TaskList.VisibilityConverter" />
     <RootType FullName="Windows.UI.Xaml.Controls.Frame">
       <RootProperty Name="CornerRadius" />
       <RootProperty Name="BorderBrush" />

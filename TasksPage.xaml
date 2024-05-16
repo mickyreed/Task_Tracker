@@ -10,6 +10,7 @@
 
     <Page.Resources>
         <local:TaskCountToStringConverter x:Key="TaskCountConverter"/>
+        <local:VisibilityConverter x:Key="VisibilityConverter"/>
     </Page.Resources>
 
     <!--="{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
@@ -81,10 +82,13 @@
                                                     <TextBlock Text="{Binding dateDue}" Foreground="#999999" FontSize="12"
                                                                VerticalAlignment="Center"/>
                                                     <!-- Pencil emoji if notes exist -->
-                                                    <TextBlock Text=" 📝" FontSize="18" Visibility="{Binding Notes}">
+                                                    <TextBlock Text=" 📝" FontSize="18" 
+                                                               Visibility="{Binding notes, Converter={StaticResource VisibilityConverter}}">
                                                         <ToolTipService.ToolTip>
                                                             <!-- Bind the content of the tooltip to Task.notes -->
-                                                            <ToolTip Content="{Binding notes}" />
+                                                            <ToolTip Content="{Binding notes}" MaxWidth="250" 
+                                                                     BorderBrush="#FF3E4D" BorderThickness="2"
+                                                                     CornerRadius="10" FontSize="16" />
                                                         </ToolTipService.ToolTip>
                                                     </TextBlock>
                                                 </StackPanel>

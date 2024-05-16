@@ -48,6 +48,7 @@ namespace TaskList
         public static ObservableCollection<Folder> FoldersList = new ObservableCollection<Folder>();
         public string SelectedFolderName { get; set; }
         private Folder currentFolder;
+        bool dataLoaded = false;
         
         /// <summary>
         /// The Apps Main Page which has an aside with a folder listview in it, 
@@ -56,21 +57,24 @@ namespace TaskList
         public MainPage()
         {
             this.InitializeComponent();
-
-            LoadData();
-
-            //If there is no existing folders or data then load default values
-            if (Folder.AllFoldersList.Count == 0 && Tasks.AllTasksList.Count == 0)
+            if (!dataLoaded)
             {
-                DefaultDataInitialiser.LoadDefaultData();
-            }
+                LoadData();
+                
+                //If there is no existing folders or data then load default values
+                if (Folder.AllFoldersList.Count == 0 && Tasks.AllTasksList.Count == 0)
+                {
+                    DefaultDataInitialiser.LoadDefaultData();
+                }
 
+            }
+            
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            RefreshFolderList(); // Refresh folder list when navigating back
+            RefreshFolderList();  // Refresh folder list when navigating back
 
             if (e.Parameter is Folder returnedFolder)
             {
@@ -93,6 +97,8 @@ namespace TaskList
         /// </summary>
         private async void LoadData()
         {
+            dataLoaded = true;
+
             await TaskDataManager.LoadDataAsync();
             await FolderDataManager.LoadDataAsync();
             await TaskDataManagerSQL.InitialiseDatabase();
@@ -101,17 +107,21 @@ namespace TaskList
             await FolderDataManagerSQL.LoadDataBaseAsync();
 
             FoldersList.Clear(); // clear the existing folder UI list
+           
             foreach (var folder in Folder.AllFoldersList)
             {
                 //Debug.WriteLine(folder.Name);
                 FoldersList.Add(folder);
+                Debug.WriteLine(folder.Name);
                 //Debug.WriteLine($"***!!!***     {folder.Name}       ***!!!***");
             }
             FoldersListView.ItemsSource = FoldersList;
             //FoldersListView.ItemsSource = Folder.AllFoldersList;
             // Call this method after data loading is completed
             DataLoaded();
+            
             await Task.Delay(100);
+
         }
 
         private void RefreshFolderList()
@@ -120,7 +130,7 @@ namespace TaskList
             //FoldersListView.ItemsSource = Folder.AllFoldersList; ;
             // Repopulate list with latest data
             
-            //*FoldersListView.ItemsSource = FoldersList;
+            FoldersListView.ItemsSource = FoldersList;
         }
 
         /// <summary>
@@ -935,7 +945,7 @@ namespace TaskList
         }
 
         /// <summary>
-        /// An event hadnler that checks if the hamburger icon is clicked to open the aside menu
+        /// An event handler that checks if the hamburger icon is clicked to open the aside menu
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1181,10 +1191,14 @@ namespace TaskList
 TODO:
 Each task should have:
     a checkbox to mark whether the task is completed
-    a small pencil icon which is visible only if the task has notes attached. 
+    a small pencil icon which is visible only if the task has notes attached.
+        Icon Added DONE
+        Functionality - NOT TESTED YET
     Overdue tasks should be listed first and marked somehow. 
     Beneath them should be the tasks due today. 
     After that, list the remaining tasks. 
-    Tapping on a task will take the user to a screen where they can view and change all the details of the task. 
-    The app should have some basic preferences, They could be colour schemes, ifferent ways of ordering the tasks, etc.
+    Tapping on a task will take the user to a screen where they can view 
+    and change all the details of the task. 
+    The app should have some basic preferences, 
+    They could be colour schemes, different ways of ordering the tasks, etc.
 */

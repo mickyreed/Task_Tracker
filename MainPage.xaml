@@ -77,20 +77,21 @@
                                 <TextBox x:Name="FolderNameTextBox" Width="240" Height="40" 
                                          Foreground="AliceBlue" PlaceholderText="Enter folder name" 
                                          Margin="0" MaxLength="21" CornerRadius="10"
-                                         FontSize="16" Padding="10,5"/>
+                                         FontSize="16" Padding="10,5"
+                                         BorderBrush="#FF3E4D" BorderThickness="1"/>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" 
                                             VerticalAlignment="Bottom" Margin="0,0,0,20">
-                                    <Button Content="Confirm &#xFF0B;" Foreground="Green" 
+                                    <Button Content="&#x2705;" Foreground="Green" 
                                              FontSize="18" Margin="5,0,10,0" 
                                              Click="AddFolderButton_Click"
-                                             BorderBrush="White" BorderThickness="1"
+                                             BorderBrush="#FF3E4D" BorderThickness="1"
                                             CornerRadius="10"
                                              Background="#535353"/>
-                                    <Button Content=" Cancel &#x26D4;"
+                                    <Button Content="&#x274C;"
                                             Foreground="DarkRed" 
                                             FontSize="18" Tag="AddFolderPopup"
                                             Click="CancelButton_Click"
-                                            BorderBrush="White" BorderThickness="1"
+                                            BorderBrush="#FF3E4D" BorderThickness="1"
                                             CornerRadius="10" Margin="10,0,5,0"
                                             Background="#535353"/>
                                 </StackPanel>

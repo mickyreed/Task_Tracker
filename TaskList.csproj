@@ -138,6 +138,7 @@
     <Compile Include="TasksPage.xaml.cs">
       <DependentUpon>TasksPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="VisibilityConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

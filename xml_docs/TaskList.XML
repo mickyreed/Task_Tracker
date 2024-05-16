@@ -387,7 +387,7 @@
         </member>
         <member name="M:TaskList.MainPage.ToggleMenu_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
             <summary>
-            An event hadnler that checks if the hamburger icon is clicked to open the aside menu
+            An event handler that checks if the hamburger icon is clicked to open the aside menu
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
