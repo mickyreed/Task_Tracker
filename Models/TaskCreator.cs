@@ -457,7 +457,7 @@ namespace TaskList
 
             cleanedInput = cleanedInput.Trim(); //trim the input
             cleanedInput = GetDescription(cleanedInput); // call to remove any unwanted stop words from description
-            string dateTimeToDisplay;
+            //string dateTimeToDisplay;
             cleanedInput = GetDescription(cleanedInput); // second clean for extra words (resolves extra "at"
            
             return (cleanedInput, userInput, dateTime);

@@ -34,7 +34,9 @@ namespace TaskList
         /// 
         /// </summary>
         public string SelectedFolderName { get; set; }
+        public string taskInput {  get; set; }
         private Folder currentFolder;
+
 
 
 
@@ -47,31 +49,31 @@ namespace TaskList
             _ = LoadData();
         }
 
+        /// <summary>
+        /// an override function that takes in parameters passed in during the navigation sent from another page
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            RefreshFolderList(); // Refresh folder list when navigating back
-            if (e.Parameter is Folder selectedFolder)
+
+            if (e.Parameter is Tuple<Folder, string> navParams)
             {
-                // Use the selectedFolder to load tasks or perform other operations
-                currentFolder = selectedFolder;
-                RefreshTaskList(selectedFolder);
+                currentFolder = navParams.Item1;
+                taskInput = navParams.Item2;
+                OpenPopupCreateTask(taskInput);
             }
+            else if(e.Parameter is string userInput)
+            {
+                taskInput = userInput;
+                OpenPopupCreateTask(taskInput);
+            }
+            else if (e.Parameter is Folder selectedFolder)
+            {
+                currentFolder = selectedFolder;
+            }
+
+            RefreshTaskList(currentFolder);
         }
-
-        //protected override void OnNavigatedFrom(NavigationEventArgs e)
-        //{
-        //    base.OnNavigatedFrom(e);
-
-        //    if (Frame.CanGoBack)
-        //    {
-        //        var lastEntry = Frame.BackStack.LastOrDefault();
-        //        if (lastEntry != null)
-        //        {
-        //            lastEntry.Parameter = currentFolder;
-        //        }
-        //    }
-        //}
 
         private void RefreshTaskList(Folder selectedFolder)
         {
@@ -198,16 +200,40 @@ namespace TaskList
                     OPEN a dialogue box
                     // so you can select what type of task and check details etc
                     */
-
+                    OpenPopupCreateTask("");
                     //ResultTextBlock.Text = output; //this to be removed in final version
                     InputTextBox.Text = string.Empty; // if we nav to Task page this may be redundant
                 }
             }
         }
 
-        private void OpenPopupCreateTask(Task task)
+        private async void OpenPopupCreateTask(string task)
         {
+            string dateTimeToDisplay;
+            await TaskCreator.CheckUserInput(task);
+            
+            var viewModel = new TaskViewModel
+            {
+                Description = "Default Description",
+                Notes = "Default Notes",
+                DateDue = DateTime.Now.Date,
+                DueTime = new TimeSpan(23, 59, 0),
+                TaskType = TaskType.Task
+            };
 
+            var dialog = new CreateTaskDialog(viewModel);
+            var result = await dialog.ShowAsync();
+
+            if (result == ContentDialogResult.Primary)
+            {
+                // Task creation logic
+            }
+            else
+            {
+                // Task creation cancelled
+            }
+
+            //CreateTaskFromTaskData(cleanedInput, userInput, dateTime);
         }
 
         /// <summary>

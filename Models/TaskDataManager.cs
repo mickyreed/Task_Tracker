@@ -154,7 +154,7 @@ namespace TaskList
                                 //Debug.WriteLine(isCompleted.ToString());
 
                                 string frequencyString = reader.ReadString();
-                                Frequency _frequency = (Habit.Frequency)Enum.Parse(typeof(Habit.Frequency), frequencyString);
+                                Frequency _frequency = (Frequency)(Habit.Frequency)Enum.Parse(typeof(Habit.Frequency), frequencyString);
                                 //Debug.WriteLine($"Frequency: {frequencyString}");
                                 //int _streak = reader.ReadInt32();
 
@@ -170,7 +170,7 @@ namespace TaskList
                                     notes = notes,
                                     dateDue = dateDue,
                                     isCompleted = isCompleted,
-                                    frequency = _frequency,
+                                    frequency = (RepeatTask.Frequency)_frequency,
                                     streak = streak
                                 };
                             }

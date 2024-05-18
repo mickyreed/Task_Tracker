@@ -121,12 +121,17 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\FrequencyConverter.cs" />
+    <Compile Include="Pages\CreateTaskDialog.xaml.cs">
+      <DependentUpon>CreateTaskDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\DateTimeToDateTimeOffsetConverter.cs" />
     <Compile Include="Models\DefaultDataInitialiser.cs" />
     <Compile Include="Models\Folder.cs" />
     <Compile Include="Models\FolderDataManagerSQL.cs" />
     <Compile Include="Models\FolderDataManager.cs" />
     <Compile Include="Models\Habit.cs" />
-    <Compile Include="MainPage.xaml.cs">
+    <Compile Include="Pages\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\TaskDataManagerSQL.cs" />
@@ -134,12 +139,13 @@
     <Compile Include="Models\RepeatTask.cs" />
     <Compile Include="Models\TaskDataManager.cs" />
     <Compile Include="Models\Tasks.cs" />
-    <Compile Include="TaskCountToStringConverter.cs" />
-    <Compile Include="TaskCreator.cs" />
-    <Compile Include="TasksPage.xaml.cs">
+    <Compile Include="Converters\TaskCountToStringConverter.cs" />
+    <Compile Include="Models\TaskCreator.cs" />
+    <Compile Include="Pages\TasksPage.xaml.cs">
       <DependentUpon>TasksPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="VisibilityConverter.cs" />
+    <Compile Include="ViewModels\TaskViewModel.cs" />
+    <Compile Include="Converters\VisibilityConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -161,11 +167,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="MainPage.xaml">
+    <Page Include="Pages\CreateTaskDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="TasksPage.xaml">
+    <Page Include="Pages\TasksPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -197,7 +207,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
+    <None Include="Class Diagrams\ClassDiagram1.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -12,7 +12,7 @@
         <local:TaskCountToStringConverter x:Key="TaskCountConverter"/>
         <local:VisibilityConverter x:Key="VisibilityConverter"/>
     </Page.Resources>
-
+    
     <!--="{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
     <Page.Background>
         <Media:LinearGradientBrush StartPoint="0,0" EndPoint="1,1">

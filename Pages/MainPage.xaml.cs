@@ -909,8 +909,24 @@ namespace TaskList
 
                 if (userInput != null || userInput != "Enter a value")
                 {
-                    string output = await TaskCreator.CheckUserInput(userInput); 
+                    //string output = await TaskCreator.CheckUserInput(userInput);
+                    InputTextBox.Text = string.Empty;
+
+                    // Get the selected folder
+                    Folder selectedFolder = currentFolder;
                     
+                    // Pass the string userInput and the currentFolder as a tuple to send to TaskPage
+                    var navigationParams = new Tuple<Folder, string>(selectedFolder, userInput);
+
+                    if (selectedFolder != null)
+                    {
+                        Frame.Navigate(typeof(TasksPage), navigationParams);
+                    }
+                    else
+                    {
+                        Frame.Navigate(typeof(TasksPage), userInput);
+                    }
+
                     /* !!! TODO: perhaps i have this in TaskPage so it passes the string thru and opens up task page
                     //and calls the TASK creator from there
                     // then Task Creator passes back task and opens a dialogue box
@@ -919,7 +935,7 @@ namespace TaskList
 
 
 
-                    ResultTextBlock.Text = output; //this to be removed in final version
+                    //ResultTextBlock.Text = output; //this to be removed in final version
                     InputTextBox.Text = string.Empty; // if we nav to Task page this may be redundant
                 }
             }
