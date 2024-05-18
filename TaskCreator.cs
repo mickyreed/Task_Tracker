@@ -449,7 +449,9 @@ namespace TaskList
         /// and the date as a string and display it in the UI
         /// </summary>
         /// <param name="userInput"></param>
-        public static async Task<string> CheckUserInput(string userInput)
+
+        
+        public static async Task<(string, string, DateTime?)> CheckUserInput(string userInput)
         {
             (string cleanedInput, DateTime? dateTime) = await CreateTaskDataFromInput(userInput);
 
@@ -457,22 +459,24 @@ namespace TaskList
             cleanedInput = GetDescription(cleanedInput); // call to remove any unwanted stop words from description
             string dateTimeToDisplay;
             cleanedInput = GetDescription(cleanedInput); // second clean for extra words (resolves extra "at"
+           
+            return (cleanedInput, userInput, dateTime);
+            
+            //CreateTaskFromTaskData(cleanedInput, userInput, dateTime);
 
-            CreateTaskFromTaskData(cleanedInput, userInput, dateTime);
-
-            if (dateTime == null)
-            {
-                dateTimeToDisplay = "None";
-            }
-            else
-            {
-                dateTimeToDisplay = dateTime.ToString();
-            }
-            //Debug.WriteLine("... " + userInput + " returns: \n" + cleanedInput + "\n" + dateTime);
-            string output = ($"TASK: {cleanedInput} \nNOTES: {userInput} \nDUE DATE: {dateTimeToDisplay}");
+            //if (dateTime == null)
+            //{
+            //    dateTimeToDisplay = "None";
+            //}
+            //else
+            //{
+            //    dateTimeToDisplay = dateTime.ToString();
+            //}
+            ////Debug.WriteLine("... " + userInput + " returns: \n" + cleanedInput + "\n" + dateTime);
+            //string output = ($"TASK: {cleanedInput} \nNOTES: {userInput} \nDUE DATE: {dateTimeToDisplay}");
 
 
-            return output;
+            //return output;
         }
 
         /// <summary>

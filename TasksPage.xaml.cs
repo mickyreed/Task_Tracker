@@ -8,6 +8,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -169,9 +170,55 @@ namespace TaskList
             InputTextBox.PlaceholderText = "Add Task (to " + selectedFolderName + ")";
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// Button CLick Event for recieving input from user and converting it to a Task
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// 
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(InputTextBox.Text))
+            {
+                ErrorMessage();
+            }
+
+            else
+            {
+                string userInput = InputTextBox.Text.Trim(); // Get the text from the text box
+                ResultTextBlock.Text = string.Empty;
+
+                if (userInput != null || userInput != "Enter a value")
+                {
+                    var result = await TaskCreator.CheckUserInput(userInput);
+                    Debug.WriteLine($"String 1: {result.Item1}");
+                    Debug.WriteLine($"String 2: {result.Item2}");
+                    Debug.WriteLine($"DateTime: {result.Item3}");
+                    /* !!! TODO: 
+                    OPEN a dialogue box
+                    // so you can select what type of task and check details etc
+                    */
+
+                    //ResultTextBlock.Text = output; //this to be removed in final version
+                    InputTextBox.Text = string.Empty; // if we nav to Task page this may be redundant
+                }
+            }
+        }
+
+        private void OpenPopupCreateTask(Task task)
         {
 
+        }
+
+        /// <summary>
+        /// Error Message Function for invalid input
+        /// </summary>
+        public async void ErrorMessage()
+        {
+            var dialog = new MessageDialog("Error: You must enter a Task");
+            await dialog.ShowAsync();
+            InputTextBox.Text = string.Empty;
+            ResultTextBlock.Text = string.Empty;
         }
 
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
