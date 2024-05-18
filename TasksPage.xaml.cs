@@ -35,12 +35,15 @@ namespace TaskList
         public string SelectedFolderName { get; set; }
         private Folder currentFolder;
 
+
+
         public TasksPage()
         {
             this.InitializeComponent();
+            FoldersListView.ItemsSource = Folder.AllFoldersList;
             //this.NavigationCacheMode = NavigationCacheMode.Disabled;
-            LoadData();
-            RefreshFolderList();
+            
+            _ = LoadData();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -125,16 +128,27 @@ namespace TaskList
             //FoldersListView.ItemsSource = FoldersList;
             FoldersListView.ItemsSource = FoldersList;
 
+            //FoldersListView.ItemsSource = Folder.AllFoldersList;
+
+
             //Debug.WriteLine("");
             await Task.Delay(100);
         }
 
-        private void RefreshFolderList()
+        private async void RefreshFolderList()
         {
-            // Clear existing list
-            //FoldersListView.ItemsSource = null;
-            // Repopulate list with latest data
-            FoldersListView.ItemsSource = FoldersList;
+            FoldersList.Clear(); // clear the existing folder UI list
+                                 //FoldersListView.ItemsSource = null;
+                                 // Repopulate list with latest data
+
+            foreach (var folder in Folder.AllFoldersList)
+            {
+                Debug.WriteLine(folder.Name);
+                FoldersList.Add(folder);
+                Debug.WriteLine($"***!!!***     {folder.Name}       ***!!!***");
+            }
+
+            //FoldersListView.ItemsSource = FoldersList;
         }
 
         private void FoldersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

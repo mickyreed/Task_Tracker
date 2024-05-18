@@ -135,6 +135,7 @@
     <Compile Include="Models\TaskDataManager.cs" />
     <Compile Include="Models\Tasks.cs" />
     <Compile Include="TaskCountToStringConverter.cs" />
+    <Compile Include="TaskCreator.cs" />
     <Compile Include="TasksPage.xaml.cs">
       <DependentUpon>TasksPage.xaml</DependentUpon>
     </Compile>

@@ -192,9 +192,20 @@
             and a main section with an input box which takes a task List input by user
             </summary>
         </member>
+        <member name="M:TaskList.MainPage.UpdateUIWithReturnedFolder(TaskList.Folder)">
+            <summary>
+            A function which updates the UI based on the returned folder which is selecte in the listview
+            </summary>
+            <param name="folder"></param>
+        </member>
         <member name="M:TaskList.MainPage.LoadData">
             <summary>
             Method to call the Loading of  Task and Folder Data from storage
+            </summary>
+        </member>
+        <member name="M:TaskList.MainPage.RefreshFolderList">
+            <summary>
+            A function that refreshes the FodlerListView in th UI
             </summary>
         </member>
         <member name="M:TaskList.MainPage.SaveData">
@@ -433,17 +444,17 @@
             <param name="sender"></param>
             <param name="e"></param>
         </member>
-        <member name="M:TaskList.MainPage.DeleteFolderYes_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
-            <summary>
-            Function that deletes a folder if the user presses the Confrim button
-            </summary>
-            <param name="sender"></param>
-            <param name="e"></param>
-        </member>
         <member name="M:TaskList.MainPage.AddFolderButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
             <summary>
             An event handler that takes in a button press and adds a folder based on input name from the user
             then closes the dialogue box
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.MainPage.DeleteFolderYes_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            Function that deletes a folder if the user presses the Confrim button
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
@@ -612,6 +623,99 @@
             <param name="language"></param>
             <returns></returns>
             <exception cref="T:System.NotImplementedException"></exception>
+        </member>
+        <member name="M:TaskList.TaskCreator.CreateTaskDataFromInput(System.String)">
+            <summary>
+            Method to parse the input, and clean it checking for dates, ordinals and specific words or chars
+            Using Microsoft.Recognizers Nuget packages, and regex.
+            References:
+            https://github.com/microsoft/Recognizers-Text/tree/master/.NET/Samples
+            https://starbeamrainbowlabs.com/blog/article.php?article=posts%2F325-AI-Microsoft-Text-Recognizers.html
+            https://stackoverflow.com/questions/52593835/parsing-timex-expressions-in-net-core
+            </summary>
+            <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskCreator.CheckAndAdjustForYear(System.DateTime,System.DateTime)">
+            <summary>
+            This function adjusts the Task datetime, to make sure it is not in a previous year,
+            It will add the difference in years to make it this year
+            and then recheck and make sure the adjusted date is not earlier in the year, 
+            if it is it and the date is greater than 7 days earlier,
+            It will add a year to make it next years event
+            </summary>
+            <param name="moment"></param>
+            <param name="currentDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskCreator.CheckAndAdjustForFortnight(System.String,System.DateTime,System.DateTime)">
+            <summary>
+            This function adjusts a Task date for if a user inputs "fortnight"
+            NOTE: "fortnight at 6pm" will not work, it needs to reference a day
+            such as tomorrow fortnight at 6 or similar
+            </summary>
+            <param name="input"></param>
+            <param name="moment"></param>
+            <param name="currentDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskCreator.CheckAndAdjustMoment(System.String,System.DateTime,System.DateTime)">
+            <summary>
+            Function to check the DateTime moment and adjust it in reference to our current date
+            this function makes calls to other functions to adjust for Year, Fortnight, and events
+            </summary>
+            <param name="input"></param>
+            <param name="moment"></param>
+            <param name="currentDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskCreator.AdjustMomentForEvent(System.String,System.DateTime)">
+            <summary>
+            Function to adjust the dateTime and Time based on the Event input
+            ie breakfast, Lunch, DInner, Afternoon, Evening etc
+            </summary>
+            <param name="input"></param>
+            <param name="moment"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskCreator.CheckAndUpdateTime(System.DateTime)">
+            <summary>
+            A function to update any default time values by adding 12 hours to adjust for AM/PM
+            and then rechecking if it is still prior to the current time, and if it is add 1 day
+            to effectively make it tomorrows event
+            </summary>
+            <param name="moment"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskCreator.GetDescription(System.String)">
+            <summary>
+            This Method splits the input string into tokens using regex
+            removes any stop words (common words like "a", "the", "with", etc. as required) 
+            Then joins the remaining tokens back into a string.
+            https://www.geeksforgeeks.org/write-regular-expressions/#google_vignette
+            https://www.tutorialspoint.com/Initializing-HashSet-in-Chash
+            https://www.geeksforgeeks.org/hashset-in-c-sharp-with-examples/
+            https://learn.microsoft.com/en-us/dotnet/api/system.text.regularexpressions.regex.split?view=net-8.0
+            https://www.dotnetperls.com/regex-split
+            https://thedeveloperblog.com/c-sharp/regex-split
+            </summary>
+            <param name="cleanedInput"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskCreator.CheckUserInput(System.String)">
+            <summary>
+            Function to get a string tuple of the cleaned description,
+            and the date as a string and display it in the UI
+            </summary>
+            <param name="userInput"></param>
+        </member>
+        <member name="M:TaskList.TaskCreator.CreateTaskFromTaskData(System.String,System.String,System.Nullable{System.DateTime})">
+            <summary>
+            A function which will take the adjusted DateTime and input Data and create a Task Object
+            </summary>
+            <param name="description"></param>
+            <param name="notes"></param>
+            <param name="dateDue"></param>
         </member>
         <member name="T:TaskList.TasksPage">
             <summary>

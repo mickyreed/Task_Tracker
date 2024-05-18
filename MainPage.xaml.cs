@@ -57,18 +57,20 @@ namespace TaskList
         public MainPage()
         {
             this.InitializeComponent();
-            if (!dataLoaded)
             {
-                LoadData();
-                
                 //If there is no existing folders or data then load default values
                 if (Folder.AllFoldersList.Count == 0 && Tasks.AllTasksList.Count == 0)
                 {
-                    DefaultDataInitialiser.LoadDefaultData();
+                    LoadData();
+                    //check if data loaded ok (ie if there was existing data saved)
+                    if (Folder.AllFoldersList.Count == 0 && Tasks.AllTasksList.Count == 0)
+                    {
+                        // Load default data
+                        DefaultDataInitialiser.LoadDefaultData();
+                    }
                 }
-
             }
-            
+            FoldersListView.ItemsSource = Folder.AllFoldersList;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -82,10 +84,13 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// A function which updates the UI based on the returned folder which is selecte in the listview
+        /// </summary>
+        /// <param name="folder"></param>
         private void UpdateUIWithReturnedFolder(Folder folder)
         {
-            // Update the UI based on the returned folder
-            // For example, select the folder in the ListView
+
             FoldersListView.SelectedItem = folder;
             SelectedFolderName = folder.Name;
             // Update the TextBox text with the selected folder name
@@ -110,28 +115,37 @@ namespace TaskList
 
         }
 
+        /// <summary>
+        /// A function that refreshes the FodlerListView in th UI
+        /// </summary>
         private async void RefreshFolderList()
         {
-            FoldersList.Clear(); // clear the existing folder UI list
+            //Debug.WriteLine("Refreshing folder list...");
+            FoldersList.Clear(); // clear the existing folder UI list if any
 
             foreach (var folder in Folder.AllFoldersList)
             {
-                //Debug.WriteLine(folder.Name);
-                FoldersList.Add(folder);
-                Debug.WriteLine(folder.Name);
-                //Debug.WriteLine($"***!!!***     {folder.Name}       ***!!!***");
+                if (!FoldersList.Contains(folder))
+                {
+                    FoldersList.Add(folder);
+                    //Debug.WriteLine(folder.Name);
+                }
+                
             }
             FoldersListView.ItemsSource = FoldersList;
-            //FoldersListView.ItemsSource = Folder.AllFoldersList;
-            // Call this method after data loading is completed
 
+            //Debug.WriteLine("Folder list refreshed.");
+            //foreach (var folder in FoldersList)
+            //{
+            //    Debug.WriteLine($"Folder: {folder.Name}");
+            //}
             await Task.Delay(100);
         }
 
         /// <summary>
         /// Function to save data from Tasks and Files to file in Binary format
         /// </summary>
-        private async void SaveData()
+        private async Task SaveData()
         {
             await TaskDataManager.SaveDataAsync();
             await FolderDataManager.SaveDataAsync();
@@ -143,10 +157,9 @@ namespace TaskList
         /// <returns></returns>
         private async Task UpdateData()
         {
-            SaveData();
-            UpdateTaskIndexes();
-            //await DisplayAllFolders();
-            //await Task.Delay(300);
+            await SaveData();
+            //UpdateTaskIndexes();
+            RefreshFolderList();
         }
 
         /// <summary>
@@ -343,7 +356,10 @@ namespace TaskList
             Debug.WriteLine($"*************************************************");
         }
 
+        /* !!! THIS NOW MOVED TO TASKCREATOR CLASS !!! CAN BE REMOVED AFTER TESTING
+         * TODO: NOTE at 3:52 i put in a task requesting and 11am meeting tomorrow, and it made it a PM time */
         #region Create Tasks from Input
+        /* 
         /// <summary>
         /// Method to parse the input, and clean it checking for dates, ordinals and specific words or chars
         /// Using Microsoft.Recognizers Nuget packages, and regex.
@@ -867,7 +883,11 @@ namespace TaskList
             Debug.WriteLine($"*************************************************");
 
         }
+        */
         #endregion
+
+
+
 
         /// <summary>
         /// Button CLick Event for recieving input from user and converting it to a Task
@@ -889,10 +909,18 @@ namespace TaskList
 
                 if (userInput != null || userInput != "Enter a value")
                 {
-                    string output = await CheckUserInput(userInput);
+                    string output = await TaskCreator.CheckUserInput(userInput); 
+                    
+                    /* !!! TODO: perhaps i have this in TaskPage so it passes the string thru and opens up task page
+                    //and calls the TASK creator from there
+                    // then Task Creator passes back task and opens a dialogue box
+                    // so you can select wht type of task and check details etc
+                    */
 
-                    ResultTextBlock.Text = output;
-                    InputTextBox.Text = string.Empty;
+
+
+                    ResultTextBlock.Text = output; //this to be removed in final version
+                    InputTextBox.Text = string.Empty; // if we nav to Task page this may be redundant
                 }
             }
         }
@@ -907,6 +935,9 @@ namespace TaskList
             InputTextBox.Text = string.Empty;
             ResultTextBlock.Text = string.Empty;
         }
+
+
+
 
         /// <summary>
         /// Event Handler to check for text changes in the Text Box and block any math symbols
@@ -931,6 +962,8 @@ namespace TaskList
             }
         }
 
+
+
         /// <summary>
         /// An event handler that checks if the hamburger icon is clicked to open the aside menu
         /// </summary>
@@ -940,20 +973,6 @@ namespace TaskList
         {
             MainSplitView.IsPaneOpen = !MainSplitView.IsPaneOpen;
         }
-
-
-
-        private void FoldersListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            // Retrieve the clicked folder
-            SelectedFolderName = e.ClickedItem as string;
-
-            // Update the TextBox text with the selected folder name
-            UpdateFolderNameTextBox();
-
-        }
-
-
 
         /// <summary>
         /// A function that Updates the TextBox text with the selected folder name
@@ -965,7 +984,7 @@ namespace TaskList
         }
 
         /// <summary>
-        /// A funcytion that Finds the Folder instance with the matching name
+        /// A function that Finds the Folder instance with the matching name
         /// </summary>
         /// <param name="folderName"></param>
         /// <returns></returns>
@@ -1041,20 +1060,6 @@ namespace TaskList
             }
         }
 
-
-        private void CreateTaskButton_PointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-        }
-        private void CreateTaskButton_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-        }
-        private void MainSplitView_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-            MainSplitView.IsPaneOpen = false;
-        }
-        
-
-
         /// <summary>
         /// An event handler that checks for a double click and opens up the TaskPage
         /// </summary>
@@ -1070,6 +1075,20 @@ namespace TaskList
             }
         }
 
+
+        private void CreateTaskButton_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+        }
+        private void CreateTaskButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+        }
+        private void MainSplitView_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            MainSplitView.IsPaneOpen = false;
+        }
+        
+
+
         /// <summary>
         /// Function that opens the Add Folder Pop Up window
         /// </summary>
@@ -1079,6 +1098,34 @@ namespace TaskList
         {
             AddFolderPopup.IsOpen = true;
         }
+
+        /// <summary>
+        /// An event handler that takes in a button press and adds a folder based on input name from the user
+        /// then closes the dialogue box
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void AddFolderButton_Click(object sender, RoutedEventArgs e)
+        {
+            string folderName = FolderNameTextBox.Text;
+            if (!string.IsNullOrEmpty(folderName))
+            {
+                var folderAdded = new Folder(folderName);
+                Folder.AddFolder(folderAdded);
+                //FoldersList.Add(folderAdded);
+                //await UpdateData();
+
+                //Add Folder to SQL Database
+                _ = FolderDataManagerSQL.AddFolderAsync(folderAdded);
+                //await SaveData();
+                await UpdateData();
+                //RefreshFolderList();
+
+                // Close Popup after adding folder
+                AddFolderPopup.IsOpen = false;
+            }
+        }
+
 
         /// <summary>
         /// Function that deletes a folder if the user presses the Confrim button
@@ -1094,43 +1141,20 @@ namespace TaskList
             //var folderToDelete = (Folder)((Button)sender).Tag;
             //Folder.RemoveFolder(folderToDelete);
             Folder.RemoveFolder(currentFolder);
-            FoldersList.Remove(currentFolder);
+            //FoldersList.Remove(currentFolder);
+            //RefreshFolderList();
 
             //Delete Folder from SQL Database
             _ = FolderDataManagerSQL.DeleteFolderByIdAsync(currentFolder.id);
             await UpdateData();
+            //RefreshFolderList();
 
             // Close Popup after deletion
             DeleteFolderPopup.IsOpen = false;
 
         }
 
-        /// <summary>
-        /// An event handler that takes in a button press and adds a folder based on input name from the user
-        /// then closes the dialogue box
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void AddFolderButton_Click(object sender, RoutedEventArgs e)
-        {
-            string folderName = FolderNameTextBox.Text;
-            if (!string.IsNullOrEmpty(folderName))
-            {
-                var folderAdded = new Folder(folderName);
-                //Folder.AddFolder(folderAdded);
-                FoldersList.Add(folderAdded);
-                await UpdateData();
-
-                //Add Folder to SQL Database
-                //_ = FolderDataManagerSQL.AddFolderAsync(folderAdded);
-                //SaveData();
-                //await UpdateData();
-
-                // Close Popup after adding folder
-                AddFolderPopup.IsOpen = false;
-            }
-        }
-
+       
         /// <summary>
         /// An event handler that takes in a button press and opens apopup window
         /// </summary>
@@ -1179,8 +1203,7 @@ namespace TaskList
 TODO:
 Each task should have:
     TODO a checkbox to mark whether the task is completed
-    DONE a small pencil icon which is visible only if the task has notes attached.
-
+    
     Overdue tasks should be listed first and marked somehow. 
     Beneath them should be the tasks due today. 
     After that, list the remaining tasks. 
