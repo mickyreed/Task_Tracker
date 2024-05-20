@@ -22,13 +22,26 @@
     <Grid Padding="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Vertical" Spacing="10">
+        <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Orientation="Horizontal" Spacing="10">
             <TextBlock Text="Task Type"/>
             <ComboBox ItemsSource="{x:Bind TaskTypes}"
-                      SelectedItem="{x:Bind ViewModel.TaskType, Mode=TwoWay}"/>
+                      SelectedItem="{x:Bind ViewModel.TaskType, Mode=TwoWay}" Width="150"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" 
+            Visibility="{x:Bind ViewModel.TaskType, Converter={StaticResource VisibilityConverter}}">
+            <TextBlock Text="Frequency"/>
+            <ComboBox Margin="5,0" Width="100" ItemsSource="{x:Bind Frequencies}"
+              SelectedItem="{x:Bind ViewModel.Frequency, Mode=TwoWay, Converter={StaticResource FrequencyConverter}}"/>
         </StackPanel>
 
         <Grid Grid.Row="1">
@@ -41,6 +54,7 @@
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="69"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
@@ -49,19 +63,14 @@
             <TextBox Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.Description, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Notes"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.Notes, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="100"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.Notes, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="50"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Due Date"/>
-            <DatePicker Grid.Row="2" Grid.Column="1" Date="{x:Bind ViewModel.DateDue, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}"/>
+            <DatePicker Grid.Row="2" Grid.Column="1" Date="{x:Bind ViewModel.NonNullableDateDue, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}" 
+                        MinYear="{x:Bind ViewModel.MinAllowedDate}"/>
 
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Due Time"/>
-            <!--TimePicker Grid.Row="3" Grid.Column="1" Time="{x:Bind ViewModel.DueTime, Mode=TwoWay}"/-->
-
-            <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" Visibility="{x:Bind ViewModel.TaskType, Converter={StaticResource VisibilityConverter}}">
-                <TextBlock Text="Frequency"/>
-                <ComboBox ItemsSource="{x:Bind Frequencies}" 
-                          SelectedItem="{x:Bind ViewModel.Frequency, Mode=TwoWay, Converter={StaticResource FrequencyConverter}}"/>
-            </StackPanel>
+            <TimePicker Grid.Row="3" Grid.Column="1" Time="{x:Bind ViewModel.NonNullableTimeDue, Mode=TwoWay}"/>
         </Grid>
     </Grid>
     

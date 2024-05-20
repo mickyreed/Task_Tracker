@@ -30,12 +30,31 @@ namespace TaskList
         {
             this.InitializeComponent();
             ViewModel = viewModel;
+            DataContext = ViewModel;
+            DateTime MinDate = DateTime.Today;
         }
 
         private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Logic to create the task using ViewModel properties
-            Debug.WriteLine("Created Task will happen here...");
+            // Validate time to ensure it is not in the past
+            DateTime selectedDateTime = ViewModel.NonNullableDateDue.Add(ViewModel.NonNullableTimeDue);
+            if (selectedDateTime < DateTime.Now)
+            {
+                args.Cancel = true;
+                // Show a message to the user
+                var dialog = new ContentDialog
+                {
+                    Title = "Invalid Time",
+                    Content = "The selected time cannot be in the past.",
+                    CloseButtonText = "Ok"
+                };
+                _ = dialog.ShowAsync();
+            }
+            else
+            {
+                // Logic to create the task using ViewModel properties
+                Debug.WriteLine("Created Task will happen here...");
+            }
         }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

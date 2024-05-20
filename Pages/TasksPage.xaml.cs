@@ -1,13 +1,17 @@
-﻿using System;
+﻿using Microsoft.Recognizers.Text.Matcher;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Audio;
+using Windows.UI.Notifications;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -36,6 +40,8 @@ namespace TaskList
         public string SelectedFolderName { get; set; }
         public string taskInput {  get; set; }
         private Folder currentFolder;
+        //public var result = (string description, string notes, DateTime? dateTime);
+        
 
 
 
@@ -60,12 +66,13 @@ namespace TaskList
             {
                 currentFolder = navParams.Item1;
                 taskInput = navParams.Item2;
-                OpenPopupCreateTask(taskInput);
+                CheckUserInput(taskInput);
             }
-            else if(e.Parameter is string userInput)
+            else if (e.Parameter is string userInput)
             {
                 taskInput = userInput;
-                OpenPopupCreateTask(taskInput);
+                //var result = TaskCreator.CheckUserInput(taskInput); TODO
+
             }
             else if (e.Parameter is Folder selectedFolder)
             {
@@ -192,48 +199,108 @@ namespace TaskList
 
                 if (userInput != null || userInput != "Enter a value")
                 {
-                    var result = await TaskCreator.CheckUserInput(userInput);
-                    Debug.WriteLine($"String 1: {result.Item1}");
-                    Debug.WriteLine($"String 2: {result.Item2}");
-                    Debug.WriteLine($"DateTime: {result.Item3}");
-                    /* !!! TODO: 
-                    OPEN a dialogue box
-                    // so you can select what type of task and check details etc
-                    */
-                    OpenPopupCreateTask("");
-                    //ResultTextBlock.Text = output; //this to be removed in final version
-                    InputTextBox.Text = string.Empty; // if we nav to Task page this may be redundant
+                    CheckUserInput(userInput);
+                    //await OpenPopupCreateTask(taskParams);
                 }
+                //ResultTextBlock.Text = output; //this to be removed in final version
+                InputTextBox.Text = string.Empty; // if we nav to Task page this may be redundant
             }
         }
 
-        private async void OpenPopupCreateTask(string task)
+        public async void CheckUserInput(string userInput)
+        {
+            //var result = new Tuple<DateTime?, string, string>(result.Item3, result.Item1, result.Item2);
+            //var result = new Tuple<string, string, DateTime?>( result.Item2, result.Item3);
+            var result = await TaskCreator.CheckUserInput(userInput);
+            Debug.WriteLine($"String 1: {result}");
+            Debug.WriteLine($"String 2: {result.Item2}");
+            Debug.WriteLine($"DateTime: {result.Item3}");
+
+
+            /* !!! TODO: 
+            OPEN a dialogue box
+            
+            // so you can select what type of task and check details etc
+            */
+            await OpenPopupCreateTask(result.Item3, result.Item1, result.Item2);
+        }
+
+        //private void OpenPopupCreateTask(Tuple<DateTime?, string, string> taskParams)
+
+
+        private async Task OpenPopupCreateTask(DateTime? dateTime, string description, string notes)
         {
             string dateTimeToDisplay;
-            await TaskCreator.CheckUserInput(task);
+            //await result = TaskCreator.CheckUserInput(task);
+            Debug.WriteLine("TRYING TO OPEN POPUP");
             
-            var viewModel = new TaskViewModel
+
+            //var taskAdded = new Tasks
+            //{
+            //    description = description,
+            //    notes = notes,
+            //    dateDue = dateTime,
+            //    isCompleted = false
+            //};
+
+            // Create an instance of TaskViewModel (populate with data as needed)
+            TaskViewModel viewModel = new TaskViewModel()
             {
-                Description = "Default Description",
-                Notes = "Default Notes",
-                DateDue = DateTime.Now.Date,
-                DueTime = new TimeSpan(23, 59, 0),
-                TaskType = TaskType.Task
+                Description = description,
+                Notes = notes,
+                DateDue = dateTime ?? DateTime.Now.Date,
+                TimeDue = dateTime?.TimeOfDay ?? TimeSpan.Zero // Default to 12:00 AM if time is null
             };
 
-            var dialog = new CreateTaskDialog(viewModel);
-            var result = await dialog.ShowAsync();
+            // Create an instance of CreateTaskDialog and pass the ViewModel
+            CreateTaskDialog createTaskDialog = new CreateTaskDialog(viewModel);
 
+            // Show the dialog and await the result
+            ContentDialogResult result = await createTaskDialog.ShowAsync();
+
+            // Handle the result
             if (result == ContentDialogResult.Primary)
             {
-                // Task creation logic
+                // User pressed "Yes"
+                // Add logic for creating a task
             }
             else
             {
-                // Task creation cancelled
+                // User pressed "No" or closed the dialog
+                // Add logic for canceling or closing
             }
+            //var taskAdded = new Tasks
+            //{
+            //    description = result.;
 
-            //CreateTaskFromTaskData(cleanedInput, userInput, dateTime);
+
+            //}
+            //taskAdded.description = description;
+            //taskAdded.notes = notes;
+            //taskAdded.dateDue = convertedDateTime;
+            //taskAdded.isCompleted = false;
+            //Tasks.AddTask(taskAdded);
+
+            // Create and show the dialog
+            //var dialog = new CreateTaskDialog(viewModel);
+            //var result = await dialog.ShowAsync();
+
+            //if (result == ContentDialogResult.Primary)
+            //{
+            //    // Create a new Task based on the ViewModel properties
+            //    var newTask = new Tasks
+            //    {
+            //        description = viewModel.Description,
+            //        notes = viewModel.Notes,
+            //        dateDue = viewModel.DateDue?.Add(viewModel.DueTime),
+            //        // Set other properties if needed
+            //    };
+
+            //    // Add the new task to your task list
+            //    Tasks.AddTask(newTask);
+            //}
+
+
         }
 
         /// <summary>

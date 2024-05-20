@@ -1,10 +1,16 @@
-﻿using System;
+﻿using Microsoft.Recognizers.Text.Matcher;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Core;
+using static TaskList.Tasks;
+using static TaskList.RepeatTask;
+using static TaskList.Habit;
+
 
 namespace TaskList
 {
@@ -14,55 +20,152 @@ namespace TaskList
         private string _description;
         private string _notes;
         private DateTime? _dateDue;
-        private TimeSpan _dueTime;
+        private TimeSpan? _timeDue;
+        private DateTime _minDate;
+        
         private TaskType _taskType;
         private Frequency? _frequency;
+
+        //Set the allowed minimum DateTime in relation to todays date
+        //public DateTime MinDate => DateTime.Now.Date;
+        public DateTime MinAllowedDate => new DateTime(DateTime.Now.Year, MinMonth, MinDay);
+        public DateTime MinAllowedTime => new DateTime(DateTime.Now.Year, MinHour, MinMinute);
+        public int MinMonth => DateTime.Now.Month;
+        public int MinDay => DateTime.Now.Day;
+        public int MinHour => DateTime.Now.Hour;
+        public int MinMinute => DateTime.Now.Minute;
 
         public string Description
         {
             get => _description;
-            set { _description = value; OnPropertyChanged(); }
+            set
+            {
+                if (_description != value)
+                {
+                    _description = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public string Notes
         {
             get => _notes;
-            set { _notes = value; OnPropertyChanged(); }
+            set
+            {
+                if (_notes != value)
+                {
+                    _notes = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public DateTime? DateDue
         {
-            get => _dateDue ?? DateTime.Now.Date;
-            set { _dateDue = value; OnPropertyChanged(); }
+            get => _dateDue;
+            set
+            {
+                if (_dateDue != value)
+                {
+                    _dateDue = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(NonNullableDateDue));
+                }
+            }
         }
 
-        public TimeSpan DueTime
+        public DateTime NonNullableDateDue
         {
-            get => _dueTime == default ? new TimeSpan(23, 59, 0) : _dueTime;
-            set { _dueTime = value; OnPropertyChanged(); }
+            get => _dateDue ?? DateTime.Now.Date;
+            set
+            {
+                if (_dateDue != value)
+                {
+                    _dateDue = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(DateDue));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Datetime reference to make sure we cant pick a date in the past
+        /// </summary>
+        //public DateTime MinDate => DateTime.Now.Date;
+
+        public TimeSpan? TimeDue
+        {
+            get => _timeDue;
+            set
+            {
+                if (_timeDue != value)
+                {
+                    _timeDue = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(NonNullableTimeDue));
+                }
+            }
+        }
+
+        public TimeSpan NonNullableTimeDue
+        {
+            get => _timeDue ?? TimeSpan.Zero;
+            set
+            {
+                if (_timeDue != value)
+                {
+                    _timeDue = value;
+                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(TimeDue));
+                }
+            }
+        }
+
+        public DateTime MinDate
+        {
+            get { return _minDate; }
+            set
+            {
+                if (_minDate != value)
+                {
+                    _minDate = value;
+                    OnPropertyChanged(); // Implement INotifyPropertyChanged interface
+                }
+            }
         }
 
         public TaskType TaskType
         {
             get => _taskType;
-            set { _taskType = value; OnPropertyChanged(); }
+            set
+            {
+                if (_taskType != value)
+                {
+                    _taskType = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public Frequency? Frequency
         {
             get => _frequency;
-            set { _frequency = value; OnPropertyChanged(); }
+            set
+            {
+                if (_frequency != value)
+                {
+                    _frequency = value;
+                    OnPropertyChanged();
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-                
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));       
         }
     }
 

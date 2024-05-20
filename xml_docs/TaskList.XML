@@ -678,6 +678,11 @@
             GetBindingConnector(int connectionId, object target)
             </summary>
         </member>
+        <member name="P:TaskList.TaskViewModel.TimeDue">
+            <summary>
+            Datetime reference to make sure we cant pick a date in the past
+            </summary>
+        </member>
         <member name="T:TaskList.Program">
             <summary>
             Program class

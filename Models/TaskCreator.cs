@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace TaskList
 {
@@ -88,7 +89,6 @@ namespace TaskList
                     DateTime checkedMoment = AdjustMomentForEvent(input, moment);
 
                     moment = checkedMoment;
-
                     return (cleanedInput, moment);
                 }
                 catch (FormatException)
@@ -99,7 +99,7 @@ namespace TaskList
                 }
             }
 
-            await Task.Delay(100);
+            //await Task.Delay(100);
             Debug.WriteLine("reached end of function return current date");
             return (cleanedInput, currentDate);
         }
@@ -451,14 +451,14 @@ namespace TaskList
         /// <param name="userInput"></param>
 
         
-        public static async Task<(string, string, DateTime?)> CheckUserInput(string userInput)
+        public static async Task <(string, string, DateTime?)> CheckUserInput(string userInput)
         {
-            (string cleanedInput, DateTime? dateTime) = await CreateTaskDataFromInput(userInput);
+            (string cleanedInput, DateTime? dateTime)  = await CreateTaskDataFromInput(userInput);
 
             cleanedInput = cleanedInput.Trim(); //trim the input
             cleanedInput = GetDescription(cleanedInput); // call to remove any unwanted stop words from description
             //string dateTimeToDisplay;
-            cleanedInput = GetDescription(cleanedInput); // second clean for extra words (resolves extra "at"
+            //cleanedInput = GetDescription(cleanedInput); // second clean for extra words (resolves extra "at"
            
             return (cleanedInput, userInput, dateTime);
             
