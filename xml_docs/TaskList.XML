@@ -58,6 +58,22 @@
             GetXmlnsDefinitions()
             </summary>
         </member>
+        <member name="T:TaskList.CompletedTaskColorConverter">
+            <summary>
+            A Helper class that changes the colour of the font based on the completed status of a Task
+            </summary>
+        </member>
+        <member name="T:TaskList.CompletedTaskTextDecorationConverter">
+            <summary>
+            A helper class that changes the text to be normal or strikethru depending on the completed state of a task
+            </summary>
+        </member>
+        <member name="T:TaskList.FrequencyConverter">
+            <summary>
+            A Helper class that converts the Frequqncy enum as we are binding it to the UI control
+            and need the enum values to display properly
+            </summary>
+        </member>
         <member name="M:TaskList.CreateTaskDialog.InitializeComponent">
             <summary>
             InitializeComponent()
@@ -71,6 +87,13 @@
         <member name="M:TaskList.CreateTaskDialog.GetBindingConnector(System.Int32,System.Object)">
             <summary>
             GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:TaskList.DateTimeToDateTimeOffsetConverter">
+            <summary>
+            A Helper class that Converts the DatTime to a DateTime with an offset for use with CalenderDatePicker
+            this is because we are databinding to the ViewModel of the Task and CalenderDatePicker expects DateTImeOffset
+            So we need to convert between the two
             </summary>
         </member>
         <member name="T:TaskList.Folder">
@@ -457,7 +480,7 @@
         </member>
         <!-- Badly formed XML comment ignored for member "T:TaskList.RepeatTask" -->
         <!-- Badly formed XML comment ignored for member "T:TaskList.Tasks" -->
-        <member name="F:TaskList.Tasks.AllTasksList">
+        <member name="P:TaskList.Tasks.AllTasksList">
             <summary>
             Static list to hold all of the tasks
             </summary>
@@ -523,7 +546,10 @@
             <returns></returns>
         </member>
         <member name="T:TaskList.TaskCountToStringConverter">
-            
+            <summary>
+            A Helper Class to convert the number of Tasks in a give folder to a string 
+            SO we can display in the ListView
+            </summary>
         </member>
         <member name="M:TaskList.TaskCountToStringConverter.Convert(System.Object,System.Type,System.Object,System.String)">
             <summary>
@@ -650,6 +676,17 @@
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:TaskList.TasksPage.OnNavigatedTo(Windows.UI.Xaml.Navigation.NavigationEventArgs)" -->
+        <member name="M:TaskList.TasksPage.SaveData">
+            <summary>
+            Function to save data from Tasks and Files to file in Binary format
+            </summary>
+        </member>
+        <member name="M:TaskList.TasksPage.UpdateData">
+            <summary>
+            this function will update the data after each change and save to the file
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:TaskList.TasksPage.Button_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
             <summary>
             Button CLick Event for recieving input from user and converting it to a Task
@@ -678,9 +715,20 @@
             GetBindingConnector(int connectionId, object target)
             </summary>
         </member>
+        <member name="T:TaskList.TaskViewModel">
+            <summary>
+            The View Model used to display and bind the Tasks in the TaskLIstView 
+            USing INotfiyPropertyChanged to update the ListView when a Task is modified
+            </summary>
+        </member>
         <member name="P:TaskList.TaskViewModel.TimeDue">
             <summary>
             Datetime reference to make sure we cant pick a date in the past
+            </summary>
+        </member>
+        <member name="T:TaskList.VisibilityConverter">
+            <summary>
+            A Helper class that hides/unhides xaml components based on actions fo the user
             </summary>
         </member>
         <member name="T:TaskList.Program">

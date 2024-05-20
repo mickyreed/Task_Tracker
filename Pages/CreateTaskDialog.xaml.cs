@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -59,7 +60,6 @@ namespace TaskList
             if (selectedDateTime < DateTime.Now)
             {
                 // Store the state of the original dialog
-                // Store the state of the original dialog
                 var dialogState = new DialogState
                 {
                     Description = ViewModel.Description,
@@ -100,6 +100,75 @@ namespace TaskList
             {
                 // Logic to create the task using ViewModel properties
                 Debug.WriteLine("Created Task will happen here...");
+                // User pressed "Yes"
+                // Create a new Task based on the ViewModel properties
+
+                var folder = Folder.AllFoldersList.FirstOrDefault(f => f.id == TasksPage.currentFolder.id);
+                if (folder != null)
+                {
+                    switch (ViewModel.TaskType)
+                    {
+                        case TaskType.Task:
+                            Debug.WriteLine("Task");
+                            var Task = new Tasks
+                            {
+                                description = ViewModel.Description,
+                                notes = ViewModel.Notes,
+                                dateDue = ViewModel.DateDue,
+                            };
+
+                            //Add the new task to the AllTaskList
+                            Tasks.AddTask(Task);
+                            TasksPage.currentFolder.AddTask(Task.id);
+                            _ = TaskDataManagerSQL.AddTaskAsync(Task);
+                            await TaskDataManager.SaveDataAsync();
+                            Debug.WriteLine($"saving Task: {Task.description}");
+                            break;
+
+                        case TaskType.RepeatingTask:
+                            Debug.WriteLine("RepeatingTask");
+                            var repeatTask = new RepeatTask
+                            {
+                                description = ViewModel.Description,
+                                notes = ViewModel.Notes,
+                                dateDue = ViewModel.DateDue,
+                                frequency = (RepeatTask.Frequency)ViewModel.Frequency
+                            };
+                            Tasks.AddTask(repeatTask);
+                            TasksPage.currentFolder.AddTask(repeatTask.id);
+                            _ = TaskDataManagerSQL.AddTaskAsync(repeatTask);
+                            await TaskDataManager.SaveDataAsync();
+                            TasksPage.TasksList.Clear();
+                            foreach (var task in Tasks.AllTasksList)
+                            {
+                                TasksPage.TasksList.Add(task);
+                            }
+                            break;
+
+                        case TaskType.Habit:
+                            Debug.WriteLine("Habit");
+                            var habit = new Habit
+                            {
+                                description = ViewModel.Description,
+                                notes = ViewModel.Notes,
+                                dateDue = ViewModel.DateDue,
+                                frequency = (Habit.Frequency)ViewModel.Frequency,
+                                streak = ViewModel.Streak
+                            };
+                            Tasks.AddTask(habit);
+                            TasksPage.currentFolder.AddTask(habit.id);
+                            _ = TaskDataManagerSQL.AddTaskAsync(habit);
+                            await TaskDataManager.SaveDataAsync();
+                            TasksPage.TasksList.Clear();
+                            foreach (var task in Tasks.AllTasksList)
+                            {
+                                TasksPage.TasksList.Add(task);
+                            }
+
+                            break;
+                    }
+                }
+                
             }
         }
 

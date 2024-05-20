@@ -14,6 +14,10 @@ using static TaskList.Habit;
 
 namespace TaskList
 {
+    /// <summary>
+    /// The View Model used to display and bind the Tasks in the TaskLIstView 
+    /// USing INotfiyPropertyChanged to update the ListView when a Task is modified
+    /// </summary>
     public class TaskViewModel : INotifyPropertyChanged
     {
 
@@ -25,6 +29,7 @@ namespace TaskList
         
         private TaskType _taskType;
         private Frequency? _frequency;
+        private int _streak = 0;
 
         //Set the allowed minimum DateTime in relation to todays date
         //public DateTime MinDate => DateTime.Now.Date;
@@ -157,6 +162,19 @@ namespace TaskList
                 if (_frequency != value)
                 {
                     _frequency = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public int Streak
+        {
+            get => _streak;
+            set
+            {
+                if (_streak != value)
+                {
+                    _streak = value;
                     OnPropertyChanged();
                 }
             }

@@ -31,15 +31,15 @@ namespace TaskList
     public sealed partial class TasksPage : Page
     {
         // List that we can bind to for the UI
-        public static ObservableCollection<Folder> FoldersList = new ObservableCollection<Folder>();
-        //public static ObservableCollection<Folder> TasksList = new ObservableCollection<Folder>();
+        public static ObservableCollection<Folder> FoldersList { get; set; } // = new ObservableCollection<Folder>();
+        public static ObservableCollection<Tasks> TasksList { get; set; } // = new ObservableCollection<Tasks>();
 
         /// <summary>
         /// 
         /// </summary>
         public string SelectedFolderName { get; set; }
         public string taskInput {  get; set; }
-        private Folder currentFolder;
+        public static Folder currentFolder;
         //public var result = (string description, string notes, DateTime? dateTime);
         
 
@@ -50,8 +50,10 @@ namespace TaskList
         {
             this.InitializeComponent();
             FoldersListView.ItemsSource = Folder.AllFoldersList;
+            TasksListView.ItemsSource = Tasks.AllTasksList;
             //this.NavigationCacheMode = NavigationCacheMode.Disabled;
-            
+            //this.DataContext = this;
+            TasksListView.UpdateLayout();
             _ = LoadData();
         }
 
@@ -79,10 +81,11 @@ namespace TaskList
                 currentFolder = selectedFolder;
             }
 
+            //TasksListView.ItemsSource = Tasks.AllTasksList;
             RefreshTaskList(currentFolder);
         }
 
-        private void RefreshTaskList(Folder selectedFolder)
+        public void RefreshTaskList(Folder selectedFolder)
         {
             if (selectedFolder != null)
             {
@@ -97,7 +100,6 @@ namespace TaskList
 
                 // Create a collection to hold the tasks
                 ObservableCollection<Tasks> tasksCollection = new ObservableCollection<Tasks>();
-
                 // Iterate through the task IDs and retrieve the corresponding tasks
                 foreach (var taskId in taskIds)
                 {
@@ -109,18 +111,32 @@ namespace TaskList
                         // Add the task to the collection
                         tasksCollection.Add(task);
                     }
+                    else
+                    {
+                        tasksCollection.Clear();
+                        TasksListView.UpdateLayout();
+                    }
 
+                    //}
+
+                    //// Set the ItemsSource of the ListView to the tasks collection
+                    TasksListView.ItemsSource = tasksCollection;
+                    // Set the header to the folder name
+                    FolderHeaderTextBlock.Text = selectedFolder.Name;
                 }
-
-                // Set the ItemsSource of the ListView to the tasks collection
-                TasksListView.ItemsSource = tasksCollection;
-                // Set the header to the folder name
-                FolderHeaderTextBlock.Text = selectedFolder.Name ;
             }
         }
         private async Task LoadData()
         {
-            FoldersList.Clear(); // clear the existing folder UI list
+            if(FoldersList != null)
+            {
+                FoldersList.Clear(); // clear the existing folder UI list
+            }
+            else
+            {
+                FoldersList = new ObservableCollection<Folder>(); // Initialize the FoldersList if it's null
+            }
+
             // DISPLAY FOLDER INFORMATION IN CONSOLE
             //Debug.WriteLine("");
             //Debug.WriteLine("...");
@@ -145,6 +161,26 @@ namespace TaskList
             await Task.Delay(100);
         }
 
+
+        /// <summary>
+        /// Function to save data from Tasks and Files to file in Binary format
+        /// </summary>
+        private async Task SaveData()
+        {
+            await TaskDataManager.SaveDataAsync();
+            await FolderDataManager.SaveDataAsync();
+        }
+
+        /// <summary>
+        /// this function will update the data after each change and save to the file
+        /// </summary>
+        /// <returns></returns>
+        private async Task UpdateData()
+        {
+            await SaveData();
+            //UpdateTaskIndexes();
+            RefreshTaskList(currentFolder);
+        }
         private async void RefreshFolderList()
         {
             FoldersList.Clear(); // clear the existing folder UI list
@@ -216,17 +252,8 @@ namespace TaskList
             Debug.WriteLine($"String 2: {result.Item2}");
             Debug.WriteLine($"DateTime: {result.Item3}");
 
-
-            /* !!! TODO: 
-            OPEN a dialogue box
-            
-            // so you can select what type of task and check details etc
-            */
             await OpenPopupCreateTask(result.Item3, result.Item1, result.Item2);
         }
-
-        //private void OpenPopupCreateTask(Tuple<DateTime?, string, string> taskParams)
-
 
         private async Task OpenPopupCreateTask(DateTime? dateTime, string description, string notes)
         {
@@ -252,46 +279,15 @@ namespace TaskList
             // Handle the result
             if (result == ContentDialogResult.Primary)
             {
-                // User pressed "Yes"
-                // Add logic for creating a task
+                await UpdateData();
+                RefreshTaskList(currentFolder);
+                Debug.WriteLine("Refreshing Task List");
             }
             else
             {
                 // User pressed "No" or closed the dialog
                 // Add logic for canceling or closing
             }
-            //var taskAdded = new Tasks
-            //{
-            //    description = result.;
-
-
-            //}
-            //taskAdded.description = description;
-            //taskAdded.notes = notes;
-            //taskAdded.dateDue = convertedDateTime;
-            //taskAdded.isCompleted = false;
-            //Tasks.AddTask(taskAdded);
-
-            // Create and show the dialog
-            //var dialog = new CreateTaskDialog(viewModel);
-            //var result = await dialog.ShowAsync();
-
-            //if (result == ContentDialogResult.Primary)
-            //{
-            //    // Create a new Task based on the ViewModel properties
-            //    var newTask = new Tasks
-            //    {
-            //        description = viewModel.Description,
-            //        notes = viewModel.Notes,
-            //        dateDue = viewModel.DateDue?.Add(viewModel.DueTime),
-            //        // Set other properties if needed
-            //    };
-
-            //    // Add the new task to your task list
-            //    Tasks.AddTask(newTask);
-            //}
-
-
         }
 
         /// <summary>
@@ -307,7 +303,7 @@ namespace TaskList
 
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
+            //
         }
 
         private void ToggleMenu_Click(object sender, RoutedEventArgs e)
@@ -347,6 +343,12 @@ namespace TaskList
         private void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
         {
             //
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            TasksListView.UpdateLayout();
+            //UpdateData(); //causes glitch
         }
     }
 }

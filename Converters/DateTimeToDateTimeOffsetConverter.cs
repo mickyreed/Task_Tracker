@@ -8,6 +8,11 @@ using Windows.UI.Xaml;
 
 namespace TaskList
 {
+    /// <summary>
+    /// A Helper class that Converts the DatTime to a DateTime with an offset for use with CalenderDatePicker
+    /// this is because we are databinding to the ViewModel of the Task and CalenderDatePicker expects DateTImeOffset
+    /// So we need to convert between the two
+    /// </summary>
     public class DateTimeToDateTimeOffsetConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

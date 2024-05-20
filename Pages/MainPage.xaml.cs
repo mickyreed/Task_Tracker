@@ -30,6 +30,8 @@ using System.Xml.Linq;
 using TaskList;
 using Windows.Graphics;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI;
+
 
 namespace TaskList
 {
@@ -1218,7 +1220,6 @@ namespace TaskList
 /*
 TODO:
 Each task should have:
-    TODO a checkbox to mark whether the task is completed
     
     Overdue tasks should be listed first and marked somehow. 
     Beneath them should be the tasks due today. 

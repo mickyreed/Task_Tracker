@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    xmlns:Media="using:Windows.UI.Xaml.Media">
+    xmlns:Media="using:Windows.UI.Xaml.Media" d:DataContext="{d:DesignInstance Type=local:Tasks}">
 
     <Page.Resources>
         <local:TaskCountToStringConverter x:Key="TaskCountConverter"/>
@@ -81,7 +81,7 @@
                                         <!-- Checkbox for marking task as completed -->
                                         <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="1">
                                             <CheckBox Grid.Column="0" 
-                                                      IsChecked="{Binding IsCompleted, Mode=TwoWay}"
+                                                      IsChecked="{Binding IsCompleted, Mode=TwoWay}" Checked="CheckBox_Checked"
                                                       FontSize="6"
                                                       HorizontalAlignment="Left"
                                                       VerticalAlignment="Center"
@@ -92,23 +92,27 @@
                                             <StackPanel Orientation="Vertical" Grid.Column="1" CornerRadius="10">
                                                 <TextBlock Text="{Binding description}" Foreground="{Binding IsCompleted, Converter={StaticResource CompletedTaskColorConverter}}" 
                                                            FontSize="18"
-                                                           TextDecorations="{Binding IsCompleted, Converter={StaticResource CompletedTaskTextDecorationConverter}}"/>
+                                                           TextDecorations="{Binding IsCompleted, Converter={StaticResource CompletedTaskTextDecorationConverter}}">
+                                                </TextBlock>
                                                 <StackPanel Orientation="Horizontal">
                                                     <!--TextBlock Text="{Binding notes}" Foreground="#CCCCCC" FontSize="16"/-->
-                                                    <TextBlock Text="{Binding dateDue}" Foreground="#999999" FontSize="12"
-                                                               VerticalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding dateDue}" 
+                                                               Foreground="{Binding IsCompleted, Mode=TwoWay, Converter={StaticResource CompletedTaskColorConverter}}" 
+                                                               FontSize="12"
+                                                               VerticalAlignment="Center">
+                                                    </TextBlock>
                                                     <!-- Pencil emoji if notes exist -->
                                                     <TextBlock Text=" 📝" FontSize="18" 
                                                                Visibility="{Binding notes, Converter={StaticResource VisibilityConverter}}">
-                                                        <ToolTipService.ToolTip>
-                                                            <!-- Bind the content of the tooltip to Task.notes -->
-                                                            <ToolTip Content="{Binding notes}" MaxWidth="250" 
-                                                                     BorderBrush="#FF3E4D" BorderThickness="2"
-                                                                     CornerRadius="10" FontSize="16" />
-                                                        </ToolTipService.ToolTip>
                                                     </TextBlock>
+                                                    <ToolTipService.ToolTip>
+                                                        <!-- Bind the content of the tooltip to Task.notes -->
+                                                        <ToolTip Content="{Binding notes}" MaxWidth="250" 
+                                                                     BorderBrush="#FF3E4D" BorderThickness="2"
+                                                                     CornerRadius="10" FontSize="16">
+                                                        </ToolTip>
+                                                    </ToolTipService.ToolTip>
                                                 </StackPanel>
-                                                
                                             </StackPanel>
                                         </StackPanel> 
                                         <!-- Edit Task Button -->

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.Networking;
+using Windows.UI.Text;
 using Windows.UI.Xaml.Controls;
 
 namespace TaskList
@@ -26,6 +28,7 @@ namespace TaskList
     public class Tasks : IComparable<Tasks>, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
+
         public Guid id { get; set; } // need to have a setter to set id when existing files are loading in
         public string description { get; set; }
         // Description (eg. “Plan India trip”)
@@ -44,6 +47,8 @@ namespace TaskList
                 {
                     _isCompleted = value;
                     OnPropertyChanged(nameof(IsCompleted));
+                    OnPropertyChanged(nameof(TextDecorations));
+                    OnPropertyChanged(nameof(TextDecorations));
                 }
             }
         }
@@ -79,7 +84,7 @@ namespace TaskList
                 return false;
             }
 
-            set {; }
+            //set {; }
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
@@ -90,7 +95,7 @@ namespace TaskList
         /// <summary>
         /// Static list to hold all of the tasks
         /// </summary>
-        public static List<Tasks> AllTasksList = new List<Tasks>();
+        public static ObservableCollection<Tasks> AllTasksList { get; set; } = new ObservableCollection<Tasks>();
         /// <summary>
         /// Static list to all tasks sorted by date
         /// </summary>
@@ -116,7 +121,12 @@ namespace TaskList
         /// <param name="taskId"></param>
         public static void RemoveTask(Guid taskId)
         {
-            AllTasksList.RemoveAll(t => t.id == taskId);
+            //AllTasksList.RemoveAll(t => t.id == taskId); // only works on lists
+            var taskToRemove = AllTasksList.FirstOrDefault(t => t.id == taskId);
+            if (taskToRemove != null)
+            {
+                AllTasksList.Remove(taskToRemove);
+            }
             // removes all elements from the list where the id matches the taskId.
             // https://www.geeksforgeeks.org/lambda-expressions-in-c-sharp/
             UpdateTasksIndexes();
@@ -127,9 +137,13 @@ namespace TaskList
         /// </summary>
         /// <param name="taskId"></param>
         /// <returns></returns>
-        public static Tasks GetTaskById(Guid taskId)
+        //public static Tasks GetTaskById(Guid taskId) // works with LIsts only
+        //{
+        //    return AllTasksList.Find(task => task.id == taskId);
+        //}
+        public static Tasks GetTaskById(Guid taskId) // updated to this to work with Observable Collection
         {
-            return AllTasksList.Find(task => task.id == taskId);
+            return AllTasksList.FirstOrDefault(task => task.id == taskId);
         }
 
         // A static method to reset the value of isCompleted to the opposite of what it currently is
@@ -257,10 +271,13 @@ namespace TaskList
         /// </summary>
         private static void SortTasksByDate()
         {
-            AllTasksList.Sort((x, y) => x.dateDue.GetValueOrDefault().CompareTo(y.dateDue.GetValueOrDefault()));
+            //AllTasksList.Sort((x, y) => x.dateDue.GetValueOrDefault().CompareTo(y.dateDue.GetValueOrDefault()));
+            var sortedTasks = AllTasksList.OrderBy(task => task.dateDue.GetValueOrDefault()).ToList();
             TasksByDateIndex.Clear();
+
             Debug.WriteLine("Sorted Tasks by Date:");
-            foreach (var task in AllTasksList)
+            //foreach (var task in AllTasksList)
+            foreach (var task in sortedTasks)
             {
                 TasksByDateIndex.Add(task);
                 Debug.WriteLine($"Description: {task.description}, Due Date: {task.dateDue}");
@@ -272,9 +289,15 @@ namespace TaskList
         /// </summary>
         private static void SortTasksByDescription()
         {
-            AllTasksList.Sort((x, y) => x.description.CompareTo(y.description));
-            TasksByDescriptionIndex.Clear();
+            //AllTasksList.Sort((x, y) => x.description.CompareTo(y.description));
+            var sortedTasks = AllTasksList.OrderBy(task => task.description).ToList();
 
+            TasksByDescriptionIndex.Clear();
+            foreach (var task in sortedTasks)
+            {
+                TasksByDescriptionIndex.Add(task);
+                Debug.WriteLine($"Description: {task.description}");
+            }
         }
 
         /// <summary>

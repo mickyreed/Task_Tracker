@@ -9,7 +9,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		Converters\CompletedTaskColorConverter.cs = Converters\CompletedTaskColorConverter.cs
 		Converters\CompletedTaskTextDecorationConverter.cs = Converters\CompletedTaskTextDecorationConverter.cs
+		Converters\DateTimeToDateTimeOffsetConverter.cs = Converters\DateTimeToDateTimeOffsetConverter.cs
 		Converters\FrequencyConverter.cs = Converters\FrequencyConverter.cs
+		Converters\TaskCountToStringConverter.cs = Converters\TaskCountToStringConverter.cs
+		Converters\VisibilityConverter.cs = Converters\VisibilityConverter.cs
 	EndProjectSection
 EndProject
 Global

@@ -8,7 +8,10 @@ using Windows.UI.Xaml;
 
 namespace TaskList
 {
-    ///
+    /// <summary>
+    /// A Helper Class to convert the number of Tasks in a give folder to a string 
+    /// SO we can display in the ListView
+    /// </summary>
     public class TaskCountToStringConverter : IValueConverter
     {
         /// <summary>

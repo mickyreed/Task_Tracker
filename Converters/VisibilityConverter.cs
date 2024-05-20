@@ -8,6 +8,9 @@ using Windows.UI.Xaml.Data;
 
 namespace TaskList
 {
+    /// <summary>
+    /// A Helper class that hides/unhides xaml components based on actions fo the user
+    /// </summary>
     public class VisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
@@ -27,9 +30,17 @@ namespace TaskList
             }
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        object IValueConverter.ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            if (value is TaskType taskType)
+            {
+                return taskType != TaskType.RepeatingTask
+                    || taskType != TaskType.Habit ? Visibility.Collapsed : Visibility.Visible;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
         }
     }
 }

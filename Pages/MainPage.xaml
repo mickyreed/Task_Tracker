@@ -189,7 +189,7 @@
                                         <ToolTip Content="View Tasks"/>
                                     </ToolTipService.ToolTip>
                                 </Button>
-                                <Button Grid.Column="1" Content="❌" FontSize="18" Foreground="Red" 
+                                <Button Grid.Column="1" Content="❌" FontSize="16" Foreground="Red" 
                                         Click="DeleteFolderButton_Click" Tag="{Binding}" Background="#3C3C40"
                                         HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0">
                                     <ToolTipService.ToolTip>

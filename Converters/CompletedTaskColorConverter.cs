@@ -8,10 +8,14 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Text;
 using Windows.UI;
 using Windows.UI.Xaml;
+using System.Globalization;
 
 
 namespace TaskList
 {
+    /// <summary>
+    /// A Helper class that changes the colour of the font based on the completed status of a Task
+    /// </summary>
     public class CompletedTaskColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
