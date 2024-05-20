@@ -234,16 +234,7 @@ namespace TaskList
             //await result = TaskCreator.CheckUserInput(task);
             Debug.WriteLine("TRYING TO OPEN POPUP");
             
-
-            //var taskAdded = new Tasks
-            //{
-            //    description = description,
-            //    notes = notes,
-            //    dateDue = dateTime,
-            //    isCompleted = false
-            //};
-
-            // Create an instance of TaskViewModel (populate with data as needed)
+            // Create an instance of TaskViewModel
             TaskViewModel viewModel = new TaskViewModel()
             {
                 Description = description,

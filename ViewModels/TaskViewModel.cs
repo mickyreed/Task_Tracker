@@ -28,12 +28,13 @@ namespace TaskList
 
         //Set the allowed minimum DateTime in relation to todays date
         //public DateTime MinDate => DateTime.Now.Date;
-        public DateTime MinAllowedDate => new DateTime(DateTime.Now.Year, MinMonth, MinDay);
-        public DateTime MinAllowedTime => new DateTime(DateTime.Now.Year, MinHour, MinMinute);
-        public int MinMonth => DateTime.Now.Month;
-        public int MinDay => DateTime.Now.Day;
-        public int MinHour => DateTime.Now.Hour;
-        public int MinMinute => DateTime.Now.Minute;
+       
+        //public DateTime MinAllowedDate => new DateTime(DateTime.Now.Year, MinMonth, MinDay);
+        //public DateTime MinAllowedTime => new DateTime(DateTime.Now.Year, MinHour, MinMinute);
+        //public int MinMonth => DateTime.Now.Month;
+        //public int MinDay => DateTime.Now.Day;
+        //public int MinHour => DateTime.Now.Hour;
+        //public int MinMinute => DateTime.Now.Minute;
 
         public string Description
         {
@@ -160,6 +161,9 @@ namespace TaskList
                 }
             }
         }
+
+        public DateTime MinAllowedDate => DateTime.Today;
+        public TimeSpan MinAllowedTime => TimeSpan.Zero;
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -52,7 +52,7 @@ namespace TaskList
                                     writer.Write(false); // Write a flag indicating the value is null
                                 }
 
-                                writer.Write(task.isCompleted);
+                                writer.Write(task.IsCompleted);
                                 writer.Write(Enum.GetName(typeof(Habit.Frequency), habit.frequency));
                                 //Debug.WriteLine(habit.frequency.ToString());
                                 int streak = habit.streak;
@@ -79,7 +79,7 @@ namespace TaskList
                                     writer.Write(false); // Write a flag indicating the value is null
                                 }
 
-                                writer.Write(task.isCompleted);
+                                writer.Write(task.IsCompleted);
                                 writer.Write(Enum.GetName(typeof(RepeatTask.Frequency), repeatTask.frequency));
                             }
 
@@ -101,7 +101,7 @@ namespace TaskList
                                     writer.Write(false); // Write a flag indicating the value is null
                                 }
 
-                                writer.Write(task.isCompleted);
+                                writer.Write(task.IsCompleted);
                             }
                         }
                         await Task.Delay(1);
@@ -169,7 +169,7 @@ namespace TaskList
                                     description = description,
                                     notes = notes,
                                     dateDue = dateDue,
-                                    isCompleted = isCompleted,
+                                    IsCompleted = isCompleted,
                                     frequency = (RepeatTask.Frequency)_frequency,
                                     streak = streak
                                 };
@@ -205,7 +205,7 @@ namespace TaskList
                                     description = description,
                                     notes = notes,
                                     dateDue = dateDue,
-                                    isCompleted = isCompleted,
+                                    IsCompleted = isCompleted,
                                     frequency = _frequency
                                 };
                             }
@@ -237,7 +237,7 @@ namespace TaskList
                                     description = description,
                                     notes = notes,
                                     dateDue = dateDue,
-                                    isCompleted = isCompleted
+                                    IsCompleted = isCompleted
                                 };
                             }
 

@@ -73,7 +73,7 @@ namespace TaskList
                 // TO DO: if task id is not null & not completed
                 if (task != null)
                 {
-                    if (!task.isCompleted)
+                    if (!task.IsCompleted)
                     {
                         incompletedCount++;
                     }

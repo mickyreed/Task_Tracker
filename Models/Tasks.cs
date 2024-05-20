@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -22,21 +23,36 @@ namespace TaskList
     /// 
     /// </summary>
     [Serializable]
-    public class Tasks : IComparable<Tasks>
+    public class Tasks : IComparable<Tasks>, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
         public Guid id { get; set; } // need to have a setter to set id when existing files are loading in
         public string description { get; set; }
         // Description (eg. “Plan India trip”)
         public string notes { get; set; }
         // Notes(eg. “Singapore is pretty close to mid way.Probably the best spot for a layover.”)
-        public bool isCompleted { get; set; }
+        private bool _isCompleted;
         public DateTime? dateDue { get; set; } // nullable types, so using ? the date time can be optional
                                                //https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/nullable-value-types
                                                //Constructor
+        public bool IsCompleted
+        {
+            get { return _isCompleted; }
+            set
+            {
+                if (_isCompleted != value)
+                {
+                    _isCompleted = value;
+                    OnPropertyChanged(nameof(IsCompleted));
+                }
+            }
+        }
+
+
         public Tasks()
         {
             this.id = Guid.NewGuid();
-            this.isCompleted = false;
+            IsCompleted = false;
             //this.description = string.Empty;
             //this.notes = string.Empty;
             //this.dateCompleted = DateTime.MinValue;
@@ -55,7 +71,7 @@ namespace TaskList
             {
                 if (!dateDue.HasValue || dateDue.Value < DateTime.Now.Date) // check if date completed is null or in the past (NOTE: date only dont use time value
                 {
-                    if (!isCompleted) // check is if task is not completed
+                    if (!IsCompleted) // check is if task is not completed
                     {
                         return true;
                     }
@@ -64,6 +80,11 @@ namespace TaskList
             }
 
             set {; }
+        }
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>
@@ -123,13 +144,13 @@ namespace TaskList
         //// OR... Perhaps I just make another method that calls on this and then instantiates a new task on the next due date might be easier.
         public static void SetTaskCompletion(Tasks task)
         {
-            if (task.isCompleted)
+            if (task.IsCompleted)
             {
-                task.isCompleted = false;
+                task.IsCompleted = false;
             }
             else
             {
-                task.isCompleted = true;
+                task.IsCompleted = true;
             }
         }
 
@@ -148,9 +169,9 @@ namespace TaskList
                     return this.description.CompareTo(other.description);
                 }
                 // if required then compare by if it is completed
-                else if (isCompleted.CompareTo(other.isCompleted) != 0)
+                else if (IsCompleted.CompareTo(other.IsCompleted) != 0)
                 {
-                    return this.isCompleted.CompareTo(other.isCompleted);
+                    return this.IsCompleted.CompareTo(other.IsCompleted);
                 }
                 // if required then compare by due date
                 else if (dateDue.Value < other.dateDue.Value)

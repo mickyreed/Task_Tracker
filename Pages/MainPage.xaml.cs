@@ -325,7 +325,7 @@ namespace TaskList
             taskAdded.description = "Added Task";
             taskAdded.notes = "notes...";
             taskAdded.dateDue = DateTime.Now;
-            taskAdded.isCompleted = false;
+            taskAdded.IsCompleted = false;
             Tasks.AddTask(taskAdded);
 
             //Delete Task from SQL Database

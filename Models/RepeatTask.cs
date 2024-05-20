@@ -64,14 +64,14 @@ namespace TaskList
                 {
                     if (frequency == Frequency.Daily || dateDue.Value < DateTime.Now.AddDays(-2).Date)
                     {
-                        if (!isCompleted) // check is if task is not completed
+                        if (!IsCompleted) // check is if task is not completed
                         {
                             return true;
                         }
                     }
                     else if (frequency == Frequency.Weekly || dateDue.Value < DateTime.Now.AddDays(-8).Date)
                     {
-                        if (!isCompleted) // check is if task is not completed
+                        if (!IsCompleted) // check is if task is not completed
                         {
                             return true;
                         }

@@ -111,7 +111,7 @@ namespace TaskList
             string description = task.description; // Write task type
             string notes = task.notes;
             DateTime? dateDue = task.dateDue;
-            bool isCompleted = task.isCompleted;
+            bool isCompleted = task.IsCompleted;
 
             if (task is Habit habit)
             {

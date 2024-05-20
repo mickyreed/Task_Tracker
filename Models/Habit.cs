@@ -25,7 +25,7 @@ namespace TaskList
         public override void MoveToNextDueDate()
         {
             //check if streak is valid
-            if (isCompleted)
+            if (IsCompleted)
             {
                 streak++;
             }

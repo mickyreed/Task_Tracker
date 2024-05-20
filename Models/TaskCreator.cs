@@ -449,8 +449,6 @@ namespace TaskList
         /// and the date as a string and display it in the UI
         /// </summary>
         /// <param name="userInput"></param>
-
-        
         public static async Task <(string, string, DateTime?)> CheckUserInput(string userInput)
         {
             (string cleanedInput, DateTime? dateTime)  = await CreateTaskDataFromInput(userInput);
@@ -512,7 +510,7 @@ namespace TaskList
             taskAdded.description = description;
             taskAdded.notes = notes;
             taskAdded.dateDue = convertedDateTime;
-            taskAdded.isCompleted = false;
+            taskAdded.IsCompleted = false;
             Tasks.AddTask(taskAdded);
             
             //********************* THIS NEEDS TO BE DONE IN THE TASKVIEW PAGE OR SEPARATE HELPER *******************************

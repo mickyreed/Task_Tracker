@@ -11,6 +11,8 @@
     <Page.Resources>
         <local:TaskCountToStringConverter x:Key="TaskCountConverter"/>
         <local:VisibilityConverter x:Key="VisibilityConverter"/>
+        <local:CompletedTaskColorConverter x:Key="CompletedTaskColorConverter"/>
+        <local:CompletedTaskTextDecorationConverter x:Key="CompletedTaskTextDecorationConverter"/>
     </Page.Resources>
     
     <!--="{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
@@ -70,13 +72,27 @@
                                 <Frame CornerRadius="10" BorderBrush="#999999" BorderThickness="0.5" Padding="20,10,10,10" Background="Transparent">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="3">
-                                            <StackPanel Orientation="Vertical" Grid.Column="0" CornerRadius="10">
-                                                <TextBlock Text="{Binding description}" Foreground="#FFFFFF" FontSize="18"/>
+
+                                        <!-- Checkbox for marking task as completed -->
+                                        <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="1">
+                                            <CheckBox Grid.Column="0" 
+                                                      IsChecked="{Binding IsCompleted, Mode=TwoWay}"
+                                                      FontSize="6"
+                                                      HorizontalAlignment="Left"
+                                                      VerticalAlignment="Center"
+                                                      Margin="0,0,0,0"/>
+                                        </StackPanel>
+
+                                        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="4">
+                                            <StackPanel Orientation="Vertical" Grid.Column="1" CornerRadius="10">
+                                                <TextBlock Text="{Binding description}" Foreground="{Binding IsCompleted, Converter={StaticResource CompletedTaskColorConverter}}" 
+                                                           FontSize="18"
+                                                           TextDecorations="{Binding IsCompleted, Converter={StaticResource CompletedTaskTextDecorationConverter}}"/>
                                                 <StackPanel Orientation="Horizontal">
                                                     <!--TextBlock Text="{Binding notes}" Foreground="#CCCCCC" FontSize="16"/-->
                                                     <TextBlock Text="{Binding dateDue}" Foreground="#999999" FontSize="12"
@@ -96,7 +112,7 @@
                                             </StackPanel>
                                         </StackPanel> 
                                         <!-- Edit Task Button -->
-                                        <Button Grid.Column="1" Content="✏️" HorizontalAlignment="Right"
+                                        <Button Grid.Column="2" Content="✏️" HorizontalAlignment="Right"
                                                 Click="EditTaskButton_Click" Tag="{Binding}" 
                                                 Background="Transparent" BorderThickness="0" FontSize="18" Margin="0,0,0,0">
                                             <ToolTipService.ToolTip>
@@ -104,7 +120,7 @@
                                             </ToolTipService.ToolTip>
                                         </Button>
                                         <!-- Delete Task Button -->
-                                        <Button Grid.Column="2" Content="❌" Foreground="Red" HorizontalAlignment="Right"
+                                        <Button Grid.Column="3" Content="❌" Foreground="Red" HorizontalAlignment="Right"
                                                 Click="DeleteTaskButton_Click" Tag="{Binding}" 
                                                 Background="Transparent" BorderThickness="0" FontSize="18">
                                             <ToolTipService.ToolTip>
