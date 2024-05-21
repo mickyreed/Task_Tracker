@@ -7,6 +7,7 @@
     <RootPropertyPathName Name="TaskCount" />
     <RootPropertyPathName Name="Name" />
     <RootPropertyPathName Name="Tasks" />
+    <RootPropertyPathName Name="Count" />
     <RootPropertyPathName Name="notes" />
     <RootPropertyPathName Name="dateDue" />
     <RootPropertyPathName Name="IsCompleted" />
@@ -18,10 +19,15 @@
       <RootProperty Name="Title" />
       <RootProperty Name="PrimaryButtonText" />
       <RootProperty Name="SecondaryButtonText" />
+      <RootProperty Name="DataContext" />
       <RootProperty Name="Resources" />
       <RootProperty Name="Content" />
       <RootEvent Name="PrimaryButtonClick" />
       <RootEvent Name="SecondaryButtonClick" />
+    </RootType>
+    <RootType FullName="Microsoft.Xaml.DirectUI.ProxyTypes.BindExtension">
+      <RootProperty Name="Mode" />
+      <RootProperty Name="Converter" />
     </RootType>
     <RootType FullName="TaskList.DateTimeToDateTimeOffsetConverter" />
     <RootType FullName="TaskList.VisibilityConverter" />
@@ -72,9 +78,9 @@
       <RootProperty Name="TextWrapping" />
       <RootProperty Name="Foreground" />
       <RootProperty Name="FontWeight" />
-      <RootProperty Name="TextDecorations" />
       <RootProperty Name="VerticalAlignment" />
       <RootProperty Name="Visibility" />
+      <RootProperty Name="TextDecorations" />
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Controls.TextBox">
       <RootProperty Name="Text" />
@@ -103,16 +109,12 @@
     <RootType FullName="Windows.UI.Xaml.Controls.TimePicker">
       <RootProperty Name="Time" />
     </RootType>
-    <RootType FullName="Microsoft.Xaml.DirectUI.ProxyTypes.BindExtension">
-      <RootProperty Name="Mode" />
-      <RootProperty Name="Converter" />
-    </RootType>
     <RootType FullName="Microsoft.Xaml.DirectUI.ProxyTypes.StaticResourceExtension" />
     <RootType FullName="Windows.UI.Xaml.Controls.ComboBox">
-      <RootProperty Name="Margin" />
-      <RootProperty Name="Width" />
       <RootProperty Name="ItemsSource" />
       <RootProperty Name="SelectedItem" />
+      <RootProperty Name="Margin" />
+      <RootProperty Name="Width" />
     </RootType>
     <RootType FullName="TaskList.CreateTaskDialog" />
     <RootType FullName="Windows.UI.Xaml.Controls.Page">
@@ -200,6 +202,7 @@
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Data.Binding">
       <RootProperty Name="Converter" />
+      <RootProperty Name="FallbackValue" />
       <RootProperty Name="Mode" />
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Controls.ToolTip">
@@ -213,6 +216,7 @@
     <RootType FullName="TaskList.MainPage" />
     <RootType FullName="TaskList.CompletedTaskColorConverter" />
     <RootType FullName="TaskList.CompletedTaskTextDecorationConverter" />
+    <RootType FullName="TaskList.CountToVisibilityConverter" />
     <RootType FullName="Windows.UI.Xaml.Controls.Frame">
       <RootProperty Name="CornerRadius" />
       <RootProperty Name="BorderBrush" />

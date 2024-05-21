@@ -13,6 +13,7 @@
         <local:VisibilityConverter x:Key="VisibilityConverter"/>
         <local:CompletedTaskColorConverter x:Key="CompletedTaskColorConverter"/>
         <local:CompletedTaskTextDecorationConverter x:Key="CompletedTaskTextDecorationConverter"/>
+        <local:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
     </Page.Resources>
     
     <!--="{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
@@ -55,7 +56,7 @@
 
                     <!-- Folder ListView -->
                     <ListView x:Name="TasksListView" Margin="5,5,5,5" Background="#2D2D30" BorderThickness="0.5"
-                              Grid.Column="1" Grid.Row="2" Grid.RowSpan="1" ItemsSource="{Binding Tasks}" SelectionMode="Single">
+                              Grid.Column="1" Grid.Row="2" Grid.RowSpan="1"  ItemsSource="{Binding Tasks, FallbackValue=empty}" SelectionMode="Single">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="Foreground" Value="White"/>
@@ -65,7 +66,7 @@
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                             </Style>
                         </ListView.ItemContainerStyle>
-                        
+
                         <ListView.ItemTemplate>
                             <DataTemplate>
 
@@ -114,7 +115,7 @@
                                                     </ToolTipService.ToolTip>
                                                 </StackPanel>
                                             </StackPanel>
-                                        </StackPanel> 
+                                        </StackPanel>
                                         <!-- Edit Task Button -->
                                         <Button Grid.Column="2" Content="✏️" HorizontalAlignment="Right"
                                                 Click="EditTaskButton_Click" Tag="{Binding}" 
@@ -133,12 +134,12 @@
                                         </Button>
                                     </Grid>
                                 </Frame>
-
-                               
-                               
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
+                    <!-- Placeholder text for when the ListView is empty -->
+                    <TextBlock Text="Empty" VerticalAlignment="Center" HorizontalAlignment="Center"
+                               FontSize="16" Foreground="Gray" Visibility="{Binding Tasks.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
 
                     <!-- Enter a Task Input Box -->
                     <Grid Grid.Column="1" Grid.Row="3" Margin="0,0,0,80" Grid.RowSpan="1">

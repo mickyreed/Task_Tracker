@@ -28,18 +28,27 @@ namespace TaskList
         private DateTime _minDate;
         
         private TaskType _taskType;
-        private Frequency? _frequency;
+        private Frequency _frequency;
         private int _streak = 0;
+
+        private bool _isUpdating;
+
+        //public TaskViewModel()
+        //{
+        //    // Subscribe to the PropertyChanged event for TaskType and Frequency
+        //    PropertyChanged += TaskViewModel_PropertyChanged;
+        //}
 
         //Set the allowed minimum DateTime in relation to todays date
         //public DateTime MinDate => DateTime.Now.Date;
-       
+
         //public DateTime MinAllowedDate => new DateTime(DateTime.Now.Year, MinMonth, MinDay);
         //public DateTime MinAllowedTime => new DateTime(DateTime.Now.Year, MinHour, MinMinute);
         //public int MinMonth => DateTime.Now.Month;
         //public int MinDay => DateTime.Now.Day;
         //public int MinHour => DateTime.Now.Hour;
         //public int MinMinute => DateTime.Now.Minute;
+
 
         public string Description
         {
@@ -154,7 +163,7 @@ namespace TaskList
             }
         }
 
-        public Frequency? Frequency
+        public Frequency Frequency
         {
             get => _frequency;
             set
@@ -187,14 +196,20 @@ namespace TaskList
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));       
+            if (!_isUpdating)
+            {
+                _isUpdating = true;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+                _isUpdating = false;
+            }
         }
+
     }
 
     public enum TaskType
     {
         Task,
-        RepeatingTask,
+        RepeatTask,
         Habit
     }
 
@@ -203,5 +218,7 @@ namespace TaskList
         Daily,
         Weekly
     }
+
+    
 }
 

@@ -58,11 +58,6 @@
             GetXmlnsDefinitions()
             </summary>
         </member>
-        <member name="T:TaskList.CompletedTaskColorConverter">
-            <summary>
-            A Helper class that changes the colour of the font based on the completed status of a Task
-            </summary>
-        </member>
         <member name="T:TaskList.CompletedTaskTextDecorationConverter">
             <summary>
             A helper class that changes the text to be normal or strikethru depending on the completed state of a task
@@ -699,6 +694,12 @@
             <summary>
             Error Message Function for invalid input
             </summary>
+        </member>
+        <member name="M:TaskList.TasksPage.RemoveTask(System.Guid)">
+            <summary>
+            Function to delete a task
+            </summary>
+            <param name="idToLookup"></param>
         </member>
         <member name="M:TaskList.TasksPage.InitializeComponent">
             <summary>

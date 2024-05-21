@@ -180,6 +180,7 @@ namespace TaskList
             await SaveData();
             //UpdateTaskIndexes();
             RefreshTaskList(currentFolder);
+            RefreshFolderList();
         }
         private async void RefreshFolderList()
         {
@@ -340,15 +341,48 @@ namespace TaskList
             //
         }
 
-        private void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
+        private async void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
         {
-            //
+            // Get the button that was clicked
+            var button = sender as Button;
+
+            // Get the task object from the Tag property
+            Tasks task = button?.Tag as Tasks; // Assuming your task model is named TaskModel
+
+            if (task != null)
+            {
+                // Get the ID of the task
+                Guid taskId = task.id; // Assuming the task has a property named 'id' of type Guid
+
+                // Call the method to remove the task
+                RemoveTask(taskId);
+            }
+            else
+            {
+                Debug.WriteLine("Task is null or could not be casted from Tag.");
+            }
         }
 
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
             TasksListView.UpdateLayout();
             //UpdateData(); //causes glitch
+        }
+
+        /// <summary>
+        /// Function to delete a task
+        /// </summary>
+        /// <param name="idToLookup"></param>
+        public async void RemoveTask(Guid idToLookup)
+        {
+            Guid id = idToLookup;
+
+            Tasks.RemoveTask(id);
+
+            //Delete Task from SQL Database
+            await TaskDataManagerSQL.DeleteTaskByIdAsync(id);
+            Debug.WriteLine($"\n Removed Task with ID: {id}");
+            TasksListView.UpdateLayout();
         }
     }
 }

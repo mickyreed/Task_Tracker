@@ -11,7 +11,8 @@
     PrimaryButtonText="Create"
     SecondaryButtonText="Cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
+    DataContext="{x:Bind ViewModel}">
 
     <ContentDialog.Resources>
         <local:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
@@ -21,6 +22,8 @@
 
     <Grid Padding="10">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -33,16 +36,19 @@
 
         <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1" Orientation="Horizontal" Spacing="10">
             <TextBlock Text="Task Type"/>
-            <ComboBox ItemsSource="{x:Bind TaskTypes}"
-                      SelectedItem="{x:Bind ViewModel.TaskType, Mode=TwoWay}" Width="150"/>
+            <!--<ComboBox x:Name="Task Type" SelectedItem="{x:Bind ViewModel.TaskType, Mode=TwoWay}" Width="150"/>-->
+            <ComboBox ItemsSource="{x:Bind TaskTypes}" SelectedItem="{x:Bind ViewModel.TaskType, Mode=TwoWay}" Width="150" />
+            <!--<ComboBox ItemsSource="{x:Bind TaskTypes}" SelectedItem="{x:Bind ViewModel.TaskType, Mode=TwoWay}" Width="150"/>-->
         </StackPanel>
 
-        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" 
-            Visibility="{x:Bind ViewModel.TaskType, Converter={StaticResource VisibilityConverter}}">
+        <StackPanel x:Name="FrequencySection" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal"
+            Visibility="{x:Bind ViewModel.TaskType, Mode=TwoWay, Converter={StaticResource VisibilityConverter}}">
             <TextBlock Text="Frequency"/>
-            <ComboBox Margin="5,0" Width="100" ItemsSource="{x:Bind Frequencies}"
-              SelectedItem="{x:Bind ViewModel.Frequency, Mode=TwoWay, Converter={StaticResource FrequencyConverter}}"/>
+            <ComboBox ItemsSource="{x:Bind Frequencies}" 
+                      SelectedItem="{x:Bind ViewModel.Frequency, Mode=TwoWay, Converter={StaticResource FrequencyConverter}}" 
+                      Margin="5,0" Width="100"/>
         </StackPanel>
+
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>

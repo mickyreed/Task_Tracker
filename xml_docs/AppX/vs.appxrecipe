@@ -30,13 +30,13 @@
     <AppXManifest Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
-      <Modified>2024-05-20T19:06:36.338</Modified>
+      <Modified>2024-05-21T18:10:25.222</Modified>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\TaskList.exe">
       <PackagePath>entrypoint\TaskList.exe</PackagePath>
-      <Modified>2024-05-20T19:06:35.804</Modified>
+      <Modified>2024-05-21T18:10:24.719</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\.nuget\packages\microsoft.data.sqlite.core\8.0.4\lib\netstandard2.0\Microsoft.Data.Sqlite.dll">
       <PackagePath>Microsoft.Data.Sqlite.dll</PackagePath>
@@ -162,23 +162,23 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\TaskList.xr.xml">
       <PackagePath>TaskList.xr.xml</PackagePath>
-      <Modified>2024-05-20T16:28:26.777</Modified>
+      <Modified>2024-05-21T17:06:52.485</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\App.xbf">
       <PackagePath>App.xbf</PackagePath>
-      <Modified>2024-05-20T19:06:35.710</Modified>
+      <Modified>2024-05-21T18:10:24.629</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\CreateTaskDialog.xbf">
       <PackagePath>Pages\CreateTaskDialog.xbf</PackagePath>
-      <Modified>2024-05-20T19:06:35.710</Modified>
+      <Modified>2024-05-21T18:10:24.629</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\MainPage.xbf">
       <PackagePath>Pages\MainPage.xbf</PackagePath>
-      <Modified>2024-05-20T19:06:35.706</Modified>
+      <Modified>2024-05-21T18:10:24.625</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\TasksPage.xbf">
       <PackagePath>Pages\TasksPage.xbf</PackagePath>
-      <Modified>2024-05-20T19:06:35.709</Modified>
+      <Modified>2024-05-21T18:10:24.628</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Windows Kits\10\UnionMetadata\10.0.22621.0\Windows.winmd">
       <PackagePath>WinMetadata\Windows.winmd</PackagePath>
@@ -186,11 +186,11 @@
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\resources.pri">
       <PackagePath>resources.pri</PackagePath>
-      <Modified>2024-05-20T16:07:48.136</Modified>
+      <Modified>2024-05-21T18:10:24.805</Modified>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Core\TaskList.exe">
       <PackagePath>TaskList.exe</PackagePath>
-      <Modified>2024-05-20T19:06:36.335</Modified>
+      <Modified>2024-05-21T18:10:25.220</Modified>
     </AppxPackagedFile>
   </ItemGroup>
   <ItemGroup>

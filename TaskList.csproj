@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="Converters\CompletedTaskColorConverter.cs" />
     <Compile Include="Converters\CompletedTaskTextDecorationConverter.cs" />
+    <Compile Include="Converters\CountToVisibilityConverter.cs" />
     <Compile Include="Converters\FrequencyConverter.cs" />
     <Compile Include="Pages\CreateTaskDialog.xaml.cs">
       <DependentUpon>CreateTaskDialog.xaml</DependentUpon>

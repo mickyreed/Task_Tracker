@@ -1,33 +1,45 @@
-﻿using System;
+﻿using Windows.UI;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Text;
-using Windows.UI;
 using Windows.UI.Xaml;
-using System.Globalization;
-
+using System.Diagnostics;
 
 namespace TaskList
 {
-    /// <summary>
-    /// A Helper class that changes the colour of the font based on the completed status of a Task
-    /// </summary>
     public class CompletedTaskColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             // Check if the task is completed
-            bool isCompleted = (bool)value;
+            //bool isCompleted = (bool)value;
 
-            // If the task is completed, return a semi-transparent color
-            if (isCompleted)
-                return new SolidColorBrush(Color.FromArgb(128, 153, 153, 153)); // Semi-transparent gray
+            // Assuming your binding context is a Task object
+            if (!(value is Tasks task)) return new SolidColorBrush(Colors.White);
+
+            if (task.IsCompleted)
+            {
+                return new SolidColorBrush(Colors.Gray); // Completed tasks are gray
+            }
+            else if (task.dateDue < DateTime.Today)
+            {
+                return new SolidColorBrush(Colors.Red); // Overdue tasks are red
+            }
+            else if (task.dateDue == DateTime.Today)
+            {
+                return new SolidColorBrush(Colors.Green); // Due today tasks are green
+            }
             else
-                return new SolidColorBrush(Color.FromArgb(255, 153, 153, 153)); // Original color: Gray
+            {
+                Debug.WriteLine("we are white!");
+                return new SolidColorBrush(Colors.White); // Normal tasks are black
+            }
+
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
