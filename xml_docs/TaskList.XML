@@ -69,6 +69,21 @@
             and need the enum values to display properly
             </summary>
         </member>
+        <member name="M:TaskList.EditTaskDialog.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:TaskList.EditTaskDialog.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:TaskList.EditTaskDialog.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
         <member name="M:TaskList.CreateTaskDialog.InitializeComponent">
             <summary>
             InitializeComponent()

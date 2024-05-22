@@ -48,7 +48,6 @@ namespace TaskList
                     _isCompleted = value;
                     OnPropertyChanged(nameof(IsCompleted));
                     OnPropertyChanged(nameof(TextDecorations));
-                    OnPropertyChanged(nameof(TextDecorations));
                 }
             }
         }
@@ -87,7 +86,7 @@ namespace TaskList
             //set {; }
         }
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

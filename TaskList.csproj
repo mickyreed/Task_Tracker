@@ -125,6 +125,9 @@
     <Compile Include="Converters\CompletedTaskTextDecorationConverter.cs" />
     <Compile Include="Converters\CountToVisibilityConverter.cs" />
     <Compile Include="Converters\FrequencyConverter.cs" />
+    <Compile Include="Pages\EditTaskDialog.xaml.cs">
+      <DependentUpon>EditTaskDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\CreateTaskDialog.xaml.cs">
       <DependentUpon>CreateTaskDialog.xaml</DependentUpon>
     </Compile>
@@ -170,6 +173,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Pages\EditTaskDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\CreateTaskDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

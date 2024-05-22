@@ -82,18 +82,19 @@
                                         <!-- Checkbox for marking task as completed -->
                                         <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="1">
                                             <CheckBox Grid.Column="0" 
-                                                      IsChecked="{Binding IsCompleted, Mode=TwoWay}" Checked="CheckBox_Checked"
+                                                      IsChecked="{Binding IsCompleted, Mode=TwoWay}" Checked="CheckBox_Checked" Unchecked="CheckBox_UnChecked"
                                                       FontSize="6"
                                                       HorizontalAlignment="Left"
                                                       VerticalAlignment="Center"
-                                                      Margin="0,0,0,0"/>
+                                                      Margin="0,0,0,0"
+                                                      Tag="{Binding}"/>
                                         </StackPanel>
 
                                         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.ColumnSpan="4">
                                             <StackPanel Orientation="Vertical" Grid.Column="1" CornerRadius="10">
-                                                <TextBlock Text="{Binding description}" Foreground="{Binding IsCompleted, Converter={StaticResource CompletedTaskColorConverter}}" 
+                                                <TextBlock Text="{Binding description}" Foreground="{Binding IsCompleted, Mode=TwoWay, Converter={StaticResource CompletedTaskColorConverter}}" 
                                                            FontSize="18"
-                                                           TextDecorations="{Binding IsCompleted, Converter={StaticResource CompletedTaskTextDecorationConverter}}">
+                                                           TextDecorations="{Binding IsCompleted, Mode=TwoWay, Converter={StaticResource CompletedTaskTextDecorationConverter}}">
                                                 </TextBlock>
                                                 <StackPanel Orientation="Horizontal">
                                                     <!--TextBlock Text="{Binding notes}" Foreground="#CCCCCC" FontSize="16"/-->

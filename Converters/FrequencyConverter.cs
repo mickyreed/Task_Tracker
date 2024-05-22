@@ -23,13 +23,18 @@ namespace TaskList
             return null;
         }
 
+        //public object ConvertBack(object value, Type targetType, object parameter, string language)
+        //{
+        //    if (value is Frequency frequency)
+        //    {
+        //        return frequency;
+        //    }
+        //    return null;
+        //}
+
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            if (value is Frequency frequency)
-            {
-                return frequency;
-            }
-            return null;
+            throw new NotImplementedException();
         }
     }
 }

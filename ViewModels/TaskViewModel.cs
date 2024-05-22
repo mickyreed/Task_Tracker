@@ -10,6 +10,7 @@ using Windows.Media.Core;
 using static TaskList.Tasks;
 using static TaskList.RepeatTask;
 using static TaskList.Habit;
+using Windows.UI.Text;
 
 
 namespace TaskList
@@ -30,13 +31,13 @@ namespace TaskList
         private TaskType _taskType;
         private Frequency _frequency;
         private int _streak = 0;
-
+        private bool _isCompleted;
         private bool _isUpdating;
 
         //public TaskViewModel()
         //{
-        //    // Subscribe to the PropertyChanged event for TaskType and Frequency
-        //    PropertyChanged += TaskViewModel_PropertyChanged;
+        //    Subscribe to the PropertyChanged event for TaskType and Frequency
+        //   PropertyChanged += TaskViewModel_PropertyChanged;
         //}
 
         //Set the allowed minimum DateTime in relation to todays date
@@ -72,6 +73,20 @@ namespace TaskList
                 {
                     _notes = value;
                     OnPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsCompleted
+        {
+            get { return _isCompleted; }
+            set
+            {
+                if (_isCompleted != value)
+                {
+                    _isCompleted = value;
+                    OnPropertyChanged(nameof(IsCompleted));
+                    //OnPropertyChanged(nameof(TextDecorations));
                 }
             }
         }
@@ -196,11 +211,8 @@ namespace TaskList
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (!_isUpdating)
             {
-                _isUpdating = true;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-                _isUpdating = false;
             }
         }
 

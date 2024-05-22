@@ -127,6 +127,9 @@
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\App.xbf">
       <PackagePath>App.xbf</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\EditTaskDialog.xbf">
+      <PackagePath>Pages\EditTaskDialog.xbf</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\CreateTaskDialog.xbf">
       <PackagePath>Pages\CreateTaskDialog.xbf</PackagePath>
     </AppxPackagedFile>

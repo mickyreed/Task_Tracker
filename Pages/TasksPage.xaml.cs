@@ -38,10 +38,12 @@ namespace TaskList
         /// 
         /// </summary>
         public string SelectedFolderName { get; set; }
-        public string taskInput {  get; set; }
+        public string taskInput { get; set; }
         public static Folder currentFolder;
         //public var result = (string description, string notes, DateTime? dateTime);
-        
+        private bool isUpdating = false;
+        private Dictionary<CheckBox, bool> checkBoxStates = new Dictionary<CheckBox, bool>();
+
 
 
 
@@ -128,7 +130,7 @@ namespace TaskList
         }
         private async Task LoadData()
         {
-            if(FoldersList != null)
+            if (FoldersList != null)
             {
                 FoldersList.Clear(); // clear the existing folder UI list
             }
@@ -261,7 +263,7 @@ namespace TaskList
             string dateTimeToDisplay;
             //await result = TaskCreator.CheckUserInput(task);
             Debug.WriteLine("TRYING TO OPEN POPUP");
-            
+
             // Create an instance of TaskViewModel
             TaskViewModel viewModel = new TaskViewModel()
             {
@@ -276,6 +278,33 @@ namespace TaskList
 
             // Show the dialog and await the result
             ContentDialogResult result = await createTaskDialog.ShowAsync();
+
+            // Handle the result
+            if (result == ContentDialogResult.Primary)
+            {
+                await UpdateData();
+                RefreshTaskList(currentFolder);
+                Debug.WriteLine("Refreshing Task List");
+            }
+            else
+            {
+                // User pressed "No" or closed the dialog
+                // Add logic for canceling or closing
+            }
+        }
+
+        private async Task OpenPopupCreateTask(Tasks taskToEdit)
+        {
+            Debug.WriteLine("TRYING TO OPEN EDIT POPUP");
+
+            Guid id = taskToEdit.id;
+            // get the Task based on the Guid??
+
+            // Create an instance of CreateTaskDialog and pass the ViewModel
+            EditTaskDialog editTaskDialog = new EditTaskDialog(taskToEdit);
+
+            // Show the dialog and await the result
+            ContentDialogResult result = await editTaskDialog.ShowAsync();
 
             // Handle the result
             if (result == ContentDialogResult.Primary)
@@ -338,7 +367,17 @@ namespace TaskList
 
         private void EditTaskButton_Click(object sender, RoutedEventArgs e)
         {
-            //
+            // Get the selected Task object from the ListView
+            Tasks selectedTask = (sender as Button)?.Tag as Tasks;
+
+            if (selectedTask != null)
+            {
+                // Create an instance of the EditTaskDialog and pass the selected Task object
+                var editTaskDialog = new EditTaskDialog(selectedTask);
+
+                // Show the dialog and handle the result
+                editTaskDialog.ShowAsync();
+            }
         }
 
         private async void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
@@ -363,10 +402,38 @@ namespace TaskList
             }
         }
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        private async void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            TasksListView.UpdateLayout();
-            //UpdateData(); //causes glitch
+            var checkBox = sender as CheckBox;
+            Tasks taskItem = checkBox?.Tag as Tasks;
+            // Check if the cast was successful
+            if (taskItem != null)
+            {
+                if (checkBox != null)
+                {
+                    // Get the IsChecked property, which is nullable
+                    bool isChecked = checkBox.IsChecked ?? false;
+                    taskItem.IsCompleted = true;
+                }
+            }
+        }
+        //Unchecked="CheckBox_UnChecked"
+        private async void CheckBox_UnChecked(object sender, RoutedEventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            Tasks taskItem = checkBox?.Tag as Tasks;
+            // Check if the cast was successful
+            if (taskItem != null)
+            {
+                if (checkBox != null)
+                {
+                    // Get the IsChecked property, which is nullable
+                    bool isChecked = checkBox.IsChecked ?? false;
+                    taskItem.IsCompleted = false;
+                }
+            }
+                
+
         }
 
         /// <summary>

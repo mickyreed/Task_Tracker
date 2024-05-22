@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
+using System.Diagnostics;
 
 namespace TaskList
 {
@@ -30,12 +31,13 @@ namespace TaskList
         {
             // Check if the task is completed
             bool isCompleted = (bool)value;
+            Debug.WriteLine($"ConvertBack called with isCompleted={isCompleted}");
 
             // If the task is completed, return strikethrough text decoration
             if (!isCompleted)
                 return TextDecorations.None;
             else
-                return null; // No text decoration if the task is not completed
+                return TextDecorations.Strikethrough; // No text decoration if the task is not completed
         }
     }
 }
