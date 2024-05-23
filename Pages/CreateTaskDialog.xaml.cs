@@ -21,13 +21,15 @@ namespace TaskList
         public CreateTaskDialog(TaskViewModel viewModel)
         {
             this.InitializeComponent();
-            ViewModel = new TaskViewModel();
-            DataContext = ViewModel;
+            //ViewModel = new TaskViewModel();
+            ViewModel = viewModel;
+            this.DataContext = viewModel;
             DateTime MinDate = DateTime.Today;
         }
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
+
         // Validate time to ensure it is not in the past
         DateTime selectedDateTime = ViewModel.NonNullableDateDue.Add(ViewModel.NonNullableTimeDue);
         if (selectedDateTime < DateTime.Now)
@@ -42,6 +44,7 @@ namespace TaskList
                 TimeDue = ViewModel.NonNullableTimeDue,
                 Frequency = ViewModel.Frequency
             };
+
 
             args.Cancel = true;
             _isClosing = true;

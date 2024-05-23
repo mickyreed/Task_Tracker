@@ -12,7 +12,8 @@
     SecondaryButtonText="Cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    DataContext="{x:Bind ViewModel}">
+    DataContext="{x:Bind ViewModel}"
+    Background="#2D2D30" CornerRadius="10" BorderBrush="#FF3E4D">
 
     <ContentDialog.Resources>
         <local:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
@@ -42,13 +43,12 @@
         </StackPanel>
 
         <StackPanel x:Name="FrequencySection" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal"
-            Visibility="{x:Bind ViewModel.TaskType, Mode=TwoWay, Converter={StaticResource VisibilityConverter}}">
+            Visibility="{x:Bind ViewModel.TaskType, Mode=OneWay, Converter={StaticResource VisibilityConverter}}">
             <TextBlock Text="Frequency"/>
-            <ComboBox ItemsSource="{x:Bind Frequencies}" 
+            <ComboBox ItemsSource="{x:Bind Frequencies}"
                       SelectedItem="{x:Bind ViewModel.Frequency, Mode=TwoWay, Converter={StaticResource FrequencyConverter}}" 
                       Margin="5,0" Width="100"/>
         </StackPanel>
-
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -58,7 +58,6 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="69"/>
                 <ColumnDefinition Width="Auto"/>
@@ -69,14 +68,14 @@
             <TextBox Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.Description, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Notes"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.Notes, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="50"/>
+            <TextBox Grid.Row="1" Grid.Column="1"  Text="{x:Bind ViewModel.Notes, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="50"/>
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Due Date"/>
-            <DatePicker Grid.Row="2" Grid.Column="1" Date="{x:Bind ViewModel.NonNullableDateDue, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}" 
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Due Date" />
+            <DatePicker Grid.Row="2" Grid.Column="1" Date="{x:Bind ViewModel.DateDue, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}" 
                         MinYear="{x:Bind ViewModel.MinAllowedDate}"/>
 
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Due Time"/>
-            <TimePicker Grid.Row="3" Grid.Column="1" Time="{x:Bind ViewModel.NonNullableTimeDue, Mode=TwoWay}"/>
+            <TimePicker Grid.Row="3" Grid.Column="1" Time="{x:Bind ViewModel.NonNullableTimeDue, Mode=TwoWay}" Margin="0,0,0,20"/>
         </Grid>
     </Grid>
     

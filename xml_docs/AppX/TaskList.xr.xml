@@ -22,6 +22,9 @@
       <RootProperty Name="DataContext" />
       <RootProperty Name="Resources" />
       <RootProperty Name="Content" />
+      <RootProperty Name="Background" />
+      <RootProperty Name="CornerRadius" />
+      <RootProperty Name="BorderBrush" />
       <RootEvent Name="PrimaryButtonClick" />
       <RootEvent Name="SecondaryButtonClick" />
     </RootType>
@@ -81,6 +84,7 @@
       <RootProperty Name="Foreground" />
       <RootProperty Name="FontWeight" />
       <RootProperty Name="VerticalAlignment" />
+      <RootProperty Name="TextAlignment" />
       <RootProperty Name="Visibility" />
       <RootProperty Name="TextDecorations" />
     </RootType>
@@ -110,6 +114,7 @@
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Controls.TimePicker">
       <RootProperty Name="Time" />
+      <RootProperty Name="Margin" />
     </RootType>
     <RootType FullName="Microsoft.Xaml.DirectUI.ProxyTypes.StaticResourceExtension" />
     <RootType FullName="TaskList.EditTaskDialog" />
@@ -234,7 +239,7 @@
       <RootProperty Name="HorizontalAlignment" />
       <RootProperty Name="VerticalAlignment" />
       <RootProperty Name="Margin" />
-      <RootEvent Name="Checked" />
+      <RootEvent Name="Click" />
     </RootType>
     <RootType FullName="TaskList.TasksPage" />
   </Roots.RootTypes>

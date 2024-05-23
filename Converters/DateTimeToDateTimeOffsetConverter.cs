@@ -22,7 +22,7 @@ namespace TaskList
                 return new DateTimeOffset(dateTime);
             }
 
-            return DateTimeOffset.Now; // default value
+            return DateTime.Today.AddDays(1).AddTicks(-1); // default value
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -32,7 +32,7 @@ namespace TaskList
                 return dateTimeOffset.DateTime;
             }
 
-            return DateTime.Now; // default value
+            return DateTime.Today.AddDays(1).AddTicks(-1); // default value
         }
     }
 }

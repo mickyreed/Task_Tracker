@@ -82,7 +82,7 @@
                                         <!-- Checkbox for marking task as completed -->
                                         <StackPanel Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="1">
                                             <CheckBox Grid.Column="0" 
-                                                      IsChecked="{Binding IsCompleted, Mode=TwoWay}" Checked="CheckBox_Checked"
+                                                      IsChecked="{Binding IsCompleted, Mode=TwoWay}" Click="CheckBox_Click"
                                                       FontSize="6"
                                                       HorizontalAlignment="Left"
                                                       VerticalAlignment="Center"
@@ -100,12 +100,10 @@
                                                     <TextBlock Text="{Binding dateDue}" 
                                                                Foreground="{Binding IsCompleted, Mode=TwoWay, Converter={StaticResource CompletedTaskColorConverter}}" 
                                                                FontSize="12"
-                                                               VerticalAlignment="Center">
-                                                    </TextBlock>
-                                                    <!-- Pencil emoji if notes exist -->
+                                                               VerticalAlignment="Center"/>
+                                                    <!-- Pencil?Note emoji if notes exist -->
                                                     <TextBlock Text=" 📝" FontSize="18" 
-                                                               Visibility="{Binding notes, Converter={StaticResource VisibilityConverter}}">
-                                                    </TextBlock>
+                                                               Visibility="{Binding notes, Converter={StaticResource VisibilityConverter}}"/>
                                                     <ToolTipService.ToolTip>
                                                         <!-- Bind the content of the tooltip to Task.notes -->
                                                         <ToolTip Content="{Binding notes}" MaxWidth="250" 
@@ -138,8 +136,9 @@
                         </ListView.ItemTemplate>
                     </ListView>
                     <!-- Placeholder text for when the ListView is empty -->
-                    <TextBlock Text="Empty" VerticalAlignment="Center" HorizontalAlignment="Center"
-                               FontSize="16" Foreground="Gray" Visibility="{Binding Tasks.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+                    <TextBlock Text="Empty" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="0" 
+                               TextAlignment="Center" Grid.ColumnSpan="2"
+                        FontSize="16" Foreground="Gray" Visibility="{Binding Tasks.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
 
                     <!-- Enter a Task Input Box -->
                     <Grid Grid.Column="1" Grid.Row="3" Margin="0,0,0,80" Grid.RowSpan="1">

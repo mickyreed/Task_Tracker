@@ -50,7 +50,6 @@ namespace TaskList
         //public int MinHour => DateTime.Now.Hour;
         //public int MinMinute => DateTime.Now.Minute;
 
-
         public string Description
         {
             get => _description;
@@ -63,7 +62,6 @@ namespace TaskList
                 }
             }
         }
-
         public string Notes
         {
             get => _notes;
@@ -76,7 +74,6 @@ namespace TaskList
                 }
             }
         }
-
         public bool IsCompleted
         {
             get { return _isCompleted; }
@@ -90,7 +87,6 @@ namespace TaskList
                 }
             }
         }
-
         public DateTime? DateDue
         {
             get => _dateDue;
@@ -104,7 +100,6 @@ namespace TaskList
                 }
             }
         }
-
         public DateTime NonNullableDateDue
         {
             get => _dateDue ?? DateTime.Now.Date;
@@ -114,16 +109,14 @@ namespace TaskList
                 {
                     _dateDue = value;
                     OnPropertyChanged();
-                    OnPropertyChanged(nameof(DateDue));
+                    //OnPropertyChanged(nameof(DateDue));
                 }
             }
         }
-
         /// <summary>
         /// Datetime reference to make sure we cant pick a date in the past
         /// </summary>
         //public DateTime MinDate => DateTime.Now.Date;
-
         public TimeSpan? TimeDue
         {
             get => _timeDue;
@@ -132,12 +125,11 @@ namespace TaskList
                 if (_timeDue != value)
                 {
                     _timeDue = value;
-                    OnPropertyChanged();
+                    //OnPropertyChanged();
                     OnPropertyChanged(nameof(NonNullableTimeDue));
                 }
             }
         }
-
         public TimeSpan NonNullableTimeDue
         {
             get => _timeDue ?? TimeSpan.Zero;
@@ -151,7 +143,6 @@ namespace TaskList
                 }
             }
         }
-
         public DateTime MinDate
         {
             get { return _minDate; }
@@ -164,7 +155,6 @@ namespace TaskList
                 }
             }
         }
-
         public TaskType TaskType
         {
             get => _taskType;
@@ -177,7 +167,6 @@ namespace TaskList
                 }
             }
         }
-
         public Frequency Frequency
         {
             get => _frequency;
@@ -190,7 +179,6 @@ namespace TaskList
                 }
             }
         }
-
         public int Streak
         {
             get => _streak;
@@ -211,9 +199,7 @@ namespace TaskList
 
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
     }

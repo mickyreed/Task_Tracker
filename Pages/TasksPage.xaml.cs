@@ -115,7 +115,7 @@ namespace TaskList
                     }
                     else
                     {
-                        tasksCollection.Clear();
+                        //tasksCollection.Clear();
                         TasksListView.UpdateLayout();
                     }
 
@@ -270,8 +270,10 @@ namespace TaskList
                 Description = description,
                 Notes = notes,
                 DateDue = dateTime ?? DateTime.Now.Date,
-                TimeDue = dateTime?.TimeOfDay ?? TimeSpan.Zero // Default to 12:00 AM if time is null
+                TimeDue = dateTime?.TimeOfDay ?? TimeSpan.MaxValue // Default to 12:00 AM if time is null
             };
+
+
 
             // Create an instance of CreateTaskDialog and pass the ViewModel
             CreateTaskDialog createTaskDialog = new CreateTaskDialog(viewModel);
@@ -293,32 +295,32 @@ namespace TaskList
             }
         }
 
-        private async Task OpenPopupCreateTask(Tasks taskToEdit)
-        {
-            Debug.WriteLine("TRYING TO OPEN EDIT POPUP");
+        //private async Task OpenPopupCreateTask(Tasks taskToEdit)
+        //{
+        //    Debug.WriteLine("TRYING TO OPEN EDIT POPUP");
 
-            Guid id = taskToEdit.id;
-            // get the Task based on the Guid??
+        //    //Guid id = taskToEdit.id;
+        //    // get the Task based on the Guid??
 
-            // Create an instance of CreateTaskDialog and pass the ViewModel
-            EditTaskDialog editTaskDialog = new EditTaskDialog(taskToEdit);
+        //    // Create an instance of CreateTaskDialog and pass the ViewModel
+        //    EditTaskDialog editTaskDialog = new EditTaskDialog(taskToEdit);
 
-            // Show the dialog and await the result
-            ContentDialogResult result = await editTaskDialog.ShowAsync();
+        //    // Show the dialog and await the result
+        //    ContentDialogResult result = await editTaskDialog.ShowAsync();
 
-            // Handle the result
-            if (result == ContentDialogResult.Primary)
-            {
-                await UpdateData();
-                RefreshTaskList(currentFolder);
-                Debug.WriteLine("Refreshing Task List");
-            }
-            else
-            {
-                // User pressed "No" or closed the dialog
-                // Add logic for canceling or closing
-            }
-        }
+        //    // Handle the result
+        //    if (result == ContentDialogResult.Primary)
+        //    {
+        //        await UpdateData();
+        //        RefreshTaskList(currentFolder);
+        //        Debug.WriteLine("Refreshing Task List");
+        //    }
+        //    else
+        //    {
+        //        // User pressed "No" or closed the dialog
+        //        // Add logic for canceling or closing
+        //    }
+        //}
 
         /// <summary>
         /// Error Message Function for invalid input
@@ -402,40 +404,6 @@ namespace TaskList
             }
         }
 
-        private async void CheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            var checkBox = sender as CheckBox;
-            Tasks taskItem = checkBox?.Tag as Tasks;
-            // Check if the cast was successful
-            if (taskItem != null)
-            {
-                if (checkBox != null)
-                {
-                    // Get the IsChecked property, which is nullable
-                    bool isChecked = checkBox.IsChecked ?? false;
-                    taskItem.IsCompleted = true;
-                }
-            }
-        }
-        //Unchecked="CheckBox_UnChecked"
-        private async void CheckBox_UnChecked(object sender, RoutedEventArgs e)
-        {
-            var checkBox = sender as CheckBox;
-            Tasks taskItem = checkBox?.Tag as Tasks;
-            // Check if the cast was successful
-            if (taskItem != null)
-            {
-                if (checkBox != null)
-                {
-                    // Get the IsChecked property, which is nullable
-                    bool isChecked = checkBox.IsChecked ?? false;
-                    taskItem.IsCompleted = false;
-                }
-            }
-                
-
-        }
-
         /// <summary>
         /// Function to delete a task
         /// </summary>
@@ -449,6 +417,25 @@ namespace TaskList
             //Delete Task from SQL Database
             await TaskDataManagerSQL.DeleteTaskByIdAsync(id);
             Debug.WriteLine($"\n Removed Task with ID: {id}");
+            
+            await UpdateData();
+            TasksListView.UpdateLayout();
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            Tasks taskItem = checkBox?.Tag as Tasks;
+
+            if (taskItem != null)
+            {
+                if (checkBox != null)
+                {
+                    bool isChecked = checkBox.IsChecked ?? false;
+                    taskItem.IsCompleted = true;
+                }
+            }
+            UpdateData();
             TasksListView.UpdateLayout();
         }
     }
