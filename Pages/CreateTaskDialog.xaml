@@ -13,11 +13,18 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
     DataContext="{x:Bind ViewModel}"
-    Background="#2D2D30" CornerRadius="10" BorderBrush="#FF3E4D">
+    Background="#3C3C40" Foreground="AliceBlue" CornerRadius="10" BorderBrush="#FF3E4D" >
+    <!--="#2D2D30" CornerRadius="10" BorderBrush="#FF3E4D"-->
+
+    <!--"{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
 
     <ContentDialog.Resources>
-        <local:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
+        <local:TaskCountToStringConverter x:Key="TaskCountConverter"/>
         <local:VisibilityConverter x:Key="VisibilityConverter"/>
+        <local:CompletedTaskColorConverter x:Key="CompletedTaskColorConverter"/>
+        <local:CompletedTaskTextDecorationConverter x:Key="CompletedTaskTextDecorationConverter"/>
+        <local:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <local:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
         <local:FrequencyConverter x:Key="FrequencyConverter"/>
     </ContentDialog.Resources>
 

@@ -95,6 +95,9 @@ namespace TaskList
         /// Static list to hold all of the tasks
         /// </summary>
         public static ObservableCollection<Tasks> AllTasksList { get; set; } = new ObservableCollection<Tasks>();
+        public TaskType TaskType { get; internal set; }
+        public Frequency Frequency { get; internal set; }
+
         /// <summary>
         /// Static list to all tasks sorted by date
         /// </summary>

@@ -190,5 +190,105 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// Task to update an existing task in the database given its id
+        /// </summary>
+        /// <param name="task"></param>
+        /// <returns></returns>
+        public static async Task UpdateTaskAsync(Tasks task)
+        {
+            if (task == null)
+            {
+                Debug.WriteLine("ERROR: task is null.");
+                throw new ArgumentNullException(nameof(task));
+            }
+
+            if (task.id == null)
+            {
+                Debug.WriteLine("ERROR: task.id is null.");
+                throw new ArgumentNullException(nameof(task.id));
+            }
+
+            try
+            {
+                string updateDataQuery = "UPDATE Tasks SET " +
+                    "folder = @folder, type = @type, description = @description, notes = @notes, " +
+                    "dateDue = @dateDue, isCompleted = @isCompleted, frequency = @frequency, streak = @streak " +
+                    "WHERE id = @id";
+
+                SqliteCommand command = new SqliteCommand(updateDataQuery, database);
+
+                // Add parameters
+                command.Parameters.AddWithValue("@id", task.id.ToString());
+                command.Parameters.AddWithValue("@folder", "");
+                command.Parameters.AddWithValue("@type", task.GetType().Name);
+                command.Parameters.AddWithValue("@description", task.description);
+                command.Parameters.AddWithValue("@notes", task.notes);
+                command.Parameters.AddWithValue("@dateDue", task.dateDue);
+                command.Parameters.AddWithValue("@isCompleted", task.IsCompleted);
+
+                if (task is Habit habit)
+                {
+                    command.Parameters.AddWithValue("@streak", habit.streak);
+                    command.Parameters.AddWithValue("@frequency", Enum.GetName(typeof(Habit.Frequency), habit.frequency));
+                }
+                else if (task is RepeatTask repeatTask)
+                {
+                    command.Parameters.AddWithValue("@streak", -1);
+                    command.Parameters.AddWithValue("@frequency", Enum.GetName(typeof(RepeatTask.Frequency), repeatTask.frequency));
+                }
+                else
+                {
+                    command.Parameters.AddWithValue("@streak", -1);
+                    command.Parameters.AddWithValue("@frequency", string.Empty);
+                }
+
+                // Execute the command
+                command.ExecuteNonQuery();
+                Debug.WriteLine($"Task with ID {task.id} updated in the database.");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"ERROR: Cannot update task with ID: {task.id}! {ex.GetType().Name}: {ex.Message}");
+            }
+        }
+
+        public static async Task UpdateTaskCompletionStatusAsync(Tasks task)
+        {
+            //if (task == null)
+            //{
+            //    Debug.WriteLine("ERROR: task is null.");
+            //    throw new ArgumentNullException(nameof(task));
+            //}
+
+            //if (task.id == null)
+            //{
+            //    Debug.WriteLine("ERROR: task.id is null.");
+            //    throw new ArgumentNullException(nameof(task));
+            //}
+            if(task != null)
+            {
+                try
+                {
+                    string updateCompletionStatusQuery = "UPDATE Tasks SET isCompleted = @isCompleted WHERE id = @id";
+
+                    using (SqliteCommand command = new SqliteCommand(updateCompletionStatusQuery, database))
+                    {
+                        command.Parameters.AddWithValue("@id", task.id.ToString());
+                        command.Parameters.AddWithValue("@isCompleted", task.IsCompleted ? 1 : 0);
+
+                        await command.ExecuteNonQueryAsync();
+                    }
+
+                    Debug.WriteLine("Task completion status updated successfully in the database.");
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"ERROR: Could not update task completion status in database. {ex.GetType().Name}: {ex.Message}");
+                    throw;
+                }
+            }
+           
+        }
     }
 }

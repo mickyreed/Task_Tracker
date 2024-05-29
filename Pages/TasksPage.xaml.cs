@@ -20,6 +20,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using static TaskList.MainPage;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -45,12 +46,11 @@ namespace TaskList
         private Dictionary<CheckBox, bool> checkBoxStates = new Dictionary<CheckBox, bool>();
 
 
-
-
-
         public TasksPage()
         {
             this.InitializeComponent();
+            MainPage.ThemeChanged += OnThemeChanged;
+            ApplyCurrentTheme();
             FoldersListView.ItemsSource = Folder.AllFoldersList;
             TasksListView.ItemsSource = Tasks.AllTasksList;
             //this.NavigationCacheMode = NavigationCacheMode.Disabled;
@@ -98,34 +98,48 @@ namespace TaskList
                 UpdateFolderNameTextBox(selectedFolder.Name);
 
                 // Retrieve the list of task IDs from the selected folder
-                List<Guid> taskIds = selectedFolder.taskId;
+                //List<Guid> taskIds = selectedFolder.taskId;
+                List<Guid> taskIds = new List<Guid>();
+                if(currentFolder.TaskCount > 0)
+                {
+                    foreach (var task in currentFolder.taskId)
+                    {
+                        taskIds.Add(task);
+                    }
+                }
+                
 
                 // Create a collection to hold the tasks
                 ObservableCollection<Tasks> tasksCollection = new ObservableCollection<Tasks>();
                 // Iterate through the task IDs and retrieve the corresponding tasks
-                foreach (var taskId in taskIds)
+                if (taskIds.Count > 0)
                 {
-                    // Retrieve the task using the taskId
-                    Tasks task = Tasks.GetTaskById(taskId);
-                    //var task = Tasks.GetTaskById(taskId);
-                    if (task != null)
+                    foreach (var taskId in taskIds)
                     {
-                        // Add the task to the collection
-                        tasksCollection.Add(task);
-                    }
-                    else
-                    {
-                        //tasksCollection.Clear();
-                        TasksListView.UpdateLayout();
-                    }
+                        // Retrieve the task using the taskId
+                        Tasks task = Tasks.GetTaskById(taskId);
+                        //var task = Tasks.GetTaskById(taskId);
+                        if (task != null)
+                        {
+                            // Add the task to the collection
+                            tasksCollection.Add(task);
+                        }
 
-                    //}
-
-                    //// Set the ItemsSource of the ListView to the tasks collection
-                    TasksListView.ItemsSource = tasksCollection;
-                    // Set the header to the folder name
-                    FolderHeaderTextBlock.Text = selectedFolder.Name;
+                    };
                 }
+                else
+                {
+                    tasksCollection.Clear();
+                    //TasksListView.UpdateLayout();
+                }
+
+                //}
+
+                //// Set the ItemsSource of the ListView to the tasks collection
+                TasksListView.ItemsSource = tasksCollection;
+                // Set the header to the folder name
+                FolderHeaderTextBlock.Text = selectedFolder.Name;
+
             }
         }
         private async Task LoadData()
@@ -254,6 +268,10 @@ namespace TaskList
             Debug.WriteLine($"String 1: {result}");
             Debug.WriteLine($"String 2: {result.Item2}");
             Debug.WriteLine($"DateTime: {result.Item3}");
+            if(result.Item3 == null)
+            {
+                result.Item3 = DateTime.Now;
+            }
 
             await OpenPopupCreateTask(result.Item3, result.Item1, result.Item2);
         }
@@ -263,15 +281,34 @@ namespace TaskList
             string dateTimeToDisplay;
             //await result = TaskCreator.CheckUserInput(task);
             Debug.WriteLine("TRYING TO OPEN POPUP");
-
+            TaskViewModel viewModel;
             // Create an instance of TaskViewModel
-            TaskViewModel viewModel = new TaskViewModel()
+            if (dateTime != null)
             {
-                Description = description,
-                Notes = notes,
-                DateDue = dateTime ?? DateTime.Now.Date,
-                TimeDue = dateTime?.TimeOfDay ?? TimeSpan.MaxValue // Default to 12:00 AM if time is null
-            };
+                viewModel = new TaskViewModel()
+                {
+                    Description = description,
+                    Notes = notes,
+                    DateDue = dateTime?.Date ?? DateTime.Today,
+                    TimeDue = dateTime?.TimeOfDay ?? TimeSpan.MinValue, // Default to 12:00 AM if time is null
+                    Frequency = Frequency.Daily,
+                    Streak = 0
+
+                };
+            }
+            else
+            {
+                viewModel = new TaskViewModel()
+                {
+                    Description = description,
+                    Notes = notes,
+                    DateDue = DateTime.Today,
+                    TimeDue = TimeSpan.MinValue,
+                    Frequency = Frequency.Daily,
+                    Streak = 0
+                };
+            }
+            
 
 
 
@@ -367,7 +404,7 @@ namespace TaskList
             TasksSplitView.IsPaneOpen = false;
         }
 
-        private void EditTaskButton_Click(object sender, RoutedEventArgs e)
+        private async void EditTaskButton_Click(object sender, RoutedEventArgs e)
         {
             // Get the selected Task object from the ListView
             Tasks selectedTask = (sender as Button)?.Tag as Tasks;
@@ -378,7 +415,7 @@ namespace TaskList
                 var editTaskDialog = new EditTaskDialog(selectedTask);
 
                 // Show the dialog and handle the result
-                editTaskDialog.ShowAsync();
+                await editTaskDialog.ShowAsync();
             }
         }
 
@@ -422,7 +459,7 @@ namespace TaskList
             TasksListView.UpdateLayout();
         }
 
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        private async void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
             Tasks taskItem = checkBox?.Tag as Tasks;
@@ -432,11 +469,47 @@ namespace TaskList
                 if (checkBox != null)
                 {
                     bool isChecked = checkBox.IsChecked ?? false;
-                    taskItem.IsCompleted = true;
+                    //taskItem.IsCompleted = true;
+                    taskItem.IsCompleted = isChecked;
                 }
             }
-            UpdateData();
+            await UpdateData();
+            //_ = TaskDataManagerSQL.UpdateTaskAsync(taskItem);
+            //await TaskDataManagerSQL.UpdateTaskCompletionStatusAsync(taskItem);
             TasksListView.UpdateLayout();
+        }
+
+        private void OnThemeChanged(object sender, ThemeChangedEventArgs e)
+        {
+            ApplyTheme(e.Theme);
+        }
+
+        private void ApplyCurrentTheme()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            if (localSettings.Values.ContainsKey("AppTheme"))
+            {
+                string savedTheme = localSettings.Values["AppTheme"].ToString();
+                ApplyTheme(savedTheme);
+            }
+        }
+
+        private void ApplyTheme(string theme)
+        {
+            if (App.Current.Resources["AppBackgroundBrush"] is LinearGradientBrush backgroundBrush)
+            {
+                var gradientStops = backgroundBrush.GradientStops;
+                if (theme == "Light")
+                {
+                    gradientStops[0].Color = Windows.UI.Colors.White;
+                    gradientStops[1].Color = Windows.UI.Colors.LightGray;
+                }
+                else if (theme == "Dark")
+                {
+                    gradientStops[0].Color = Windows.UI.Colors.Black;
+                    gradientStops[1].Color = Windows.UI.Colors.Gray;
+                }
+            }
         }
     }
 }

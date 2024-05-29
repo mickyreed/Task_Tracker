@@ -4,6 +4,8 @@ using System.Linq;
 using System.Diagnostics;
 using Windows.UI.Xaml.Controls;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml;
 
 // The Content Dialog item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -21,137 +23,169 @@ namespace TaskList
         public CreateTaskDialog(TaskViewModel viewModel)
         {
             this.InitializeComponent();
+            // Find all buttons in the dialog and apply styling
+            Loaded += MyDialogBox_Loaded;
             //ViewModel = new TaskViewModel();
-            ViewModel = viewModel;
+            this.ViewModel = viewModel;
             this.DataContext = viewModel;
             DateTime MinDate = DateTime.Today;
         }
 
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-    {
-
-        // Validate time to ensure it is not in the past
-        DateTime selectedDateTime = ViewModel.NonNullableDateDue.Add(ViewModel.NonNullableTimeDue);
-        if (selectedDateTime < DateTime.Now)
+        private void MyDialogBox_Loaded(object sender, RoutedEventArgs e)
         {
-            // Store the state of the original dialog
-            var dialogState = new DialogState
-            {
-                Description = ViewModel.Description,
-                Notes = ViewModel.Notes,
-                TaskType = ViewModel.TaskType,
-                DateDue = ViewModel.NonNullableDateDue,
-                TimeDue = ViewModel.NonNullableTimeDue,
-                Frequency = ViewModel.Frequency
-            };
-
-
-            args.Cancel = true;
-            _isClosing = true;
-                
-            this.Hide();
-                
-            Task.Delay(300);
-
-
-            // Show a message to the user
-            var errorDialog = new ContentDialog
-            {
-                Title = "Invalid Task Due Date",
-                Content = "The selected Date & Time cannot be in the past.",
-                CloseButtonText = "Ok"
-            };
-                
-            await errorDialog.ShowAsync();
-
-            // After closing the error dialog, reopen the original dialog
-            if (_isClosing)
-            {
-                _isClosing = false;
-                //var reopenedDialog = new CreateTaskDialog(dialogState);
-                //await reopenedDialog.ShowAsync();
-            }
+            // Find all buttons in the dialog and apply styling
+            FindAndStyleButtons();
         }
-        else
+
+        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Logic to create the task using ViewModel properties
-            Debug.WriteLine("Created Task will happen here...");
-            // User pressed "Yes"
-            // Create a new Task based on the ViewModel properties
 
-            var folder = Folder.AllFoldersList.FirstOrDefault(f => f.id == TasksPage.currentFolder.id);
-            if (folder != null)
+            // Validate time to ensure it is not in the past
+            DateTime selectedDateTime = ViewModel.NonNullableDateDue.Add(ViewModel.NonNullableTimeDue);
+            if (selectedDateTime < DateTime.Now)
             {
-                switch (ViewModel.TaskType)
+                // Store the state of the original dialog
+                var dialogState = new DialogState
                 {
-                    case TaskType.Task:
-                        Debug.WriteLine("Task");
-                        var Task = new Tasks
-                        {
-                            description = ViewModel.Description,
-                            notes = ViewModel.Notes,
-                            dateDue = ViewModel.DateDue,
-                        };
+                    Description = ViewModel.Description,
+                    Notes = ViewModel.Notes,
+                    TaskType = ViewModel.TaskType,
+                    DateDue = ViewModel.NonNullableDateDue,
+                    TimeDue = ViewModel.NonNullableTimeDue,
+                    Frequency = ViewModel.Frequency
+                };
 
-                        //Add the new task to the AllTaskList
-                        Tasks.AddTask(Task);
-                        TasksPage.currentFolder.AddTask(Task.id);
-                        _ = TaskDataManagerSQL.AddTaskAsync(Task);
-                        await TaskDataManager.SaveDataAsync();
-                        Debug.WriteLine($"saving Task: {Task.description}");
-                        break;
 
-                    case TaskType.RepeatTask:
-                        Debug.WriteLine("RepeatTask");
-                        var repeatTask = new RepeatTask
-                        {
-                            description = ViewModel.Description,
-                            notes = ViewModel.Notes,
-                            dateDue = ViewModel.DateDue,
-                            frequency = (RepeatTask.Frequency)ViewModel.Frequency
-                        };
-                        Tasks.AddTask(repeatTask);
-                        TasksPage.currentFolder.AddTask(repeatTask.id);
-                        _ = TaskDataManagerSQL.AddTaskAsync(repeatTask);
-                        await TaskDataManager.SaveDataAsync();
-                        //TasksPage.TasksList.Clear();
-                        //foreach (var task in Tasks.AllTasksList)
-                        //{
-                        //    TasksPage.TasksList.Add(task);
-                        //}
-                        break;
+                args.Cancel = true;
+                _isClosing = true;
 
-                    case TaskType.Habit:
-                        Debug.WriteLine("Habit");
-                        var habit = new Habit
-                        {
-                            description = ViewModel.Description,
-                            notes = ViewModel.Notes,
-                            dateDue = ViewModel.DateDue,
-                            frequency = (Habit.Frequency)ViewModel.Frequency,
-                            streak = ViewModel.Streak
-                        };
-                        Tasks.AddTask(habit);
-                        TasksPage.currentFolder.AddTask(habit.id);
-                        _ = TaskDataManagerSQL.AddTaskAsync(habit);
-                        await TaskDataManager.SaveDataAsync();
-                        //TasksPage.TasksList.Clear();
-                        //foreach (var task in Tasks.AllTasksList)
-                        //{
-                        //    TasksPage.TasksList.Add(task);
-                        //}
+                this.Hide();
 
-                        break;
+                Task.Delay(300);
+
+                var errorDialog = new ContentDialog
+                {
+                    Title = "Invalid Task Due Date",
+                    Content = "The selected Date & Time cannot be in the past.",
+                    CloseButtonText = "Ok"
+                };
+
+                await errorDialog.ShowAsync();
+
+                // After closing the error dialog, reopen the original dialog
+                if (_isClosing)
+                {
+                    _isClosing = false;
                 }
             }
-                
+            else
+            {
+                Debug.WriteLine("Created Task will happen here...");
+                // Create a new Task based on the ViewModel properties
+
+                var folder = Folder.AllFoldersList.FirstOrDefault(f => f.id == TasksPage.currentFolder.id);
+                if (folder != null)
+                {
+                    switch (ViewModel.TaskType)
+                    {
+                        case TaskType.Task:
+                            Debug.WriteLine("Task");
+                            var Task = new Tasks
+                            {
+                                description = ViewModel.Description,
+                                notes = ViewModel.Notes,
+                                dateDue = ViewModel.DateDue,
+                            };
+
+                            //Add the new task to the AllTaskList
+                            Tasks.AddTask(Task);
+                            TasksPage.currentFolder.AddTask(Task.id);
+                            _ = TaskDataManagerSQL.AddTaskAsync(Task);
+                            await TaskDataManager.SaveDataAsync();
+                            Debug.WriteLine($"saving Task: {Task.description}");
+                            break;
+
+                        case TaskType.RepeatTask:
+                            Debug.WriteLine("RepeatTask");
+                            var repeatTask = new RepeatTask
+                            {
+                                description = ViewModel.Description,
+                                notes = ViewModel.Notes,
+                                dateDue = ViewModel.DateDue,
+                                frequency = (RepeatTask.Frequency)ViewModel.Frequency
+                            };
+                            Tasks.AddTask(repeatTask);
+                            TasksPage.currentFolder.AddTask(repeatTask.id);
+                            _ = TaskDataManagerSQL.AddTaskAsync(repeatTask);
+                            await TaskDataManager.SaveDataAsync();
+
+                            //TasksPage.TasksList.Clear();
+                            //foreach (var task in Tasks.AllTasksList)
+                            //{
+                            //    TasksPage.TasksList.Add(task);
+                            //}
+
+                            break;
+
+                        case TaskType.Habit:
+                            Debug.WriteLine("Habit");
+                            var habit = new Habit
+                            {
+                                description = ViewModel.Description,
+                                notes = ViewModel.Notes,
+                                dateDue = ViewModel.DateDue,
+                                frequency = (Habit.Frequency)ViewModel.Frequency,
+                                streak = ViewModel.Streak
+                            };
+                            Tasks.AddTask(habit);
+                            TasksPage.currentFolder.AddTask(habit.id);
+                            _ = TaskDataManagerSQL.AddTaskAsync(habit);
+                            await TaskDataManager.SaveDataAsync();
+
+                            //TasksPage.TasksList.Clear();
+                            //foreach (var task in Tasks.AllTasksList)
+                            //{
+                            //    TasksPage.TasksList.Add(task);
+                            //}
+
+                            break;
+                    }
+                }
+
+            }
         }
-    }
 
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Logic to cancel task creation
             Debug.WriteLine("CANCEL Create Task will happen here...");
+        }
+
+        private void FindAndStyleButtons()
+        {
+            // Find all buttons within the dialog box
+            FindButtonsRecursive(this);
+
+            void FindButtonsRecursive(DependencyObject parent)
+            {
+                int count = VisualTreeHelper.GetChildrenCount(parent);
+                for (int i = 0; i < count; i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                    if (child is Button button)
+                    {
+                        // Apply the desired styling to the button
+                        button.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
+                        button.CornerRadius = new CornerRadius(10);
+                        button.BorderBrush = new SolidColorBrush(Windows.UI.Colors.White);  // FromArgb(255, 62, 78, 77)); // #FF3E4D
+                    }
+                    else
+                    {
+                        // Recursively search for buttons in child elements
+                        FindButtonsRecursive(child);
+                    }
+                }
+            }
         }
     }
 
@@ -164,4 +198,5 @@ namespace TaskList
         public TimeSpan? TimeDue { get; set; }
         public Frequency Frequency { get; set; }
     }
+
 }

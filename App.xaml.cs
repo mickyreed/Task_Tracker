@@ -7,6 +7,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -70,6 +71,36 @@ namespace TaskList
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
+
+                ApplySavedTheme();
+            }
+        }
+
+        private void ApplySavedTheme()
+        {
+            var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
+            if (localSettings.Values.ContainsKey("AppTheme"))
+            {
+                string savedTheme = localSettings.Values["AppTheme"].ToString();
+                ApplyTheme(savedTheme);
+            }
+        }
+
+        private void ApplyTheme(string theme)
+        {
+            if (App.Current.Resources["AppBackgroundBrush"] is LinearGradientBrush backgroundBrush)
+            {
+                var gradientStops = backgroundBrush.GradientStops;
+                if (theme == "Light")
+                {
+                    gradientStops[0].Color = Colors.White;
+                    gradientStops[1].Color = Colors.LightGray;
+                }
+                else if (theme == "Dark")
+                {
+                    gradientStops[0].Color = Colors.Black;
+                    gradientStops[1].Color = Colors.Gray;
+                }
             }
         }
 

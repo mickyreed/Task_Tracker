@@ -58,6 +58,7 @@ namespace TaskList
                 if (_description != value)
                 {
                     _description = value;
+                    //OnPropertyChanged(nameof(Description));
                     OnPropertyChanged();
                 }
             }
@@ -70,6 +71,7 @@ namespace TaskList
                 if (_notes != value)
                 {
                     _notes = value;
+                    //OnPropertyChanged(nameof(Notes));
                     OnPropertyChanged();
                 }
             }
@@ -82,7 +84,8 @@ namespace TaskList
                 if (_isCompleted != value)
                 {
                     _isCompleted = value;
-                    OnPropertyChanged(nameof(IsCompleted));
+                    //OnPropertyChanged(nameof(IsCompleted));
+                    OnPropertyChanged();
                     //OnPropertyChanged(nameof(TextDecorations));
                 }
             }
@@ -163,7 +166,7 @@ namespace TaskList
                 if (_taskType != value)
                 {
                     _taskType = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(TaskType));
                 }
             }
         }
@@ -175,7 +178,7 @@ namespace TaskList
                 if (_frequency != value)
                 {
                     _frequency = value;
-                    OnPropertyChanged();
+                    OnPropertyChanged(nameof(Frequency));
                 }
             }
         }

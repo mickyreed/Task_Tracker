@@ -14,23 +14,68 @@
     
     <!--"{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
     <Page.Background>
-        <Media:LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <Media:GradientStop Color="#2D2D30" Offset="0.0"/>
-            <Media:GradientStop Color="#333333" Offset="1.0"/>
-        </Media:LinearGradientBrush>
+        <StaticResource ResourceKey="AppBackgroundBrush"/>
     </Page.Background>
+    
 
     <SplitView x:Name="MainSplitView" DisplayMode="CompactOverlay" 
                IsPaneOpen="False" CompactPaneLength="0" OpenPaneLength="300"
                PointerExited="MainSplitView_PointerExited">
         <!-- Content area -->
         <SplitView.Content>
-            <!-- Your main content goes here -->
             <Grid>
-                <Button Content="&#x2630;" FontSize="24" Background="#FF3E4D"
-                        Click="ToggleMenu_Click" VerticalAlignment="Top"/>
+                <Button Content="&#x2630;" FontSize="24" Background="#FF3E4D" Width="40" Height="40"
+                        Click="ToggleMenu_Click" VerticalAlignment="Top">
+                    <Button.Resources>
+                        <ResourceDictionary>
+                            <Color x:Key="ButtonBorderColour">#FF3E4D</Color>
+                            <Color x:Key="ButtonHoverColour">#FFFFFF</Color>
+                            <Color x:Key="BackgroundHoverColour">#FFFFFF</Color>
+                        </ResourceDictionary>
+                    </Button.Resources>
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="BorderBrush" Value="{StaticResource ButtonBorderColour}" />
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid Background="{TemplateBinding Background}">
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal" />
+                                                    <VisualState x:Name="PointerOver">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="BorderBrush">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonHoverColour}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonHoverColour}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Pressed" />
+                                                    <VisualState x:Name="Disabled" />
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                            <Border x:Name="border" BorderThickness="1"
+                                                    BorderBrush="{TemplateBinding BorderBrush}">
+                                                    <ContentPresenter 
+                                                    x:Name="ContentPresenter" 
+                                                    HorizontalAlignment="Center" 
+                                                    VerticalAlignment="Center"
+                                                    Content="{TemplateBinding Content}" />
+                                            </Border>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
-                <!-- Add your main content here -->
+                <!-- main content -->
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -42,6 +87,7 @@
                         <RowDefinition Height="40"/>
                         <RowDefinition Height="80"/>
                         <RowDefinition Height="80"/>
+                        <RowDefinition Height="160"/>
                         <RowDefinition Height="160"/>
                     </Grid.RowDefinitions>
 
@@ -123,6 +169,20 @@
                             </Grid>
                         </Popup>
 
+                        <!-- Popup for Settings -->
+                        <Popup x:Name="SettingsPopup" IsOpen="False">
+                            <Grid Background="#3C3C40" Width="400" Height="300" CornerRadius="10" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <TextBlock Text="Choose Theme" Foreground="AliceBlue" FontSize="24" Margin="0,0,0,20"/>
+                                    <RadioButton x:Name="LightThemeRadioButton" Content="Light Theme" Foreground="AliceBlue" FontSize="18" Margin="0,10"/>
+                                    <RadioButton x:Name="DarkThemeRadioButton" Content="Dark Theme" Foreground="AliceBlue" FontSize="18" Margin="0,10"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                                        <Button Content="OK" Click="SettingsOkButton_Click" Margin="10" Background="#FF3E4D" Foreground="White" BorderBrush="#FF3E4D" CornerRadius="10"/>
+                                        <Button Content="Cancel" Click="CancelButton_Click" Tag="SettingsPopup" Margin="10" Background="#FF3E4D" Foreground="White" BorderBrush="#FF3E4D" CornerRadius="10"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </Popup>
                     </Grid>
 
                     <!-- Display Task Created -->
@@ -140,19 +200,27 @@
             <Grid Background="#80CCCCCC" PointerExited="MainSplitView_PointerExited">
 
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="40*"/>
+                    <RowDefinition Height="80*"/>
                     <RowDefinition Height="Auto"/>
 
                 </Grid.RowDefinitions>
 
                 <!-- Menu items -->
                 <!-- Add Folder Button -->
-                <Button Content="Add Folder" Grid.Row="5" Grid.RowSpan="2" 
-                        Click="AddFolder_Click" CornerRadius="10"
-                        HorizontalAlignment="Center" Margin="0,10" 
+                <StackPanel Orientation="Horizontal" Grid.Row="5" Grid.RowSpan="2" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0,10,0,0">
+                    <Button Content="Add Folder" 
+                            Click="AddFolder_Click" CornerRadius="10"
+                            HorizontalAlignment="Center" Margin="10,10" 
+                            Foreground="AliceBlue" FontSize="18"
+                            Background="#3C3C40"/>
+
+
+                    <Button Content="&#x2699; Settings" 
+                        Click="OpenSettings_Click" CornerRadius="10"
+                        HorizontalAlignment="Center"
                         Foreground="AliceBlue" FontSize="18"
-                        Background="#3C3C40"/>
-                
+                        Background="#3C3C40" Margin="10,10"/>
+                </StackPanel>
                 <!--TextBlock Grid.Row="0" x:Name="TitleTextBlock" Text="Folders" /-->
 
                 <ListView x:Name="FoldersListView" SelectionMode="Single" 
@@ -179,7 +247,7 @@
                                 <StackPanel Orientation="Horizontal" Grid.Column="0">
                                     <TextBlock Text="{Binding Name}" Foreground="AliceBlue" FontSize="16"/>
                                     <!--TextBlock Text="{Binding TaskCount}" Foreground="AliceBlue" FontSize="12" Margin="1,0,0,0"/-->
-                                    <TextBlock Text="{Binding TaskCount, Converter={StaticResource TaskCountConverter}}" 
+                                    <TextBlock Text="{Binding TaskCount, Mode=TwoWay, Converter={StaticResource TaskCountConverter}}" 
                                                Foreground="#FF3E4D" FontSize="12" Margin="5,0,0,0"/>
                                 </StackPanel>
                                 <Button Grid.Column="0" Content="&#x1F50D;" FontSize="16" Foreground="#FF3E4D" 
@@ -196,9 +264,9 @@
                                         <ToolTip Content="Delete Folder"/>
                                     </ToolTipService.ToolTip>
                                 </Button>
-                                
-                                
-                                    <!--Image Source="Assets/bin.png" Width="20" Height="20" Stretch="UniformToFill"/-->
+
+
+                                <!--Image Source="Assets/bin.png" Width="20" Height="20" Stretch="UniformToFill"/-->
                                 <!--<TextBlock Text="X" Foreground="White" FontSize="18" VerticalAlignment="Center" HorizontalAlignment="Center"/>-->
 
 
@@ -209,6 +277,8 @@
             </Grid>
         </SplitView.Pane>
     </SplitView>
+
+    
 
     <!-- REFERENCES/-->
     <!-- https://blog.ticktick.com/2019/06/03/habit510/-->

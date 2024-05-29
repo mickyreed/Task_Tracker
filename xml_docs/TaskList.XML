@@ -416,7 +416,7 @@
         </member>
         <member name="M:TaskList.MainPage.DeleteFolderButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
             <summary>
-            An event handler that takes in a button press and opens apopup window
+            An event handler that takes in a button press and opens a popup window
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
@@ -486,6 +486,13 @@
             Task to delete a task from the database given its id
             </summary>
             <param name="taskId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TaskDataManagerSQL.UpdateTaskAsync(TaskList.Tasks)">
+            <summary>
+            Task to update an existing task in the database given its id
+            </summary>
+            <param name="task"></param>
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "T:TaskList.RepeatTask" -->

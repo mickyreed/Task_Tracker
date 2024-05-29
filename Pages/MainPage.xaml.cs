@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Popups;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -31,7 +33,7 @@ using TaskList;
 using Windows.Graphics;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI;
-
+using Windows.Storage;
 
 namespace TaskList
 {
@@ -46,6 +48,7 @@ namespace TaskList
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
         // List that we can bind to for the UI
         public static ObservableCollection<Folder> FoldersList = new ObservableCollection<Folder>();
         public string SelectedFolderName { get; set; }
@@ -72,6 +75,7 @@ namespace TaskList
                     }
                 }
             }
+            ApplySavedTheme();
             FoldersListView.ItemsSource = Folder.AllFoldersList;
         }
 
@@ -916,7 +920,21 @@ namespace TaskList
 
                     // Get the selected folder
                     Folder selectedFolder = currentFolder;
-                    
+                    if (currentFolder is null) //if folder is null check for Inbox and make that the default
+                    {
+                        if(AllFoldersList.Count < 0 && Folder.AllFoldersList.Any(folder => folder.Name == "Inbox"))
+                        {
+                            currentFolder = Folder.AllFoldersList.First(folder => folder.Name == "Inbox");
+                        }
+                        else // create a default folder called inbox
+                        {
+                            Folder folder = new Folder("Inbox");
+                            Folder.AddFolder(folder);
+                            currentFolder = folder;
+                        }
+                    }
+                    selectedFolder = currentFolder;
+
                     // Pass the string userInput and the currentFolder as a tuple to send to TaskPage
                     var navigationParams = new Tuple<Folder, string>(selectedFolder, userInput);
 
@@ -1174,7 +1192,7 @@ namespace TaskList
 
        
         /// <summary>
-        /// An event handler that takes in a button press and opens apopup window
+        /// An event handler that takes in a button press and opens a popup window
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1212,6 +1230,61 @@ namespace TaskList
             {
                 var popupName = button.Tag as string;
                 ClosePopup(popupName);
+            }
+        }
+
+        private void OpenSettings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsPopup.IsOpen = true;
+        }
+
+        private void SettingsOkButton_Click(object sender, RoutedEventArgs e)
+        {
+            string selectedTheme = LightThemeRadioButton.IsChecked == true ? "Light" : "Dark";
+            localSettings.Values["AppTheme"] = selectedTheme;
+            ApplyTheme(selectedTheme);
+            SettingsPopup.IsOpen = false;
+        }
+
+        private void ApplySavedTheme()
+        {
+            if (localSettings.Values.ContainsKey("AppTheme"))
+            {
+                string savedTheme = localSettings.Values["AppTheme"].ToString();
+                ApplyTheme(savedTheme);
+            }
+        }
+
+        private void ApplyTheme(string theme)
+        {
+            if (App.Current.Resources["AppBackgroundBrush"] is LinearGradientBrush backgroundBrush)
+            {
+                var gradientStops = backgroundBrush.GradientStops;
+                if (theme == "Light")
+                {
+                    gradientStops[0].Color = Windows.UI.Colors.White;
+                    gradientStops[1].Color = Windows.UI.Colors.LightGray;
+                }
+                else if (theme == "Dark")
+                {
+                    gradientStops[0].Color = Windows.UI.Colors.Black;
+                    gradientStops[1].Color = Windows.UI.Colors.Gray;
+                }
+            }
+
+            // Notify other pages about the theme change
+            ThemeChanged?.Invoke(this, new ThemeChangedEventArgs(theme));
+        }
+
+        public static event EventHandler<ThemeChangedEventArgs> ThemeChanged;
+
+        public class ThemeChangedEventArgs : EventArgs
+        {
+            public string Theme { get; }
+
+            public ThemeChangedEventArgs(string theme)
+            {
+                Theme = theme;
             }
         }
     }

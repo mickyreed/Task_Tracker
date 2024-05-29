@@ -12,13 +12,52 @@
     SecondaryButtonText="Cancel"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     SecondaryButtonClick="ContentDialog_SecondaryButtonClick"
-    DataContext="{x:Bind ViewModel}">
+    DataContext="{x:Bind ViewModel}"
+    Background="#3C3C40" Foreground="AliceBlue" CornerRadius="10" BorderBrush="#FF3E4D" >
 
     <ContentDialog.Resources>
-        <local:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
+        <local:TaskCountToStringConverter x:Key="TaskCountConverter"/>
         <local:VisibilityConverter x:Key="VisibilityConverter"/>
-        <local:FrequencyConverter x:Key="FrequencyConverter"/>
+        <local:CompletedTaskColorConverter x:Key="CompletedTaskColorConverter"/>
+        <local:CompletedTaskTextDecorationConverter x:Key="CompletedTaskTextDecorationConverter"/>
+        <local:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <local:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
+
+        <!-- Button Style -->
+        <Style x:Key="RedBorderButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}"/>
+            <Setter Property="BorderBrush" Value="Red"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="MinWidth" Value="120"/>
+            <Setter Property="UseSystemFocusVisuals" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <VisualStateManager.VisualStateGroups>
+                                <!-- Visual states here -->
+                            </VisualStateManager.VisualStateGroups>
+                            <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="10">
+                                <ContentPresenter x:Name="ContentPresenter" AutomationProperties.AccessibilityView="Raw" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentTransitions="{TemplateBinding ContentTransitions}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
     </ContentDialog.Resources>
+
+
+
 
     <Grid Padding="10">
         <Grid.RowDefinitions>
@@ -66,7 +105,7 @@
             <TextBox Grid.Row="0" Grid.Column="1" Text="{x:Bind ViewModel.Description, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Notes"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.Notes, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="50"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{x:Bind ViewModel.Notes, Mode=TwoWay}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="50" MaxWidth="380"/>
 
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Due Date"/>
             <DatePicker Grid.Row="2" Grid.Column="1" Date="{x:Bind ViewModel.NonNullableDateDue, Mode=TwoWay, Converter={StaticResource DateTimeToDateTimeOffsetConverter}}" 

@@ -14,14 +14,12 @@
         <local:CompletedTaskColorConverter x:Key="CompletedTaskColorConverter"/>
         <local:CompletedTaskTextDecorationConverter x:Key="CompletedTaskTextDecorationConverter"/>
         <local:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <local:DateTimeToDateTimeOffsetConverter x:Key="DateTimeToDateTimeOffsetConverter"/>
     </Page.Resources>
-    
-    <!--="{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
+
+    <!--"{ThemeResource ApplicationPageBackgroundThemeBrush}">-->
     <Page.Background>
-        <Media:LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <Media:GradientStop Color="#2D2D30" Offset="0.0"/>
-            <Media:GradientStop Color="#333333" Offset="1.0"/>
-        </Media:LinearGradientBrush>
+        <StaticResource ResourceKey="AppBackgroundBrush"/>
     </Page.Background>
 
     <SplitView x:Name="TasksSplitView" DisplayMode="CompactOverlay" 
@@ -31,7 +29,58 @@
         <SplitView.Content>
             <!-- Main content goes here -->
             <Grid>
-                <Button Content="&#x2630;" FontSize="24" Click="ToggleMenu_Click" VerticalAlignment="Top"/>
+                <Button Content="&#x2630;" FontSize="24" Width="40" Height="40"
+                        Background="#FF3E4D" 
+                        Click="ToggleMenu_Click" 
+                        VerticalAlignment="Top">
+                    <Button.Resources>
+                        <ResourceDictionary>
+                            <Color x:Key="ButtonBorderColour">#FF3E4D</Color>
+                            <Color x:Key="ButtonHoverColour">#FFFFFF</Color>
+                            <Color x:Key="BackgroundHoverColour">#FFFFFF</Color>
+                        </ResourceDictionary>
+                    </Button.Resources>
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Foreground" Value="White" />
+                            <Setter Property="BorderBrush" Value="{StaticResource ButtonBorderColour}" />
+                            <Setter Property="Background" Value="White"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Grid Background="{TemplateBinding Background}">
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal" />
+                                                    <VisualState x:Name="PointerOver">
+                                                        <Storyboard>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="border" Storyboard.TargetProperty="BorderBrush">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonHoverColour}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource ButtonHoverColour}" />
+                                                            </ObjectAnimationUsingKeyFrames>
+                                                        </Storyboard>
+                                                    </VisualState>
+                                                    <VisualState x:Name="Pressed" />
+                                                    <VisualState x:Name="Disabled" />
+                                                </VisualStateGroup>
+                                            </VisualStateManager.VisualStateGroups>
+                                            <Border x:Name="border"
+                                    BorderThickness="1"
+                                    BorderBrush="{TemplateBinding BorderBrush}">
+                                                <ContentPresenter x:Name="ContentPresenter"
+                                                  HorizontalAlignment="Center"
+                                                  VerticalAlignment="Center"
+                                                  Content="{TemplateBinding Content}" />
+                                            </Border>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
                 <!-- Add your main content here -->
                 <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -136,9 +185,9 @@
                         </ListView.ItemTemplate>
                     </ListView>
                     <!-- Placeholder text for when the ListView is empty -->
-                    <TextBlock Text="Empty" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="0" 
-                               TextAlignment="Center" Grid.ColumnSpan="2"
-                        FontSize="16" Foreground="Gray" Visibility="{Binding Tasks.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+                    <!--<TextBlock Text="Empty" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2" Grid.Column="0" 
+                            TextAlignment="Center" Grid.ColumnSpan="2"
+                            FontSize="16" Foreground="Gray" Visibility="{Binding Tasks.Count, Converter={StaticResource CountToVisibilityConverter}}"/>-->
 
                     <!-- Enter a Task Input Box -->
                     <Grid Grid.Column="1" Grid.Row="3" Margin="0,0,0,80" Grid.RowSpan="1">
@@ -173,7 +222,8 @@
                             Click="BackButton_Click" HorizontalAlignment="Right" 
                             VerticalAlignment="Bottom" Margin="0,0,10,20"
                             BorderBrush="AliceBlue" BorderThickness="0.5" 
-                            Padding="10,10,10,10" Background="#000000" CornerRadius="10"/>
+                            Padding="10,10,10,10" Background="#3C3C40" Foreground="AliceBlue" CornerRadius="10"/>
+                        
                 </Grid>
             </Grid>
         </SplitView.Content>
