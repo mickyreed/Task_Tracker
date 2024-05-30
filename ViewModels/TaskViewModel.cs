@@ -11,6 +11,7 @@ using static TaskList.Tasks;
 using static TaskList.RepeatTask;
 using static TaskList.Habit;
 using Windows.UI.Text;
+using System.Collections.ObjectModel;
 
 
 namespace TaskList
@@ -195,6 +196,7 @@ namespace TaskList
             }
         }
 
+
         public DateTime MinAllowedDate => DateTime.Today;
         public TimeSpan MinAllowedTime => TimeSpan.Zero;
 
@@ -204,6 +206,16 @@ namespace TaskList
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        //// Implement INotifyPropertyChanged members
+        //public event PropertyChangedEventHandler PropertyChanged;
+        //protected void OnPropertyChanged(string propertyName)
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //}
+
+        // Assuming you have a collection to hold the tasks
+        public ObservableCollection<Tasks> Tasks { get; set; } = new ObservableCollection<Tasks>();
 
     }
 
@@ -220,6 +232,5 @@ namespace TaskList
         Weekly
     }
 
-    
 }
 

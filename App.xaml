@@ -12,5 +12,8 @@
             <GradientStop Color="LightGray" Offset="1.0"/>
             <!-- #333333 -->
         </LinearGradientBrush>
+        <local:DueDateColorConverter x:Key="DueDateColorConverter" />
+        <local:CompletedTaskColorConverter x:Key="CompletedTaskColorConverter"/>
+        <local:CompletedTaskTextDecorationConverter x:Key="CompletedTaskTextDecorationConverter"/>
     </Application.Resources>
 </Application>

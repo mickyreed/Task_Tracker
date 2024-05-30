@@ -97,6 +97,7 @@ namespace TaskList
         public static ObservableCollection<Tasks> AllTasksList { get; set; } = new ObservableCollection<Tasks>();
         public TaskType TaskType { get; internal set; }
         public Frequency Frequency { get; internal set; }
+        public object DateDue { get; internal set; }
 
         /// <summary>
         /// Static list to all tasks sorted by date
@@ -106,6 +107,7 @@ namespace TaskList
         /// Static class to hold all tasks sorted by description
         /// </summary>
         public static List<Tasks> TasksByDescriptionIndex = new List<Tasks>();
+        internal DateTime? NonNullableTimeDue;
 
         /// <summary>
         /// A static method to add new tasks to the static list

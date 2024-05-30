@@ -6,9 +6,9 @@
   <Roots.PropertyPathNames>
     <RootPropertyPathName Name="TaskCount" />
     <RootPropertyPathName Name="Name" />
-    <RootPropertyPathName Name="Tasks" />
-    <RootPropertyPathName Name="notes" />
+    <RootPropertyPathName Name="DateDue" />
     <RootPropertyPathName Name="dateDue" />
+    <RootPropertyPathName Name="notes" />
     <RootPropertyPathName Name="IsCompleted" />
     <RootPropertyPathName Name="description" />
   </Roots.PropertyPathNames>
@@ -22,6 +22,9 @@
       <RootProperty Name="EndPoint" />
       <RootProperty Name="GradientStops" />
     </RootType>
+    <RootType FullName="TaskList.DueDateColorConverter" />
+    <RootType FullName="TaskList.CompletedTaskColorConverter" />
+    <RootType FullName="TaskList.CompletedTaskTextDecorationConverter" />
     <RootType FullName="Windows.UI.Xaml.Media.GradientStop">
       <RootProperty Name="Color" />
       <RootProperty Name="Offset" />
@@ -47,8 +50,6 @@
     </RootType>
     <RootType FullName="TaskList.TaskCountToStringConverter" />
     <RootType FullName="TaskList.VisibilityConverter" />
-    <RootType FullName="TaskList.CompletedTaskColorConverter" />
-    <RootType FullName="TaskList.CompletedTaskTextDecorationConverter" />
     <RootType FullName="TaskList.CountToVisibilityConverter" />
     <RootType FullName="TaskList.DateTimeToDateTimeOffsetConverter" />
     <RootType FullName="Windows.UI.Xaml.Controls.Button">
@@ -174,8 +175,8 @@
       <RootProperty Name="Foreground" />
       <RootProperty Name="FontWeight" />
       <RootProperty Name="TextDecorations" />
-      <RootProperty Name="VerticalAlignment" />
       <RootProperty Name="Visibility" />
+      <RootProperty Name="VerticalAlignment" />
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Controls.TextBox">
       <RootProperty Name="Text" />
@@ -235,6 +236,7 @@
     <RootType FullName="Windows.UI.Xaml.Controls.Primitives.Popup">
       <RootProperty Name="IsOpen" />
       <RootProperty Name="Child" />
+      <RootProperty Name="Margin" />
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Controls.RadioButton">
       <RootProperty Name="Content" />
@@ -286,7 +288,6 @@
     <RootType FullName="Windows.UI.Xaml.Data.Binding">
       <RootProperty Name="Mode" />
       <RootProperty Name="Converter" />
-      <RootProperty Name="FallbackValue" />
     </RootType>
     <RootType FullName="Windows.UI.Xaml.Controls.ToolTip">
       <RootProperty Name="Content" />
@@ -297,6 +298,7 @@
       <RootProperty Name="FontSize" />
     </RootType>
     <RootType FullName="TaskList.MainPage" />
+    <RootType FullName="TaskList.TaskStatusConverter" />
     <RootType FullName="Windows.UI.Xaml.Controls.Frame">
       <RootProperty Name="CornerRadius" />
       <RootProperty Name="BorderBrush" />

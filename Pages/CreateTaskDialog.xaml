@@ -83,6 +83,7 @@
 
             <TextBlock Grid.Row="3" Grid.Column="0" Text="Due Time"/>
             <TimePicker Grid.Row="3" Grid.Column="1" Time="{x:Bind ViewModel.NonNullableTimeDue, Mode=TwoWay}" Margin="0,0,0,20"/>
+
         </Grid>
     </Grid>
     

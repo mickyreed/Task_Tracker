@@ -69,6 +69,62 @@
             and need the enum values to display properly
             </summary>
         </member>
+        <member name="T:TaskList.EditTaskDialog">
+            <summary>
+            A class that represents the Dialog Window for Editing existing Tasks
+            </summary>
+        </member>
+        <member name="P:TaskList.EditTaskDialog.TaskToEdit">
+            <summary>
+            Gets or sets the task that is being edited.
+            This property holds a reference to the task object that is currently
+            being modified in the dialog, allowing for its details to be displayed
+            and updated by the user.
+            </summary>
+        </member>
+        <member name="P:TaskList.EditTaskDialog.ViewModel">
+            <summary>
+            A public TaskViewModel used tio display and bind the Tasks in the TaskView List
+            </summary>
+        </member>
+        <member name="F:TaskList.EditTaskDialog.TaskTypeName">
+            <summary>
+            A public string variable to hold the name of the Task Type
+            </summary>
+        </member>
+        <member name="M:TaskList.EditTaskDialog.#ctor(TaskList.Tasks)">
+            <summary>
+            Constructor that takes in a Task that we want to edit
+            </summary>
+            <param name="taskToEdit"></param>
+        </member>
+        <member name="M:TaskList.EditTaskDialog.MyDialogBox_Loaded(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            A function that runs when the dialog is loaded, and calls the function to to find and style the buttons
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.EditTaskDialog.ContentDialog_PrimaryButtonClick(Windows.UI.Xaml.Controls.ContentDialog,Windows.UI.Xaml.Controls.ContentDialogButtonClickEventArgs)">
+            <summary>
+            The function that handles the primary button event (save the edited task) and updates the saved data
+            And will also call an error if date is in the past
+            </summary>
+            <param name="sender"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:TaskList.EditTaskDialog.ContentDialog_SecondaryButtonClick(Windows.UI.Xaml.Controls.ContentDialog,Windows.UI.Xaml.Controls.ContentDialogButtonClickEventArgs)">
+            <summary>
+            Function that handles the cancel event and returns to the TaskPage view
+            </summary>
+            <param name="sender"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:TaskList.EditTaskDialog.FindAndStyleButtons">
+            <summary>
+            Function that recursively finds all the buttons in the dialog window and styles them
+            </summary>
+        </member>
         <member name="M:TaskList.EditTaskDialog.InitializeComponent">
             <summary>
             InitializeComponent()
@@ -84,6 +140,44 @@
             GetBindingConnector(int connectionId, object target)
             </summary>
         </member>
+        <member name="T:TaskList.CreateTaskDialog">
+            <summary>
+            A Class that represents the dialog window for creating a new Task
+            </summary>
+        </member>
+        <member name="M:TaskList.CreateTaskDialog.#ctor(TaskList.TaskViewModel)">
+            <summary>
+            Constructor taht takes in a TaskViewModel parameter
+            </summary>
+            <param name="viewModel"></param>
+        </member>
+        <member name="M:TaskList.CreateTaskDialog.MyDialogBox_Loaded(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            Function that runs when the dialog box loads, and calls the Button Style Functions
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.CreateTaskDialog.ContentDialog_PrimaryButtonClick(Windows.UI.Xaml.Controls.ContentDialog,Windows.UI.Xaml.Controls.ContentDialogButtonClickEventArgs)">
+            <summary>
+            Function that handles the primary button (create task) event
+            And takes all the entered data and creates a Task, Habit or RepeatTask from it, or handles an error if its a date in the past
+            </summary>
+            <param name="sender"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:TaskList.CreateTaskDialog.ContentDialog_SecondaryButtonClick(Windows.UI.Xaml.Controls.ContentDialog,Windows.UI.Xaml.Controls.ContentDialogButtonClickEventArgs)">
+            <summary>
+            Functyion that hadnles the cancel task button
+            </summary>
+            <param name="sender"></param>
+            <param name="args"></param>
+        </member>
+        <member name="M:TaskList.CreateTaskDialog.FindAndStyleButtons">
+            <summary>
+            A function that recursively finds any buttons inthe dialog and applies styles to them
+            </summary>
+        </member>
         <member name="M:TaskList.CreateTaskDialog.InitializeComponent">
             <summary>
             InitializeComponent()
@@ -97,6 +191,14 @@
         <member name="M:TaskList.CreateTaskDialog.GetBindingConnector(System.Int32,System.Object)">
             <summary>
             GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:TaskList.DialogState">
+            <summary>
+            A function that saves the current state of the Dialog data so we can close it 
+            as there can only be one dialog open at a time.
+            and then we can display another dialog when the date is in the past
+            Before re-opening the dialog with the saved information
             </summary>
         </member>
         <member name="T:TaskList.DateTimeToDateTimeOffsetConverter">
@@ -722,6 +824,27 @@
             Function to delete a task
             </summary>
             <param name="idToLookup"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.DeleteTaskYes_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            Function that deletes a folder if the user presses the Confrim button
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.ClosePopup(System.String)">
+            <summary>
+            A function that takes in a string value which is the name of an existing popup window,
+            It finds the open pop up and closes it when a user presses the cancel button
+            </summary>
+            <param name="popupName"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.CancelButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            An event handler for finding the open pop up window name based on the Tag element from the button pressed
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
         </member>
         <member name="M:TaskList.TasksPage.InitializeComponent">
             <summary>

@@ -16,12 +16,11 @@ namespace TaskList
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            // Check if the task is completed
-            //bool isCompleted = (bool)value;
-
-            // Assuming your binding context is a Task object
-            if (!(value is Tasks task)) return new SolidColorBrush(Colors.White);
-
+            Tasks task = value as Tasks;
+            if (task == null)
+            {
+                return new SolidColorBrush(Colors.White);
+            }
             if (task.IsCompleted)
             {
                 return new SolidColorBrush(Colors.Gray); // Completed tasks are gray
@@ -36,8 +35,7 @@ namespace TaskList
             }
             else
             {
-                Debug.WriteLine("we are white!");
-                return new SolidColorBrush(Colors.White); // Normal tasks are black
+                return new SolidColorBrush(Colors.White); // Normal tasks are white
             }
 
         }

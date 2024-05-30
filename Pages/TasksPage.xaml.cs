@@ -2,11 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -35,16 +39,21 @@ namespace TaskList
         public static ObservableCollection<Folder> FoldersList { get; set; } // = new ObservableCollection<Folder>();
         public static ObservableCollection<Tasks> TasksList { get; set; } // = new ObservableCollection<Tasks>();
 
+        public IOrderedEnumerable<Tasks> sortedTasks;
+
+
+
         /// <summary>
         /// 
         /// </summary>
-        public string SelectedFolderName { get; set; }
+        public Folder selectedFolder { get; set; }
         public string taskInput { get; set; }
         public static Folder currentFolder;
+        private Task currentTask;
+        private Guid currentTaskGuid;
         //public var result = (string description, string notes, DateTime? dateTime);
         private bool isUpdating = false;
         private Dictionary<CheckBox, bool> checkBoxStates = new Dictionary<CheckBox, bool>();
-
 
         public TasksPage()
         {
@@ -52,11 +61,15 @@ namespace TaskList
             MainPage.ThemeChanged += OnThemeChanged;
             ApplyCurrentTheme();
             FoldersListView.ItemsSource = Folder.AllFoldersList;
-            TasksListView.ItemsSource = Tasks.AllTasksList;
+            TasksListView.ItemsSource = TasksList;
             //this.NavigationCacheMode = NavigationCacheMode.Disabled;
             //this.DataContext = this;
+            TasksList = Tasks.AllTasksList;
             TasksListView.UpdateLayout();
             _ = LoadData();
+
+            //sortedTasks = TasksList.OrderBy(t => t.dateDue ?? DateTime.MaxValue);
+            UpdateSortedTasks(TasksList);
         }
 
         /// <summary>
@@ -100,14 +113,14 @@ namespace TaskList
                 // Retrieve the list of task IDs from the selected folder
                 //List<Guid> taskIds = selectedFolder.taskId;
                 List<Guid> taskIds = new List<Guid>();
-                if(currentFolder.TaskCount > 0)
+                if (currentFolder.TaskCount > 0)
                 {
                     foreach (var task in currentFolder.taskId)
                     {
                         taskIds.Add(task);
                     }
                 }
-                
+
 
                 // Create a collection to hold the tasks
                 ObservableCollection<Tasks> tasksCollection = new ObservableCollection<Tasks>();
@@ -118,7 +131,6 @@ namespace TaskList
                     {
                         // Retrieve the task using the taskId
                         Tasks task = Tasks.GetTaskById(taskId);
-                        //var task = Tasks.GetTaskById(taskId);
                         if (task != null)
                         {
                             // Add the task to the collection
@@ -132,15 +144,33 @@ namespace TaskList
                     tasksCollection.Clear();
                     //TasksListView.UpdateLayout();
                 }
-
-                //}
-
-                //// Set the ItemsSource of the ListView to the tasks collection
-                TasksListView.ItemsSource = tasksCollection;
+                
                 // Set the header to the folder name
                 FolderHeaderTextBlock.Text = selectedFolder.Name;
+                UpdateSortedTasks(tasksCollection);
 
             }
+        }
+
+        /// <summary>
+        /// Function that creates an observable collection then orders the tasks by IsCompleted, then by due Date, then by decending
+        /// </summary>
+        /// <param name="currentTasksList"></param>
+        public void UpdateSortedTasks(ObservableCollection<Tasks> currentTasksList)
+        {
+            List<Guid> taskIdsInSelectedFolder = currentFolder.taskId;
+            // Filter tasks based on the selected folder
+            var filteredTasks = currentTasksList
+                .Where(t => taskIdsInSelectedFolder.Contains(t.id)).ToList();
+
+
+            var sortedTasks = filteredTasks
+                .OrderBy(t => t.IsCompleted == true) // order by incomplete tasks first
+                .ThenBy(t => t.dateDue ?? DateTime.MaxValue)
+                .ThenByDescending(t => t.dateDue ?? DateTime.MinValue)
+                .ToList();
+            
+            TasksListView.ItemsSource = new ObservableCollection<Tasks>(sortedTasks);
         }
         private async Task LoadData()
         {
@@ -195,8 +225,11 @@ namespace TaskList
         {
             await SaveData();
             //UpdateTaskIndexes();
-            RefreshTaskList(currentFolder);
+            //RefreshTaskList(currentFolder);
             RefreshFolderList();
+            //UpdateSortedTasks();
+            
+            RefreshTaskList(currentFolder);
         }
         private async void RefreshFolderList()
         {
@@ -268,7 +301,7 @@ namespace TaskList
             Debug.WriteLine($"String 1: {result}");
             Debug.WriteLine($"String 2: {result.Item2}");
             Debug.WriteLine($"DateTime: {result.Item3}");
-            if(result.Item3 == null)
+            if (result.Item3 == null)
             {
                 result.Item3 = DateTime.Now;
             }
@@ -278,37 +311,66 @@ namespace TaskList
 
         private async Task OpenPopupCreateTask(DateTime? dateTime, string description, string notes)
         {
-            string dateTimeToDisplay;
-            //await result = TaskCreator.CheckUserInput(task);
+            DateTime? nullableDateTime = dateTime; /* your nullable DateTime value */
+            DateTime date;
+            TimeSpan timeSpan = TimeSpan.Zero;
+
             Debug.WriteLine("TRYING TO OPEN POPUP");
             TaskViewModel viewModel;
-            // Create an instance of TaskViewModel
-            if (dateTime != null)
+            
+            // Try to extract a time of day as a timespan
+            if (nullableDateTime.HasValue)
             {
-                viewModel = new TaskViewModel()
-                {
-                    Description = description,
-                    Notes = notes,
-                    DateDue = dateTime?.Date ?? DateTime.Today,
-                    TimeDue = dateTime?.TimeOfDay ?? TimeSpan.MinValue, // Default to 12:00 AM if time is null
-                    Frequency = Frequency.Daily,
-                    Streak = 0
+                date = nullableDateTime.Value;
 
-                };
+                // Extract the date component and time component
+                if (date.TimeOfDay == TimeSpan.Zero && date.TimeOfDay < DateTime.Now.TimeOfDay)
+                {
+                    // The user specified only the date without the time.
+                    timeSpan = new TimeSpan(23, 59, 59);
+                    date = nullableDateTime.Value.Date;
+                }
+                else
+                {
+                    timeSpan = date.TimeOfDay;
+                    date = nullableDateTime.Value.Date;
+                }
+
             }
+
             else
             {
-                viewModel = new TaskViewModel()
-                {
-                    Description = description,
-                    Notes = notes,
-                    DateDue = DateTime.Today,
-                    TimeDue = TimeSpan.MinValue,
-                    Frequency = Frequency.Daily,
-                    Streak = 0
-                };
+                // If there's no dateTime value, set to 11:59:59 PM of the current day
+                date = DateTime.Today;
+                timeSpan = new TimeSpan(23, 59, 59);
             }
-            
+
+            viewModel = new TaskViewModel()
+            {
+
+                Description = description,
+                Notes = notes,
+                DateDue = date,
+                TimeDue = timeSpan,
+                //TimeDue = dateTime?.TimeOfDay ?? TimeSpan.MaxValue, // Default to 12:00 AM if time is null
+                Frequency = Frequency.Daily,
+                Streak = 0
+
+            };
+
+            //else
+            //{
+            //    viewModel = new TaskViewModel()
+            //    {
+            //        Description = description,
+            //        Notes = notes,
+            //        DateDue = DateTime.Today,
+            //        TimeDue = TimeSpan.MaxValue,
+            //        Frequency = Frequency.Daily,
+            //        Streak = 0
+            //    };
+            //}
+
 
 
 
@@ -322,14 +384,18 @@ namespace TaskList
             if (result == ContentDialogResult.Primary)
             {
                 await UpdateData();
+                
                 RefreshTaskList(currentFolder);
+                //UpdateSortedTasks(tasksCollection);
                 Debug.WriteLine("Refreshing Task List");
             }
             else
             {
                 // User pressed "No" or closed the dialog
-                // Add logic for canceling or closing
+                // No logic here just close dialog
             }
+            await UpdateData();
+            RefreshTaskList(currentFolder);
         }
 
         //private async Task OpenPopupCreateTask(Tasks taskToEdit)
@@ -412,10 +478,25 @@ namespace TaskList
             if (selectedTask != null)
             {
                 // Create an instance of the EditTaskDialog and pass the selected Task object
-                var editTaskDialog = new EditTaskDialog(selectedTask);
+                EditTaskDialog editTaskDialog = new EditTaskDialog(selectedTask);
 
                 // Show the dialog and handle the result
-                await editTaskDialog.ShowAsync();
+                ContentDialogResult result = await editTaskDialog.ShowAsync();
+
+
+                if (result == ContentDialogResult.Primary)
+                {
+                    RemoveTask(currentTaskGuid);
+                    await UpdateData();
+                    RefreshTaskList(currentFolder);
+                    //UpdateSortedTasks();
+                    Debug.WriteLine("Refreshing Task List");
+                }
+                else
+                {
+                    // User pressed "No" or closed the dialog
+                    // No logic here just close dialog
+                }
             }
         }
 
@@ -425,15 +506,17 @@ namespace TaskList
             var button = sender as Button;
 
             // Get the task object from the Tag property
-            Tasks task = button?.Tag as Tasks; // Assuming your task model is named TaskModel
+            Tasks tasks = button?.Tag as Tasks; // Assuming your task model is named TaskModel
 
-            if (task != null)
+            if (tasks != null)
             {
                 // Get the ID of the task
-                Guid taskId = task.id; // Assuming the task has a property named 'id' of type Guid
-
+                Debug.WriteLine($"\n Getting Task ID: {currentTaskGuid}");
+                currentTaskGuid = tasks.id;
+                DeleteTaskPopup.IsOpen = true;
                 // Call the method to remove the task
-                RemoveTask(taskId);
+                //RemoveTask(currentTaskGuid);
+                //RefreshFolderList();
             }
             else
             {
@@ -447,16 +530,53 @@ namespace TaskList
         /// <param name="idToLookup"></param>
         public async void RemoveTask(Guid idToLookup)
         {
-            Guid id = idToLookup;
+            currentTaskGuid = idToLookup;
 
-            Tasks.RemoveTask(id);
+            Tasks.RemoveTask(currentTaskGuid);
+            currentFolder.RemoveTask(currentTaskGuid);
 
             //Delete Task from SQL Database
-            await TaskDataManagerSQL.DeleteTaskByIdAsync(id);
-            Debug.WriteLine($"\n Removed Task with ID: {id}");
-            
+            _ = TaskDataManagerSQL.DeleteTaskByIdAsync(currentTaskGuid);
+            Debug.WriteLine($"\n Removed Task with ID: {currentTaskGuid}");
+
+            //_ = FolderDataManagerSQL.DeleteFolderByIdAsync(currentFolder.id);
             await UpdateData();
-            TasksListView.UpdateLayout();
+
+            //UpdateSortedTasks();
+            //TasksListView.UpdateLayout();
+            RefreshTaskList(currentFolder);
+        }
+
+        /// <summary>
+        /// Function that deletes a folder if the user presses the Confrim button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void DeleteTaskYes_Click(object sender, RoutedEventArgs e)
+        {
+
+            Debug.WriteLine($"*************************************************");
+            Debug.WriteLine("DELETING A TASK");
+            //var folderToDelete = (Folder)((Button)sender).Tag;
+            //Folder.RemoveFolder(folderToDelete);
+            //Tasks.RemoveTask(currentFolder);
+
+            if (currentTaskGuid != null)
+            {
+                RemoveTask(currentTaskGuid);
+            }
+
+            //FoldersList.Remove(currentFolder);
+            //RefreshFolderList();
+
+            //Delete Folder from SQL Database
+            //_ = FolderDataManagerSQL.DeleteFolderByIdAsync(currentFolder.id);
+            //await UpdateData();
+            //RefreshFolderList();
+
+            // Close Popup after deletion
+            DeleteTaskPopup.IsOpen = false;
+
         }
 
         private async void CheckBox_Click(object sender, RoutedEventArgs e)
@@ -476,6 +596,9 @@ namespace TaskList
             await UpdateData();
             //_ = TaskDataManagerSQL.UpdateTaskAsync(taskItem);
             //await TaskDataManagerSQL.UpdateTaskCompletionStatusAsync(taskItem);
+
+            //UpdateSortedTasks();
+            RefreshTaskList(currentFolder);
             TasksListView.UpdateLayout();
         }
 
@@ -510,6 +633,74 @@ namespace TaskList
                     gradientStops[1].Color = Windows.UI.Colors.Gray;
                 }
             }
+        }
+
+        /// <summary>
+        /// A function that takes in a string value which is the name of an existing popup window,
+        /// It finds the open pop up and closes it when a user presses the cancel button
+        /// </summary>
+        /// <param name="popupName"></param>
+        private void ClosePopup(string popupName)
+        {
+            var popup = FindName(popupName) as Popup;
+            if (popup != null)
+            {
+                popup.IsOpen = false;
+            }
+        }
+
+        /// <summary>
+        /// An event handler for finding the open pop up window name based on the Tag element from the button pressed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button != null)
+            {
+                var popupName = button.Tag as string;
+                ClosePopup(popupName);
+            }
+        }
+
+    }
+
+    public class GroupInfo : INotifyPropertyChanged
+    {
+        private string _groupTitle;
+        public string GroupTitle
+        {
+            get { return _groupTitle; }
+            set
+            {
+                if (_groupTitle != value)
+                {
+                    _groupTitle = value;
+                    OnPropertyChanged(nameof(GroupTitle));
+                }
+            }
+        }
+
+        private ObservableCollection<Task> _tasks;
+        public ObservableCollection<Task> Tasks
+        {
+            get { return _tasks; }
+            set
+            {
+                if (_tasks != value)
+                {
+                    _tasks = value;
+                    OnPropertyChanged(nameof(Tasks));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

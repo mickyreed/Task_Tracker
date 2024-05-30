@@ -29,7 +29,7 @@ namespace TaskList
             task1.description = "Plan India trip";
             task1.notes = "research places to stay. make enquiries into flights. speak to Dad";
             task1.dateDue = DateTime.Now.AddDays(-1);
-            task1.IsCompleted = false;
+            task1.IsCompleted = true;
             Tasks.AddTask(task1);
             folder1.AddTask(task1.id);
             //Debug.WriteLine("TASK: " + task1.description);
@@ -48,7 +48,7 @@ namespace TaskList
             //Debug.WriteLine(task3.id);
             task3.description = "Plan India trip again";
             task3.notes = "Speak to mum this time";
-            task3.dateDue = DateTime.Now.AddDays(-1); // this is overdue DUE 1 DAY AGO
+            task3.dateDue = DateTime.Now.AddDays(+20); // this is overdue DUE 1 DAY AGO
             task3.IsCompleted = false;
             Tasks.AddTask(task3);
             folder1.AddTask(task3.id);
@@ -58,7 +58,7 @@ namespace TaskList
             //Debug.WriteLine(task4.id);
             task4.description = "Read a novel";
             task4.notes = "Lord of the Rings again??";
-            task4.dateDue = DateTime.Now.AddDays(-1); // this is past the due date ...
+            task4.dateDue = DateTime.Now.AddDays(+40); // this is past the due date ...
             task4.IsCompleted = true; // but has been completed !!
             Tasks.AddTask(task4);
             folder1.AddTask(task4.id);
@@ -68,7 +68,7 @@ namespace TaskList
             //Debug.WriteLine(task4.id);
             task4a.description = "Read a novel";
             task4a.notes = "possibly The Marsian by Andy Wier, yes i know I've read this 20 times already :)";
-            task4a.dateDue = DateTime.Now.AddDays(+2); // this is past the due date ...
+            task4a.dateDue = DateTime.Now.AddDays(+90); // this is past the due date ...
             task4a.IsCompleted = false; // but has been completed !!
             Tasks.AddTask(task4a);
             folder1.AddTask(task4a.id);
@@ -78,7 +78,7 @@ namespace TaskList
             var task5 = new Tasks();
             task5.description = "Call Accountant";
             task5.notes = "Ring Paul about the business venture";
-            task5.dateDue = DateTime.Now.AddDays(3); // this is due tomorrowin 1 day
+            task5.dateDue = DateTime.Now.AddDays(7); // this is due tomorrowin 1 day
             task5.IsCompleted = false;
             Tasks.AddTask(task5);
             folder2.AddTask(task5.id);
@@ -100,8 +100,8 @@ namespace TaskList
             var habitTask2 = new Habit();
             habitTask2.description = "Daily Exercise";
             habitTask2.notes = "Chest and Arms,followed by yoga";
-            habitTask2.dateDue = DateTime.Now.AddDays(-1);
-            habitTask2.IsCompleted = true;
+            habitTask2.dateDue = DateTime.Now.AddDays(+5);
+            habitTask2.IsCompleted = false;
             habitTask2.frequency = Habit.Frequency.Daily;
             habitTask2.streak = 5;
             Tasks.AddTask(habitTask2);
@@ -112,7 +112,7 @@ namespace TaskList
             var repeatTask = new RepeatTask();
             repeatTask.description = "Pick up Weekly Mail";
             repeatTask.notes = "";
-            repeatTask.dateDue = DateTime.Now.AddDays(-3);  //this will be overdue
+            repeatTask.dateDue = DateTime.Today.AddDays(1).AddTicks(-1);  //this will be overdue
             repeatTask.IsCompleted = false;
             repeatTask.frequency = RepeatTask.Frequency.Weekly;
             Tasks.AddTask(repeatTask);
@@ -123,7 +123,7 @@ namespace TaskList
             var repeatTask2 = new RepeatTask();
             repeatTask2.description = "Clean Bathroom Weekly";
             repeatTask2.notes = "";
-            repeatTask2.dateDue = DateTime.Now.AddDays(+1);
+            repeatTask2.dateDue = DateTime.Today.AddDays(1).AddTicks(-1);
             repeatTask2.IsCompleted = false;
             repeatTask2.frequency = RepeatTask.Frequency.Weekly; // this will be not overdue (due tomorrow)
             Tasks.AddTask(repeatTask2);

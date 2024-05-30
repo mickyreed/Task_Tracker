@@ -922,15 +922,16 @@ namespace TaskList
                     Folder selectedFolder = currentFolder;
                     if (currentFolder is null) //if folder is null check for Inbox and make that the default
                     {
-                        if(AllFoldersList.Count < 0 && Folder.AllFoldersList.Any(folder => folder.Name == "Inbox"))
+                        if (Folder.AllFoldersList.Any(folder => folder.Name == "Inbox"))
                         {
+                            // Set the current folder to the existing Inbox folder
                             currentFolder = Folder.AllFoldersList.First(folder => folder.Name == "Inbox");
                         }
                         else // create a default folder called inbox
                         {
-                            Folder folder = new Folder("Inbox");
-                            Folder.AddFolder(folder);
-                            currentFolder = folder;
+                            Folder inboxFolder = new Folder("Inbox");
+                            Folder.AddFolder(inboxFolder);
+                            currentFolder = inboxFolder;
                         }
                     }
                     selectedFolder = currentFolder;

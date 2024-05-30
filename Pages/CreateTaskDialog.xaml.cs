@@ -11,15 +11,25 @@ using Windows.UI.Xaml;
 
 namespace TaskList
 {
+    /// <summary>
+    /// A Class that represents the dialog window for creating a new Task
+    /// </summary>
     public sealed partial class CreateTaskDialog : ContentDialog
     {
         private bool _isClosing;
+        DateTime? MinDate = DateTime.Today.AddDays(+1).AddTicks(-1);
+
+        
 
         public TaskViewModel ViewModel { get; set; }
 
         public List<TaskType> TaskTypes { get; } = new List<TaskType> { TaskType.Task, TaskType.RepeatTask, TaskType.Habit };
         public List<Frequency> Frequencies { get; } = new List<Frequency> { Frequency.Daily, Frequency.Weekly };
 
+        /// <summary>
+        /// Constructor taht takes in a TaskViewModel parameter
+        /// </summary>
+        /// <param name="viewModel"></param>
         public CreateTaskDialog(TaskViewModel viewModel)
         {
             this.InitializeComponent();
@@ -28,17 +38,49 @@ namespace TaskList
             //ViewModel = new TaskViewModel();
             this.ViewModel = viewModel;
             this.DataContext = viewModel;
-            DateTime MinDate = DateTime.Today;
+            
         }
 
+        /// <summary>
+        /// Function that runs when the dialog box loads, and calls the Button Style Functions
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MyDialogBox_Loaded(object sender, RoutedEventArgs e)
         {
             // Find all buttons in the dialog and apply styling
             FindAndStyleButtons();
         }
 
+        /// <summary>
+        /// Function that handles the primary button (create task) event
+        /// And takes all the entered data and creates a Task, Habit or RepeatTask from it, or handles an error if its a date in the past
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            // Access the ViewModel
+            var viewModel = (TaskViewModel)this.DataContext;
+
+            // Extract the data from the ViewModel
+            TaskType taskType = viewModel.TaskType;
+            string description = viewModel.Description;
+            string notes = viewModel.Notes;
+            DateTime? dateDue = viewModel.DateDue;
+            TimeSpan? timeDue = viewModel.NonNullableTimeDue;
+            Frequency frequency = viewModel.Frequency;
+
+            //// Create the Tasks object
+            //Tasks newTask = new Tasks
+            //{
+            //    TaskType = taskType,
+            //    description = description,
+            //    notes = notes,
+            //    DateDue = dateDue,
+            //    //TimeDue = timeDue,
+            //    Frequency = frequency
+            //};
 
             // Validate time to ensure it is not in the past
             DateTime selectedDateTime = ViewModel.NonNullableDateDue.Add(ViewModel.NonNullableTimeDue);
@@ -50,33 +92,33 @@ namespace TaskList
                     Description = ViewModel.Description,
                     Notes = ViewModel.Notes,
                     TaskType = ViewModel.TaskType,
-                    DateDue = ViewModel.NonNullableDateDue,
-                    TimeDue = ViewModel.NonNullableTimeDue,
+                    DateDue = MinDate,
+                    TimeDue = MinDate.Value.TimeOfDay,
                     Frequency = ViewModel.Frequency
                 };
 
 
                 args.Cancel = true;
-                _isClosing = true;
+            _isClosing = true;
 
-                this.Hide();
+            this.Hide();
 
-                Task.Delay(300);
+            Task.Delay(300);
 
-                var errorDialog = new ContentDialog
-                {
-                    Title = "Invalid Task Due Date",
-                    Content = "The selected Date & Time cannot be in the past.",
-                    CloseButtonText = "Ok"
-                };
+            var errorDialog = new ContentDialog
+            {
+                Title = "Invalid Task Due Date",
+                Content = "The selected Date & Time cannot be in the past.",
+                CloseButtonText = "Ok"
+            };
 
-                await errorDialog.ShowAsync();
+            await errorDialog.ShowAsync();
 
-                // After closing the error dialog, reopen the original dialog
-                if (_isClosing)
-                {
-                    _isClosing = false;
-                }
+            // After closing the error dialog, reopen the original dialog
+            if (_isClosing)
+            {
+                _isClosing = false;
+            }
             }
             else
             {
@@ -92,9 +134,9 @@ namespace TaskList
                             Debug.WriteLine("Task");
                             var Task = new Tasks
                             {
-                                description = ViewModel.Description,
-                                notes = ViewModel.Notes,
-                                dateDue = ViewModel.DateDue,
+                                description = viewModel.Description,
+                                notes = viewModel.Notes,
+                                dateDue = viewModel.NonNullableDateDue + timeDue,
                             };
 
                             //Add the new task to the AllTaskList
@@ -109,45 +151,32 @@ namespace TaskList
                             Debug.WriteLine("RepeatTask");
                             var repeatTask = new RepeatTask
                             {
-                                description = ViewModel.Description,
-                                notes = ViewModel.Notes,
-                                dateDue = ViewModel.DateDue,
-                                frequency = (RepeatTask.Frequency)ViewModel.Frequency
+                                description = viewModel.Description,
+                                notes = viewModel.Notes,
+                                dateDue = viewModel.NonNullableDateDue + timeDue,
+                                frequency = (RepeatTask.Frequency)viewModel.Frequency
                             };
                             Tasks.AddTask(repeatTask);
                             TasksPage.currentFolder.AddTask(repeatTask.id);
                             _ = TaskDataManagerSQL.AddTaskAsync(repeatTask);
                             await TaskDataManager.SaveDataAsync();
-
-                            //TasksPage.TasksList.Clear();
-                            //foreach (var task in Tasks.AllTasksList)
-                            //{
-                            //    TasksPage.TasksList.Add(task);
-                            //}
-
                             break;
 
                         case TaskType.Habit:
                             Debug.WriteLine("Habit");
                             var habit = new Habit
                             {
-                                description = ViewModel.Description,
-                                notes = ViewModel.Notes,
-                                dateDue = ViewModel.DateDue,
-                                frequency = (Habit.Frequency)ViewModel.Frequency,
-                                streak = ViewModel.Streak
+                                description = viewModel.Description,
+                                notes = viewModel.Notes,
+                                dateDue = viewModel.NonNullableDateDue + timeDue,
+                                frequency = (Habit.Frequency)viewModel.Frequency,
+                                //streak = viewModel.Streak
+                                streak = 0
                             };
                             Tasks.AddTask(habit);
                             TasksPage.currentFolder.AddTask(habit.id);
                             _ = TaskDataManagerSQL.AddTaskAsync(habit);
                             await TaskDataManager.SaveDataAsync();
-
-                            //TasksPage.TasksList.Clear();
-                            //foreach (var task in Tasks.AllTasksList)
-                            //{
-                            //    TasksPage.TasksList.Add(task);
-                            //}
-
                             break;
                     }
                 }
@@ -155,12 +184,20 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// Functyion that hadnles the cancel task button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
         private void ContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Logic to cancel task creation
-            Debug.WriteLine("CANCEL Create Task will happen here...");
+            Debug.WriteLine("CANCELLED Task creation...");
         }
 
+        /// <summary>
+        /// A function that recursively finds any buttons inthe dialog and applies styles to them
+        /// </summary>
         private void FindAndStyleButtons()
         {
             // Find all buttons within the dialog box
@@ -189,6 +226,12 @@ namespace TaskList
         }
     }
 
+    /// <summary>
+    /// A function that saves the current state of the Dialog data so we can close it 
+    /// as there can only be one dialog open at a time.
+    /// and then we can display another dialog when the date is in the past
+    /// Before re-opening the dialog with the saved information
+    /// </summary>
     public class DialogState
     {
         public string Description { get; set; }

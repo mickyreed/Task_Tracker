@@ -124,6 +124,7 @@
     <Compile Include="Converters\CompletedTaskColorConverter.cs" />
     <Compile Include="Converters\CompletedTaskTextDecorationConverter.cs" />
     <Compile Include="Converters\CountToVisibilityConverter.cs" />
+    <Compile Include="Converters\DueDateColorConverter.cs" />
     <Compile Include="Converters\FrequencyConverter.cs" />
     <Compile Include="Pages\EditTaskDialog.xaml.cs">
       <DependentUpon>EditTaskDialog.xaml</DependentUpon>
@@ -150,6 +151,7 @@
     <Compile Include="Pages\TasksPage.xaml.cs">
       <DependentUpon>TasksPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters\TaskStatusConverter.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
   </ItemGroup>
