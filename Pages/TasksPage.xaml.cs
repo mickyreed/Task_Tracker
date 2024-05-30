@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -47,7 +46,7 @@ namespace TaskList
         /// <summary>
         /// 
         /// </summary>
-        public string selectedFolderName { get; set; }
+        public Folder selectedFolder { get; set; }
         public string taskInput { get; set; }
         public static Folder currentFolder;
         private Task currentTask;
@@ -70,10 +69,6 @@ namespace TaskList
             _ = LoadData();
 
             //sortedTasks = TasksList.OrderBy(t => t.dateDue ?? DateTime.MaxValue);
-
-            
-            RefreshFolderList();
-            RefreshTaskList(currentFolder);
             UpdateSortedTasks(TasksList);
         }
 
@@ -96,15 +91,13 @@ namespace TaskList
                 //var result = TaskCreator.CheckUserInput(taskInput); TODO
 
             }
-            else if (e.Parameter != null && e.Parameter is Folder selectedFolder)
+            else if (e.Parameter is Folder selectedFolder)
             {
                 currentFolder = selectedFolder;
             }
 
             //TasksListView.ItemsSource = Tasks.AllTasksList;
-            RefreshFolderList();
             RefreshTaskList(currentFolder);
-            UpdateSortedTasks(TasksList);
         }
 
         public void RefreshTaskList(Folder selectedFolder)
@@ -166,28 +159,19 @@ namespace TaskList
         /// <param name="currentTasksList"></param>
         public void UpdateSortedTasks(ObservableCollection<Tasks> currentTasksList)
         {
-            //if (currentFolder != null)
-            {
-                List<Guid> taskIdsInSelectedFolder = new List<Guid>();
-
-                foreach (var taskId in currentFolder.taskId)
-                {
-                    taskIdsInSelectedFolder.Add(taskId);
-                }
-                // Filter tasks based on the selected folder
-                var filteredTasks = currentTasksList
-                    .Where(t => taskIdsInSelectedFolder.Contains(t.id)).ToList();
+            List<Guid> taskIdsInSelectedFolder = currentFolder.taskId;
+            // Filter tasks based on the selected folder
+            var filteredTasks = currentTasksList
+                .Where(t => taskIdsInSelectedFolder.Contains(t.id)).ToList();
 
 
-                var sortedTasks = filteredTasks
-                    .OrderBy(t => t.IsCompleted == true) // order by incomplete tasks first
-                    .ThenBy(t => t.dateDue ?? DateTime.MaxValue)
-                    .ThenByDescending(t => t.dateDue ?? DateTime.MinValue)
-                    .ToList();
-
-                TasksListView.ItemsSource = new ObservableCollection<Tasks>(sortedTasks);
-            }
-           
+            var sortedTasks = filteredTasks
+                .OrderBy(t => t.IsCompleted == true) // order by incomplete tasks first
+                .ThenBy(t => t.dateDue ?? DateTime.MaxValue)
+                .ThenByDescending(t => t.dateDue ?? DateTime.MinValue)
+                .ToList();
+            
+            TasksListView.ItemsSource = new ObservableCollection<Tasks>(sortedTasks);
         }
         private async Task LoadData()
         {
@@ -596,41 +580,41 @@ namespace TaskList
         }
 
     }
-    public class GroupInfo : INotifyPropertyChanged
-    {
-        private string _groupTitle;
-        public string GroupTitle
-        {
-            get { return _groupTitle; }
-            set
-            {
-                if (_groupTitle != value)
-                {
-                    _groupTitle = value;
-                    OnPropertyChanged(nameof(GroupTitle));
-                }
-            }
-        }
+    //public class GroupInfo : INotifyPropertyChanged
+    //{
+    //    private string _groupTitle;
+    //    public string GroupTitle
+    //    {
+    //        get { return _groupTitle; }
+    //        set
+    //        {
+    //            if (_groupTitle != value)
+    //            {
+    //                _groupTitle = value;
+    //                OnPropertyChanged(nameof(GroupTitle));
+    //            }
+    //        }
+    //    }
 
-        private ObservableCollection<Task> _tasks;
-        public ObservableCollection<Task> Tasks
-        {
-            get { return _tasks; }
-            set
-            {
-                if (_tasks != value)
-                {
-                    _tasks = value;
-                    OnPropertyChanged(nameof(Tasks));
-                }
-            }
-        }
+    //    private ObservableCollection<Task> _tasks;
+    //    public ObservableCollection<Task> Tasks
+    //    {
+    //        get { return _tasks; }
+    //        set
+    //        {
+    //            if (_tasks != value)
+    //            {
+    //                _tasks = value;
+    //                OnPropertyChanged(nameof(Tasks));
+    //            }
+    //        }
+    //    }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+    //    public event PropertyChangedEventHandler PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+    //    protected virtual void OnPropertyChanged(string propertyName)
+    //    {
+    //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    //    }
+    //}
 }
