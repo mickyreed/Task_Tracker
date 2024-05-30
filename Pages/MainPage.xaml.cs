@@ -53,6 +53,7 @@ namespace TaskList
         public static ObservableCollection<Folder> FoldersList = new ObservableCollection<Folder>();
         public string SelectedFolderName { get; set; }
         private Folder currentFolder;
+        public Folder selectedFolder;
         bool dataLoaded = false;
         
         /// <summary>
@@ -918,23 +919,9 @@ namespace TaskList
                     //string output = await TaskCreator.CheckUserInput(userInput);
                     InputTextBox.Text = string.Empty;
 
-                    // Get the selected folder
-                    Folder selectedFolder = currentFolder;
-                    if (currentFolder is null) //if folder is null check for Inbox and make that the default
-                    {
-                        if (Folder.AllFoldersList.Any(folder => folder.Name == "Inbox"))
-                        {
-                            // Set the current folder to the existing Inbox folder
-                            currentFolder = Folder.AllFoldersList.First(folder => folder.Name == "Inbox");
-                        }
-                        else // create a default folder called inbox
-                        {
-                            Folder inboxFolder = new Folder("Inbox");
-                            Folder.AddFolder(inboxFolder);
-                            currentFolder = inboxFolder;
-                        }
-                    }
-                    selectedFolder = currentFolder;
+                    // check for selected folder
+                    CheckForOrCreateSelectedFolder();
+                    
 
                     // Pass the string userInput and the currentFolder as a tuple to send to TaskPage
                     var navigationParams = new Tuple<Folder, string>(selectedFolder, userInput);
@@ -959,6 +946,26 @@ namespace TaskList
                     //ResultTextBlock.Text = output; //this to be removed in final version
                     InputTextBox.Text = string.Empty; // if we nav to Task page this may be redundant
                 }
+            }
+        }
+
+        public void CheckForOrCreateSelectedFolder()
+        {
+            Folder selectedFolder = currentFolder;
+            if (currentFolder is null) //if folder is null check for Inbox and make that the default
+            {
+                if (Folder.AllFoldersList.Any(folder => folder.Name == "Inbox"))
+                {
+                    // Set the current folder to the existing Inbox folder
+                    currentFolder = Folder.AllFoldersList.First(folder => folder.Name == "Inbox");
+                }
+                else // create a default folder called inbox
+                {
+                    Folder inboxFolder = new Folder("Inbox");
+                    Folder.AddFolder(inboxFolder);
+                    currentFolder = inboxFolder;
+                }
+                selectedFolder = currentFolder;
             }
         }
 

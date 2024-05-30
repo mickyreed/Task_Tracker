@@ -789,12 +789,18 @@
             An empty page that can be used on its own or navigated to within a Frame.
             </summary>
         </member>
-        <member name="P:TaskList.TasksPage.SelectedFolderName">
+        <member name="P:TaskList.TasksPage.selectedFolderName">
             <summary>
             
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:TaskList.TasksPage.OnNavigatedTo(Windows.UI.Xaml.Navigation.NavigationEventArgs)" -->
+        <member name="M:TaskList.TasksPage.UpdateSortedTasks(System.Collections.ObjectModel.ObservableCollection{TaskList.Tasks})">
+            <summary>
+            Function that creates an observable collection then orders the tasks by IsCompleted, then by due Date, then by decending
+            </summary>
+            <param name="currentTasksList"></param>
+        </member>
         <member name="M:TaskList.TasksPage.SaveData">
             <summary>
             Function to save data from Tasks and Files to file in Binary format
