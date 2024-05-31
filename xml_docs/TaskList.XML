@@ -789,7 +789,7 @@
             An empty page that can be used on its own or navigated to within a Frame.
             </summary>
         </member>
-        <member name="P:TaskList.TasksPage.SelectedFolder">
+        <member name="P:TaskList.TasksPage.selectedFolder">
             <summary>
             
             </summary>

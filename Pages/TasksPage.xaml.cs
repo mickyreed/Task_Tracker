@@ -39,7 +39,8 @@ namespace TaskList
         public static ObservableCollection<Folder> FoldersList { get; set; } // = new ObservableCollection<Folder>();
         public static ObservableCollection<Tasks> TasksList { get; set; } // = new ObservableCollection<Tasks>();
 
-        public IOrderedEnumerable<Tasks> sortedTasks;
+        //public IOrderedEnumerable<Tasks> sortedTasks { get; set; }
+        private IOrderedEnumerable<Tasks> sortedTasks;
 
 
 
@@ -47,6 +48,8 @@ namespace TaskList
         /// 
         /// </summary>
         public Folder selectedFolder { get; set; }
+
+        public string SelectedFolderName { get; set; }
         public string taskInput { get; set; }
         public static Folder currentFolder;
         private Task currentTask;
@@ -69,8 +72,14 @@ namespace TaskList
             _ = LoadData();
 
             //sortedTasks = TasksList.OrderBy(t => t.dateDue ?? DateTime.MaxValue);
+
+            CheckCurrentSelectedFolder(SelectedFolderName);
+            TasksListView.ItemsSource = TasksList;
             UpdateSortedTasks(TasksList);
+            
+
         }
+
 
         /// <summary>
         /// an override function that takes in parameters passed in during the navigation sent from another page
@@ -100,12 +109,37 @@ namespace TaskList
             RefreshTaskList(currentFolder);
         }
 
+        private Folder CheckCurrentSelectedFolder(string folderName)
+        {
+
+            // Find the Folder instance with the matching name
+            selectedFolder = null;
+            foreach (Folder folder in Folder.AllFoldersList)
+            {
+                if (folder.Name == SelectedFolderName)
+                {
+                    selectedFolder = folder;
+                    return selectedFolder;
+                    //break;
+                }
+
+            }
+            return selectedFolder;
+        }
+
         public void RefreshTaskList(Folder selectedFolder)
         {
+            
+            //Debug.WriteLine($"A. currentFolder: {currentFolder.Name}"); //currentFolder: Work Tasks
+            //Debug.WriteLine($"B. currentFolder: {selectedFolder.Name}"); //B.currentFolder: Work Tasks
+            //Debug.WriteLine($"C. currentFolder: {SelectedFolderName}"); //currentFolder: 
+
             if (selectedFolder != null)
             {
                 // Update the current folder
                 currentFolder = selectedFolder;
+                
+                CheckCurrentSelectedFolder(currentFolder.Name);
 
                 // Update UI or perform any other actions based on the selection
                 UpdateFolderNameTextBox(selectedFolder.Name);
@@ -118,9 +152,9 @@ namespace TaskList
                     foreach (var task in currentFolder.taskId)
                     {
                         taskIds.Add(task);
+                        Debug.WriteLine($"aa. taskIDs: {task}");//aa. taskIDs: 96388f01-792c-4d4b-80e2-3ea389ea3f4b
                     }
                 }
-
 
                 // Create a collection to hold the tasks
                 ObservableCollection<Tasks> tasksCollection = new ObservableCollection<Tasks>();
@@ -135,6 +169,7 @@ namespace TaskList
                         {
                             // Add the task to the collection
                             tasksCollection.Add(task);
+                            Debug.WriteLine($"bb. task: {task.description}"); //bb. task: Call Accountant
                         }
 
                     };
@@ -147,11 +182,12 @@ namespace TaskList
                 
                 // Set the header to the folder name
                 FolderHeaderTextBlock.Text = selectedFolder.Name;
-                currentFolder = selectedFolder;
+                //currentFolder = selectedFolder;
                 UpdateSortedTasks(tasksCollection);
 
             }
         }
+
 
         /// <summary>
         /// Function that creates an observable collection then orders the tasks by IsCompleted, then by due Date, then by decending
@@ -159,20 +195,22 @@ namespace TaskList
         /// <param name="currentTasksList"></param>
         public void UpdateSortedTasks(ObservableCollection<Tasks> currentTasksList)
         {
-            List<Guid> taskIdsInSelectedFolder = currentFolder.taskId;
-            // Filter tasks based on the selected folder
-            var filteredTasks = currentTasksList
-                .Where(t => taskIdsInSelectedFolder.Contains(t.id)).ToList();
+            if (currentTasksList == null)
+            {
+                Debug.WriteLine("1. currentTasksList is null.");
+                return;
+            }
 
-
-            var sortedTasks = filteredTasks
-                .OrderBy(t => t.IsCompleted == true) // order by incomplete tasks first
+            var sortedTasks = currentTasksList
+                .OrderBy(t => !t.IsCompleted) // order by incomplete tasks first
                 .ThenBy(t => t.dateDue ?? DateTime.MaxValue)
-                .ThenByDescending(t => t.dateDue ?? DateTime.MinValue)
-                .ToList();
-            
-            TasksListView.ItemsSource = new ObservableCollection<Tasks>(sortedTasks);
+                .ThenByDescending(t => t.dateDue ?? DateTime.MinValue);
+
+            TasksListView.ItemsSource = sortedTasks;
         }
+
+
+
         private async Task LoadData()
         {
             if (FoldersList != null)
@@ -184,30 +222,16 @@ namespace TaskList
                 FoldersList = new ObservableCollection<Folder>(); // Initialize the FoldersList if it's null
             }
 
-            // DISPLAY FOLDER INFORMATION IN CONSOLE
-            //Debug.WriteLine("");
-            //Debug.WriteLine("...");
-            //Debug.WriteLine("DISPLAY ALL FOLDERS FROM ALLFOLDERS LIST...");
-
             foreach (var folder in Folder.AllFoldersList)
             {
                 Debug.WriteLine(folder.Name);
                 FoldersList.Add(folder);
                 Debug.WriteLine($"***!!!***     {folder.Name}       ***!!!***");
             }
-            //FoldersList = Folder.AllFoldersList;
 
-            // Set the ItemsSource of FoldersListView to the list of current folders
-            //FoldersListView.ItemsSource = FoldersList;
             FoldersListView.ItemsSource = FoldersList;
-
-            //FoldersListView.ItemsSource = Folder.AllFoldersList;
-
-
-            //Debug.WriteLine("");
             await Task.Delay(100);
         }
-
 
         /// <summary>
         /// Function to save data from Tasks and Files to file in Binary format
@@ -248,7 +272,7 @@ namespace TaskList
             if (e.AddedItems.Count > 0)
             {
                 // Get the selected folder
-                Folder selectedFolder = e.AddedItems[0] as Folder;
+                selectedFolder = e.AddedItems[0] as Folder;
                 currentFolder = selectedFolder;
                 RefreshTaskList(selectedFolder);
             }
