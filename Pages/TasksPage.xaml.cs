@@ -85,19 +85,25 @@ namespace TaskList
         {
             base.OnNavigatedTo(e);
 
-            if (e.Parameter is Tuple<Folder, string> navParams)
+            Debug.WriteLine("Navigated to TasksPage");
+
+            if (e.Parameter is Tuple<Folder, string> navigationParams)
             {
-                currentFolder = navParams.Item1;
-                taskInput = navParams.Item2;
+                selectedFolder = navigationParams.Item1;
+                taskInput = navigationParams.Item2;
                 CheckUserInput(taskInput);
+                currentFolder = selectedFolder;
+                Debug.WriteLine($" on Nav1 to: {currentFolder.Name}");
             }
             else if (e.Parameter is string userInput)
             {
                 taskInput = userInput;
+                Debug.WriteLine($" on Nav2");
             }
             else if (e.Parameter is Folder selectedFolder)
             {
                 currentFolder = selectedFolder;
+                Debug.WriteLine($" on Nav3 to: {currentFolder.Name}");
             }
             RefreshTaskList(currentFolder);
         }

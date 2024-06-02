@@ -916,9 +916,9 @@ namespace TaskList
                     
 
                     // Pass the string userInput and the currentFolder as a tuple to send to TaskPage
-                    var navigationParams = new Tuple<Folder, string>(selectedFolder, userInput);
+                    var navigationParams = new Tuple<Folder, string>(currentFolder, userInput);
 
-                    if (selectedFolder != null)
+                    if (currentFolder != null)
                     {
                         Frame.Navigate(typeof(TasksPage), navigationParams);
                     }
@@ -963,6 +963,7 @@ namespace TaskList
                     currentFolder = inboxFolder;
                 }
                 selectedFolder = currentFolder;
+                Debug.WriteLine(selectedFolder.Name);
             }
         }
 
