@@ -80,6 +80,10 @@ namespace TaskList
             FoldersListView.ItemsSource = Folder.AllFoldersList;
         }
 
+        /// <summary>
+        /// A function called when this page is navigated to from anotyher page
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -119,7 +123,6 @@ namespace TaskList
             await FolderDataManagerSQL.LoadDataBaseAsync();
 
             RefreshFolderList();
-
         }
 
         /// <summary>
@@ -127,7 +130,6 @@ namespace TaskList
         /// </summary>
         private async void RefreshFolderList()
         {
-            //Debug.WriteLine("Refreshing folder list...");
             FoldersList.Clear(); // clear the existing folder UI list if any
 
             foreach (var folder in Folder.AllFoldersList)
@@ -135,17 +137,10 @@ namespace TaskList
                 if (!FoldersList.Contains(folder))
                 {
                     FoldersList.Add(folder);
-                    //Debug.WriteLine(folder.Name);
                 }
                 
             }
             FoldersListView.ItemsSource = FoldersList;
-
-            //Debug.WriteLine("Folder list refreshed.");
-            //foreach (var folder in FoldersList)
-            //{
-            //    Debug.WriteLine($"Folder: {folder.Name}");
-            //}
             await Task.Delay(100);
         }
 
@@ -893,9 +888,6 @@ namespace TaskList
         */
         #endregion
 
-
-
-
         /// <summary>
         /// Button CLick Event for recieving input from user and converting it to a Task
         /// </summary>
@@ -949,6 +941,11 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// If there is no folder selected  when a user creates a task 
+        /// Check if there is a folder called inbox and set it as current Folder
+        /// and if not creAte it
+        /// </summary>
         public void CheckForOrCreateSelectedFolder()
         {
             Folder selectedFolder = currentFolder;
@@ -980,9 +977,6 @@ namespace TaskList
             ResultTextBlock.Text = string.Empty;
         }
 
-
-
-
         /// <summary>
         /// Event Handler to check for text changes in the Text Box and block any math symbols
         /// Reference: https://claude.ai/chat/ab0b5a8f-3b82-4249-bf1b-8677e5b5667a
@@ -1005,8 +999,6 @@ namespace TaskList
                 textBox.SelectionStart = textBox.Text.Length;
             }
         }
-
-
 
         /// <summary>
         /// An event handler that checks if the hamburger icon is clicked to open the aside menu

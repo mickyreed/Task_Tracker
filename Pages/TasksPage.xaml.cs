@@ -8,6 +8,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
@@ -42,13 +43,10 @@ namespace TaskList
         //public IOrderedEnumerable<Tasks> sortedTasks { get; set; }
         private IOrderedEnumerable<Tasks> sortedTasks;
 
-
-
         /// <summary>
         /// 
         /// </summary>
         public Folder selectedFolder { get; set; }
-
         public string SelectedFolderName { get; set; }
         public string taskInput { get; set; }
         public static Folder currentFolder;
@@ -58,6 +56,9 @@ namespace TaskList
         private bool isUpdating = false;
         private Dictionary<CheckBox, bool> checkBoxStates = new Dictionary<CheckBox, bool>();
 
+        /// <summary>
+        /// 
+        /// </summary>
         public TasksPage()
         {
             this.InitializeComponent();
@@ -65,8 +66,7 @@ namespace TaskList
             ApplyCurrentTheme();
             FoldersListView.ItemsSource = Folder.AllFoldersList;
             TasksListView.ItemsSource = TasksList;
-            //this.NavigationCacheMode = NavigationCacheMode.Disabled;
-            //this.DataContext = this;
+
             TasksList = Tasks.AllTasksList;
             TasksListView.UpdateLayout();
             _ = LoadData();
@@ -74,12 +74,9 @@ namespace TaskList
             currentFolder = CheckCurrentSelectedFolder(SelectedFolderName);
             
             RefreshTaskList(currentFolder);
-            //UpdateSortedTasks(TasksList);
-            //TasksListView.UpdateLayout();
             TasksListView.ItemsSource = sortedTasks;
             _ = UpdateData();
         }
-
 
         /// <summary>
         /// an override function that takes in parameters passed in during the navigation sent from another page
@@ -97,18 +94,19 @@ namespace TaskList
             else if (e.Parameter is string userInput)
             {
                 taskInput = userInput;
-                //var result = TaskCreator.CheckUserInput(taskInput); TODO
-
             }
             else if (e.Parameter is Folder selectedFolder)
             {
                 currentFolder = selectedFolder;
             }
-
-            //TasksListView.ItemsSource = Tasks.AllTasksList;
             RefreshTaskList(currentFolder);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="folderName"></param>
+        /// <returns></returns>
         private Folder CheckCurrentSelectedFolder(string folderName)
         {
 
@@ -120,20 +118,18 @@ namespace TaskList
                 {
                     selectedFolder = folder;
                     return selectedFolder;
-                    //break;
                 }
 
             }
             return selectedFolder;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectedFolder"></param>
         public void RefreshTaskList(Folder selectedFolder)
         {
-            
-            //Debug.WriteLine($"A. currentFolder: {currentFolder.Name}"); //currentFolder: Work Tasks
-            //Debug.WriteLine($"B. currentFolder: {selectedFolder.Name}"); //B.currentFolder: Work Tasks
-            //Debug.WriteLine($"C. currentFolder: {SelectedFolderName}"); //currentFolder: 
-
             if (selectedFolder != null)
             {
                 // Update the current folder
@@ -144,15 +140,12 @@ namespace TaskList
                 // Update UI or perform any other actions based on the selection
                 UpdateFolderNameTextBox(selectedFolder.Name);
 
-                // Retrieve the list of task IDs from the selected folder
-                //List<Guid> taskIds = selectedFolder.taskId;
                 List<Guid> taskIds = new List<Guid>();
                 if (currentFolder.TaskCount > 0)
                 {
                     foreach (var task in currentFolder.taskId)
                     {
                         taskIds.Add(task);
-                        Debug.WriteLine($"aa. taskIDs: {task}");//aa. taskIDs: 96388f01-792c-4d4b-80e2-3ea389ea3f4b
                     }
                 }
 
@@ -169,25 +162,20 @@ namespace TaskList
                         {
                             // Add the task to the collection
                             tasksCollection.Add(task);
-                            Debug.WriteLine($"bb. task: {task.description}"); //bb. task: Call Accountant
                         }
-
                     };
                 }
                 else
                 {
                     tasksCollection.Clear();
-                    //TasksListView.UpdateLayout();
                 }
                 
                 // Set the header to the folder name
                 FolderHeaderTextBlock.Text = selectedFolder.Name;
-                //currentFolder = selectedFolder;
                 UpdateSortedTasks(tasksCollection);
 
             }
         }
-
 
         /// <summary>
         /// Function that creates an observable collection then orders the tasks by IsCompleted, then by due Date, then by decending
@@ -208,8 +196,6 @@ namespace TaskList
 
             TasksListView.ItemsSource = sortedTasks;
         }
-
-
 
         private async Task LoadData()
         {
@@ -252,6 +238,11 @@ namespace TaskList
             RefreshFolderList(currentFolder);
             RefreshTaskList(currentFolder);
         }
+
+        /// <summary>
+        /// A fcuntion which clears the current folder list, and then repopulates it based on the latest saved data
+        /// </summary>
+        /// <param name="currentFolder"></param>
         private async void RefreshFolderList(Folder currentFolder)
         {
             FoldersList.Clear(); // clear the existing folder UI list
@@ -265,6 +256,11 @@ namespace TaskList
 
         }
 
+        /// <summary>
+        /// A function which updates the folders listview based on if there is a selection change
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FoldersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // Check if there is any selected item
@@ -277,6 +273,10 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// A function which updates the user Text box with the current folder name
+        /// </summary>
+        /// <param name="selectedFolderName"></param>
         private void UpdateFolderNameTextBox(string selectedFolderName)
         {
             // Update the TextBox text with the selected folder name
@@ -309,6 +309,10 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// A function which takes the users input and passes it in and has it evaluated and returned as 2 strings for desciption and notes and a dateTime?
+        /// </summary>
+        /// <param name="userInput"></param>
         public async void CheckUserInput(string userInput)
         {
             var result = await TaskCreator.CheckUserInput(userInput);
@@ -323,6 +327,13 @@ namespace TaskList
             await OpenPopupCreateTask(result.Item3, result.Item1, result.Item2);
         }
 
+        /// <summary>
+        /// A function that gets called and takes the user input and passes it in to open up a dialag with the task information
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <param name="description"></param>
+        /// <param name="notes"></param>
+        /// <returns></returns>
         private async Task OpenPopupCreateTask(DateTime? dateTime, string description, string notes)
         {
             DateTime? nullableDateTime = dateTime;
@@ -400,40 +411,72 @@ namespace TaskList
             ResultTextBlock.Text = string.Empty;
         }
 
+        /// <summary>
+        /// A function that is called when the input text box text is changed
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             //
         }
 
+        /// <summary>
+        ///  A function that opens the aside when the toggle menu is clicked
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ToggleMenu_Click(object sender, RoutedEventArgs e)
         {
             // Toggle the state of the SplitView pane
             TasksSplitView.IsPaneOpen = !TasksSplitView.IsPaneOpen;
         }
 
+        /// <summary>
+        /// A function that naviagtes back to the main page
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             // Navigate back to the MainPage
             Frame.GoBack();
         }
 
+        //A function activated when the mouse pointer enters the create task button - unused in thuis version
         private void CreateTaskButton_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             //CreateTaskButton.BorderBrush = new SolidColorBrush(Windows.UI.Colors.Red);
             //CreateTaskButton.Foreground = new SolidColorBrush(Windows.UI.Colors.Red);
         }
 
+        /// <summary>
+        /// A function activated when the mouse pointer exits the create task button - unused in thuis version
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void CreateTaskButton_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             //CreateTaskButton.BorderBrush = new SolidColorBrush(Windows.UI.Colors.White);
             //CreateTaskButton.Foreground = new SolidColorBrush(Windows.UI.Colors.White);
         }
 
-        private void TasksSplitView_PointerExited(object sender, PointerRoutedEventArgs e)
+        /// <summary>
+        /// A function which closes the side pane when the user moves the mouse out of the aside
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void TasksSplitView_PointerExited(object sender, PointerRoutedEventArgs e)
         {
+            await Task.Delay(300);
             TasksSplitView.IsPaneOpen = false;
         }
 
+        /// <summary>
+        /// A function which opens a edit Task dialog when the users clicks on the edit task button
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void EditTaskButton_Click(object sender, RoutedEventArgs e)
         {
             // Get the selected Task object from the ListView
@@ -460,6 +503,11 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// A function which gets actioned from the delete task button action and opens a popup to confirm
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void DeleteTaskButton_Click(object sender, RoutedEventArgs e)
         {
             // Get the button that was clicked
@@ -523,6 +571,11 @@ namespace TaskList
 
         }
 
+        /// <summary>
+        /// Function that takes a checkbox ticked unyticked action and sets a bool which gets updated in the Task Class
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void CheckBox_Click(object sender, RoutedEventArgs e)
         {
             var checkBox = sender as CheckBox;
@@ -541,11 +594,19 @@ namespace TaskList
             TasksListView.UpdateLayout();
         }
 
+        /// <summary>
+        /// Function to check for a theme change and updates the app
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnThemeChanged(object sender, ThemeChangedEventArgs e)
         {
             ApplyTheme(e.Theme);
         }
 
+        /// <summary>
+        /// A function that checks if there is a saved AppTheme in applicationData and calls the ApplyTheme function
+        /// </summary>
         private void ApplyCurrentTheme()
         {
             var localSettings = Windows.Storage.ApplicationData.Current.LocalSettings;
@@ -556,6 +617,10 @@ namespace TaskList
             }
         }
 
+        /// <summary>
+        /// Function that gets the saved theme from preferences and applies it in the app
+        /// </summary>
+        /// <param name="theme"></param>
         private void ApplyTheme(string theme)
         {
             if (App.Current.Resources["AppBackgroundBrush"] is LinearGradientBrush backgroundBrush)
@@ -604,41 +669,4 @@ namespace TaskList
         }
 
     }
-    //public class GroupInfo : INotifyPropertyChanged
-    //{
-    //    private string _groupTitle;
-    //    public string GroupTitle
-    //    {
-    //        get { return _groupTitle; }
-    //        set
-    //        {
-    //            if (_groupTitle != value)
-    //            {
-    //                _groupTitle = value;
-    //                OnPropertyChanged(nameof(GroupTitle));
-    //            }
-    //        }
-    //    }
-
-    //    private ObservableCollection<Task> _tasks;
-    //    public ObservableCollection<Task> Tasks
-    //    {
-    //        get { return _tasks; }
-    //        set
-    //        {
-    //            if (_tasks != value)
-    //            {
-    //                _tasks = value;
-    //                OnPropertyChanged(nameof(Tasks));
-    //            }
-    //        }
-    //    }
-
-    //    public event PropertyChangedEventHandler PropertyChanged;
-
-    //    protected virtual void OnPropertyChanged(string propertyName)
-    //    {
-    //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    //    }
-    //}
 }

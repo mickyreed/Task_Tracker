@@ -342,6 +342,12 @@
             and a main section with an input box which takes a task List input by user
             </summary>
         </member>
+        <member name="M:TaskList.MainPage.OnNavigatedTo(Windows.UI.Xaml.Navigation.NavigationEventArgs)">
+            <summary>
+            A function called when this page is navigated to from anotyher page
+            </summary>
+            <param name="e"></param>
+        </member>
         <member name="M:TaskList.MainPage.UpdateUIWithReturnedFolder(TaskList.Folder)">
             <summary>
             A function which updates the UI based on the returned folder which is selecte in the listview
@@ -434,6 +440,13 @@
             <param name="sender"></param>
             <param name="e"></param>
             
+        </member>
+        <member name="M:TaskList.MainPage.CheckForOrCreateSelectedFolder">
+            <summary>
+            If there is no folder selected  when a user creates a task 
+            Check if there is a folder called inbox and set it as current Folder
+            and if not creAte it
+            </summary>
         </member>
         <member name="M:TaskList.MainPage.ErrorMessage">
             <summary>
@@ -794,7 +807,25 @@
             
             </summary>
         </member>
+        <member name="M:TaskList.TasksPage.#ctor">
+            <summary>
+            
+            </summary>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:TaskList.TasksPage.OnNavigatedTo(Windows.UI.Xaml.Navigation.NavigationEventArgs)" -->
+        <member name="M:TaskList.TasksPage.CheckCurrentSelectedFolder(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="folderName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskList.TasksPage.RefreshTaskList(TaskList.Folder)">
+            <summary>
+            
+            </summary>
+            <param name="selectedFolder"></param>
+        </member>
         <member name="M:TaskList.TasksPage.UpdateSortedTasks(System.Collections.ObjectModel.ObservableCollection{TaskList.Tasks})">
             <summary>
             Function that creates an observable collection then orders the tasks by IsCompleted, then by due Date, then by decending
@@ -812,6 +843,25 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:TaskList.TasksPage.RefreshFolderList(TaskList.Folder)">
+            <summary>
+            A fcuntion which clears the current folder list, and then repopulates it based on the latest saved data
+            </summary>
+            <param name="currentFolder"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.FoldersListView_SelectionChanged(System.Object,Windows.UI.Xaml.Controls.SelectionChangedEventArgs)">
+            <summary>
+            A function which updates the folders listview based on if there is a selection change
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.UpdateFolderNameTextBox(System.String)">
+            <summary>
+            A function which updates the user Text box with the current folder name
+            </summary>
+            <param name="selectedFolderName"></param>
+        </member>
         <member name="M:TaskList.TasksPage.Button_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
             <summary>
             Button CLick Event for recieving input from user and converting it to a Task
@@ -820,10 +870,74 @@
             <param name="e"></param>
             
         </member>
+        <member name="M:TaskList.TasksPage.CheckUserInput(System.String)">
+            <summary>
+            A function which takes the users input and passes it in and has it evaluated and returned as 2 strings for desciption and notes and a dateTime?
+            </summary>
+            <param name="userInput"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.OpenPopupCreateTask(System.Nullable{System.DateTime},System.String,System.String)">
+            <summary>
+            A function that gets called and takes the user input and passes it in to open up a dialag with the task information
+            </summary>
+            <param name="dateTime"></param>
+            <param name="description"></param>
+            <param name="notes"></param>
+            <returns></returns>
+        </member>
         <member name="M:TaskList.TasksPage.ErrorMessage">
             <summary>
             Error Message Function for invalid input
             </summary>
+        </member>
+        <member name="M:TaskList.TasksPage.InputTextBox_TextChanged(System.Object,Windows.UI.Xaml.Controls.TextChangedEventArgs)">
+            <summary>
+            A function that is called when the input text box text is changed
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.ToggleMenu_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+             A function that opens the aside when the toggle menu is clicked
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.BackButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            A function that naviagtes back to the main page
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.CreateTaskButton_PointerExited(System.Object,Windows.UI.Xaml.Input.PointerRoutedEventArgs)">
+            <summary>
+            A function activated when the mouse pointer exits the create task button - unused in thuis version
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.TasksSplitView_PointerExited(System.Object,Windows.UI.Xaml.Input.PointerRoutedEventArgs)">
+            <summary>
+            A function which closes the side pane when the user moves the mouse out of the aside
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.EditTaskButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            A function which opens a edit Task dialog when the users clicks on the edit task button
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.DeleteTaskButton_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            A function which gets actioned from the delete task button action and opens a popup to confirm
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
         </member>
         <member name="M:TaskList.TasksPage.RemoveTask(System.Guid)">
             <summary>
@@ -837,6 +951,31 @@
             </summary>
             <param name="sender"></param>
             <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.CheckBox_Click(System.Object,Windows.UI.Xaml.RoutedEventArgs)">
+            <summary>
+            Function that takes a checkbox ticked unyticked action and sets a bool which gets updated in the Task Class
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.OnThemeChanged(System.Object,TaskList.MainPage.ThemeChangedEventArgs)">
+            <summary>
+            Function to check for a theme change and updates the app
+            </summary>
+            <param name="sender"></param>
+            <param name="e"></param>
+        </member>
+        <member name="M:TaskList.TasksPage.ApplyCurrentTheme">
+            <summary>
+            A function that checks if there is a saved AppTheme in applicationData and calls the ApplyTheme function
+            </summary>
+        </member>
+        <member name="M:TaskList.TasksPage.ApplyTheme(System.String)">
+            <summary>
+            Function that gets the saved theme from preferences and applies it in the app
+            </summary>
+            <param name="theme"></param>
         </member>
         <member name="M:TaskList.TasksPage.ClosePopup(System.String)">
             <summary>
