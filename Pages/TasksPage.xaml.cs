@@ -71,13 +71,13 @@ namespace TaskList
             TasksListView.UpdateLayout();
             _ = LoadData();
 
-            //sortedTasks = TasksList.OrderBy(t => t.dateDue ?? DateTime.MaxValue);
-
-            CheckCurrentSelectedFolder(SelectedFolderName);
-            TasksListView.ItemsSource = TasksList;
-            UpdateSortedTasks(TasksList);
+            currentFolder = CheckCurrentSelectedFolder(SelectedFolderName);
             
-
+            RefreshTaskList(currentFolder);
+            //UpdateSortedTasks(TasksList);
+            //TasksListView.UpdateLayout();
+            TasksListView.ItemsSource = sortedTasks;
+            _ = UpdateData();
         }
 
 
@@ -202,7 +202,7 @@ namespace TaskList
             }
 
             var sortedTasks = currentTasksList
-                .OrderBy(t => !t.IsCompleted) // order by incomplete tasks first
+                .OrderBy(t => t.IsCompleted) // order by incomplete tasks first
                 .ThenBy(t => t.dateDue ?? DateTime.MaxValue)
                 .ThenByDescending(t => t.dateDue ?? DateTime.MinValue);
 
@@ -249,11 +249,10 @@ namespace TaskList
         private async Task UpdateData()
         {
             await SaveData();
-            RefreshFolderList();
-            
+            RefreshFolderList(currentFolder);
             RefreshTaskList(currentFolder);
         }
-        private async void RefreshFolderList()
+        private async void RefreshFolderList(Folder currentFolder)
         {
             FoldersList.Clear(); // clear the existing folder UI list
 
@@ -500,6 +499,7 @@ namespace TaskList
 
             await UpdateData();
             RefreshTaskList(currentFolder);
+            
         }
 
         /// <summary>
