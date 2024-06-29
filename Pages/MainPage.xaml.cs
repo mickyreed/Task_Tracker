@@ -1290,16 +1290,3 @@ namespace TaskList
         }
     }
 }
-
-/*
-TODO:
-Each task should have:
-    
-    Overdue tasks should be listed first and marked somehow. 
-    Beneath them should be the tasks due today. 
-    After that, list the remaining tasks. 
-    Tapping on a task will take the user to a screen where they can view 
-    and change all the details of the task. 
-    The app should have some basic preferences, 
-    They could be colour schemes, different ways of ordering the tasks, etc.
-*/
