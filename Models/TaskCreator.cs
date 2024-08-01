@@ -250,24 +250,67 @@ namespace TaskList
             }
 
             // if the current Time is past the morning and they want breakfast
-            if (DateTime.Now > DateTime.Today.AddHours(12) && moment.Date == DateTime.Today)
+            if (DateTime.Now > DateTime.Today.AddHours(12) && moment.Date == DateTime.Today
+                && input.ToLower().Contains("breakfast") || input.ToLower().Contains("tomorrow"))
             //if (moment.Hour > 0 && moment.Hour < 12)
             {
-                if (input.ToLower().Contains("breakfast") && (moment.Hour > 0 && moment.Hour < 12) && (!input.ToLower().Contains("tomorrow")))
-                {
-                    //Debug.WriteLine($"BREAKFAST TOO LATE ADD 24 hrs:   {moment.Date}");
-                    //adjustedMoment = moment.AddHours(12);
-                    adjustedMoment = moment.AddDays(1);
-                    //adjustedMoment = CheckAndUpdateTime(moment);
-                    return adjustedMoment;
-                }
-                else if (input.ToLower().Contains("breakfast") && (!input.ToLower().Contains("tomorrow")))
-                {
-                    adjustedMoment = moment.AddHours(12);
-                    //adjustedMoment = CheckAndUpdateTime(moment);
-                    return adjustedMoment;
-                }
+                Debug.WriteLine($"moment.Date: {moment.Date}");
+                Debug.WriteLine($"moment.TimeOfDay: {moment.TimeOfDay}");
+                Debug.WriteLine($"DateTime.Now: {DateTime.Now}");
+                Debug.WriteLine($"DateTime.Today: {DateTime.Today}");
+                Debug.WriteLine($"DateTime.Today+12: {DateTime.Today.AddHours(12)}");
+                Debug.WriteLine($"DateTime.Today+24: {DateTime.Today.AddHours(24)}");
+                Debug.WriteLine($"DateTime.Today+1Day: {DateTime.Today.AddDays(1)}");
+
+                adjustedMoment = moment.AddHours(24);
+                Debug.Assert(DateTime.Now > DateTime.Today.AddHours(12));
+                Debug.Assert(moment.Date == DateTime.Today);
+                return adjustedMoment;
             }
+
+            // if the task contains breakfast and does not contain tomorrow and the chsoen time is less than 12pm add a day
+            //if (input.ToLower().Contains("breakfast") && (moment.Hour <12) && (input.ToLower().Contains("tomorrow")))
+            else if (DateTime.Now < DateTime.Today.AddHours(12) && moment.Date == DateTime.Today
+                && input.ToLower().Contains("breakfast") || input.ToLower().Contains("tomorrow"))
+            {
+                Debug.Assert(DateTime.Now < DateTime.Today.AddHours(12));
+                Debug.Assert(moment.Date == DateTime.Today);
+                adjustedMoment = moment.AddHours(24);
+
+                return adjustedMoment;
+            }
+
+
+
+                //if (input.ToLower().Contains("breakfast") || (input.ToLower().Contains("tomorrow") &&
+                //    (moment.Date >= DateTime.Now && moment.Date <= DateTime.Today.AddHours(12))))
+                //{
+                //    //Trace.Assert(moment.Date >= DateTime.Now);
+                //    //Trace.Assert(moment.Date <= DateTime.Today.AddHours(12));
+                //    Debug.WriteLine($"Breakfast is Today:   {moment.Date}");
+                //    //adjustedMoment = moment.AddHours(12);
+                //    adjustedMoment = moment.AddHours(24);
+                //    //adjustedMoment = CheckAndUpdateTime(moment);
+                //    return adjustedMoment;
+                //}
+                ////else if (input.ToLower().Contains("breakfast") && (moment.Hour > 12) && (input.ToLower().Contains("tomorrow")))
+                //else if (input.ToLower().Contains("breakfast") || (input.ToLower().Contains("tomorrow") &&
+                //    (moment.Date <= DateTime.Now && moment.Date <= DateTime.Today.AddHours(12))))
+                //{
+                //    Debug.WriteLine($"Breakfast is tomorrow:   {moment.Date}");
+                //    adjustedMoment.AddDays(0);
+                //    return adjustedMoment;
+                //}
+                //// else if task contains breakfast and current time is after 12pm
+                //else if (!input.ToLower().Contains("breakfast") || (input.ToLower().Contains("tomorrow") &&
+                //    (moment.Date > DateTime.Today.AddHours(12))))
+                //{
+                //    Debug.WriteLine($"After 12 Breakfast is tomorrow:   {moment.Date}");
+                //    adjustedMoment = moment.AddHours(12);
+                //    //adjustedMoment = CheckAndUpdateTime(moment);
+                //    return adjustedMoment;
+                //}
+            //}
 
             // else if moment if for afternoon
             if ((moment.Hour > 0 && moment.Hour < 7)

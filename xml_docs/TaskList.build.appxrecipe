@@ -10,22 +10,22 @@
     <PackageArchitecture>x64</PackageArchitecture>
     <PackageIdentityName>78dfad1d-c215-40e2-b10e-7caf716ecd98</PackageIdentityName>
     <PackageIdentityPublisher>CN=xcal1</PackageIdentityPublisher>
-    <IntermediateOutputPath>C:\Users\xcal1\source\TaskList\src\TaskList\obj\x64\Debug\</IntermediateOutputPath>
+    <IntermediateOutputPath>C:\Users\xcal1\source\repos\TaskListApp\obj\x64\Debug\</IntermediateOutputPath>
     <RemoteDeploymentType></RemoteDeploymentType>
     <PackageRegistrationPath></PackageRegistrationPath>
     <RemoveNonLayoutFiles>true</RemoveNonLayoutFiles>
     <DeployOptionalPackages>false</DeployOptionalPackages>
     <WindowsSdkPath>C:\Program Files %28x86%29\Windows Kits\10\</WindowsSdkPath>
-    <LayoutDir>C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\AppX</LayoutDir>
+    <LayoutDir>C:\Users\xcal1\source\repos\TaskListApp\xml_docs\AppX</LayoutDir>
   </PropertyGroup>
   <ItemGroup>
-    <AppXManifest Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Core\AppxManifest.xml">
+    <AppXManifest Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\Core\AppxManifest.xml">
       <PackagePath>AppxManifest.xml</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppXManifest>
   </ItemGroup>
   <ItemGroup>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\TaskList.exe">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\TaskList.exe">
       <PackagePath>entrypoint\TaskList.exe</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\xcal1\.nuget\packages\microsoft.data.sqlite.core\8.0.4\lib\netstandard2.0\Microsoft.Data.Sqlite.dll">
@@ -91,61 +91,61 @@
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Windows Kits\10\bin\10.0.22621.0\XamlCompiler\Microsoft.UI.Xaml.Markup.winmd">
       <PackagePath>Microsoft.UI.Xaml.Markup.winmd</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\Properties\Default.rd.xml">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\Properties\Default.rd.xml">
       <PackagePath>Properties\Default.rd.xml</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\Assets\LockScreenLogo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\Assets\LockScreenLogo.scale-200.png">
       <PackagePath>Assets\LockScreenLogo.scale-200.png</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\Assets\SplashScreen.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\Assets\SplashScreen.scale-200.png">
       <PackagePath>Assets\SplashScreen.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\Assets\Square150x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\Assets\Square150x150Logo.scale-200.png">
       <PackagePath>Assets\Square150x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\Assets\Square44x44Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\Assets\Square44x44Logo.scale-200.png">
       <PackagePath>Assets\Square44x44Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
       <PackagePath>Assets\Square44x44Logo.targetsize-24_altform-unplated.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\Assets\StoreLogo.png">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\Assets\StoreLogo.png">
       <PackagePath>Assets\StoreLogo.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\Assets\Wide310x150Logo.scale-200.png">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\Assets\Wide310x150Logo.scale-200.png">
       <PackagePath>Assets\Wide310x150Logo.scale-200.png</PackagePath>
       <ReRegisterAppIfChanged>true</ReRegisterAppIfChanged>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\TaskList.xr.xml">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\TaskList.xr.xml">
       <PackagePath>TaskList.xr.xml</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\App.xbf">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\App.xbf">
       <PackagePath>App.xbf</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\EditTaskDialog.xbf">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\Pages\EditTaskDialog.xbf">
       <PackagePath>Pages\EditTaskDialog.xbf</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\CreateTaskDialog.xbf">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\Pages\CreateTaskDialog.xbf">
       <PackagePath>Pages\CreateTaskDialog.xbf</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\MainPage.xbf">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\Pages\MainPage.xbf">
       <PackagePath>Pages\MainPage.xbf</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Pages\TasksPage.xbf">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\Pages\TasksPage.xbf">
       <PackagePath>Pages\TasksPage.xbf</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Program Files %28x86%29\Windows Kits\10\UnionMetadata\10.0.22621.0\Windows.winmd">
       <PackagePath>WinMetadata\Windows.winmd</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\resources.pri">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\resources.pri">
       <PackagePath>resources.pri</PackagePath>
     </AppxPackagedFile>
-    <AppxPackagedFile Include="C:\Users\xcal1\source\TaskList\src\TaskList\xml_docs\Core\TaskList.exe">
+    <AppxPackagedFile Include="C:\Users\xcal1\source\repos\TaskListApp\xml_docs\Core\TaskList.exe">
       <PackagePath>TaskList.exe</PackagePath>
     </AppxPackagedFile>
   </ItemGroup>
